@@ -1,4 +1,4 @@
-# Meal Mentor – mealmentor.com
+# Meal Mentor – mealmentorai.com
 
 Web-versionen af Meal Mentor. Den kører som Cloudflare Worker (ligesom foodtrux og sableandmons), gemmer login og data i Supabase (EU) og kalder Claude gennem en sikker server-funktion (`functions/api/ai.js`). API-nøglen ligger kun hos Cloudflare – aldrig i appen.
 
@@ -12,8 +12,8 @@ supabase/          schema.sql (tabel + adgangsregler)
 ## 1. Supabase – allerede sat op
 Projektet `mealmentor` (Frankfurt) er oprettet, og tabellen med adgangsregler ligger der. Adresse og offentlig nøgle står i `functions/api/config.js`.
 Det eneste du skal: **Authentication → URL Configuration** (https://supabase.com/dashboard/project/ugleivliwefxeenasmuv/auth/url-configuration)
-- Site URL: `https://mealmentor.com`
-- Redirect URLs: `https://mealmentor.com/**`, `https://www.mealmentor.com/**` og `https://*.workers.dev/**`
+- Site URL: `https://mealmentorai.com`
+- Redirect URLs: `https://mealmentorai.com/**`, `https://www.mealmentorai.com/**` og `https://*.workers.dev/**`
 
 Supabase' indbyggede login-mail har et lavt loft pr. time. Til flere testere: **Authentication → SMTP** med fx Resend eller Brevo.
 
@@ -27,8 +27,8 @@ Supabase' indbyggede login-mail har et lavt loft pr. time. Til flere testere: **
 3. Worker'en → **Settings → Variables and Secrets → Add** → type **Secret**, navn `ANTHROPIC_API_KEY`, værdi = nøglen fra trin 2 → **Deploy**.
 
 ## 4. Domænet
-1. Ligger mealmentor.com ikke allerede i Cloudflare: **Add a domain** → skift navneservere hos den forhandler, hvor du købte det.
-2. Worker'en → **Settings → Domains & Routes → Add → Custom domain** → `mealmentor.com`, og igen for `www.mealmentor.com`.
+1. Ligger mealmentorai.com ikke allerede i Cloudflare: **Add a domain** → skift navneservere hos den forhandler, hvor du købte det.
+2. Worker'en → **Settings → Domains & Routes → Add → Custom domain** → `mealmentorai.com`, og igen for `www.mealmentorai.com`.
 
 ## Opdatering af appen
 Når prototypen ændres: læg den nye `madscanner.html` ved siden af mappen og kør `python3 build.py`, commit og push – Cloudflare udgiver automatisk.
