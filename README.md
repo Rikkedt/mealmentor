@@ -8,15 +8,13 @@ functions/api/     ai.js (Claude-proxy) og config.js (Supabase-adresse til appen
 supabase/          schema.sql (tabel + adgangsregler)
 ```
 
-## 1. Supabase (login og data) – ca. 10 min
-1. supabase.com → **New project** → navn `mealmentor`, region **Central EU (Frankfurt)**.
-2. **SQL Editor** → indsæt indholdet af `supabase/schema.sql` → **Run**.
-3. **Authentication → URL Configuration**
-   - Site URL: `https://mealmentor.com`
-   - Redirect URLs: `https://mealmentor.com/**`, `https://www.mealmentor.com/**` og `https://*.pages.dev/**`
-4. **Project Settings → API**: kopiér **Project URL** og **anon public key** (bruges i trin 3).
-5. Login med e-mail virker med det samme. Supabase' indbyggede mail har et lavt loft over antal mails i timen – til flere testere: **Authentication → SMTP** med fx Resend eller Brevo.
-   Google-login (valgfrit): **Authentication → Providers → Google**. Apple-login kommer med iPhone-appen.
+## 1. Supabase – allerede sat op
+Projektet `mealmentor` (Frankfurt) er oprettet, og tabellen med adgangsregler ligger der. Adresse og offentlig nøgle står i `functions/api/config.js`.
+Det eneste du skal: **Authentication → URL Configuration** (https://supabase.com/dashboard/project/ugleivliwefxeenasmuv/auth/url-configuration)
+- Site URL: `https://mealmentor.com`
+- Redirect URLs: `https://mealmentor.com/**`, `https://www.mealmentor.com/**` og `https://*.pages.dev/**`
+
+Supabase' indbyggede login-mail har et lavt loft pr. time. Til flere testere: **Authentication → SMTP** med fx Resend eller Brevo.
 
 ## 2. Claude API-nøgle – ca. 5 min
 1. console.anthropic.com → **API Keys** → **Create key** (navn `mealmentor`).
@@ -28,12 +26,8 @@ supabase/          schema.sql (tabel + adgangsregler)
    - Framework preset: **None**
    - Build command: *(tom)*
    - Build output directory: `public`
-3. **Settings → Variables and Secrets** (Production) – tilføj:
-   | Navn | Værdi |
-   |---|---|
-   | `SUPABASE_URL` | Project URL fra Supabase |
-   | `SUPABASE_ANON_KEY` | anon public key fra Supabase |
-   | `ANTHROPIC_API_KEY` | nøglen fra trin 2 (vælg **Encrypt**) |
+3. **Settings → Variables and Secrets** (Production) – tilføj én hemmelighed:
+   `ANTHROPIC_API_KEY` = nøglen fra trin 2 (vælg **Encrypt**)
 4. Valgfrit dagligt loft pr. bruger: opret et KV-namespace `mealmentor-limits`, bind det som `LIMITS` under **Settings → Bindings**, og sæt `DAILY_LIMIT` (standard 150 AI-kald pr. bruger pr. dag).
 5. **Deployments → Retry deployment**, så variablerne kommer med.
 

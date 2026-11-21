@@ -1,8 +1,11 @@
 /* Sikker proxy til Claude. API-nøglen ligger kun her (Cloudflare-miljøvariabel), aldrig i appen.
    Kræver at brugeren er logget ind (Supabase-token) og har et dagligt loft pr. bruger, hvis KV "LIMITS" er koblet på. */
+import { supa } from './config.js';
+
 export async function onRequestPost({ request, env }) {
+  const S = supa(env);
   const auth = request.headers.get('authorization') || '';
-  const u = await fetch(`${env.SUPABASE_URL}/auth/v1/user`, { headers: { apikey: env.SUPABASE_ANON_KEY, authorization: auth } });
+  const u = await fetch(`${S.url}/auth/v1/user`, { headers: { apikey: S.anon, authorization: auth } });
   if (!u.ok) return new Response('unauthorized', { status: 401 });
   const user = await u.json();
 
