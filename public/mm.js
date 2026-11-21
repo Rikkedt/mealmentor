@@ -1,9 +1,9 @@
 /* Meal Mentor – kobler appen til Supabase (login + data) og /api/ai (Claude).
    Giver appen samme interface som prototypen: claude.use('sample'|'db'|'user'). */
 (function () {
-  let sb = null, session = null;
+  let sb = null, session = null, sbUrl = '', sbAnon = '';
   const ready = (async () => {
-    const c = await fetch('/api/config').then(r => r.json());
+    const c = await fetch('/api/config').then(r => r.json()); sbUrl = c.url; sbAnon = c.anon;
     sb = supabase.createClient(c.url, c.anon, { auth: { persistSession: true, autoRefreshToken: true, detectSessionInUrl: true, flowType: 'pkce' } });
     session = (await sb.auth.getSession()).data.session;
     if (/[?&](code|error)=/.test(location.search)) history.replaceState(null, '', location.pathname + location.hash);
@@ -15,10 +15,10 @@
   const fresh = async () => { await ready; session = (await sb.auth.getSession()).data.session; return session; };
 
   /* ---------- login ---------- */
-  function emailDialog() {
+  function emailDialog(note) {
     const d = document.createElement('dialog');
     d.className = 'mm-login';
-    d.innerHTML = `<form method="dialog"><b>Log ind med e-mail</b><p>Vi sender dig et link. Tryk på det, så er du logget ind.</p>
+    d.innerHTML = `<form method="dialog"><b>Log ind med e-mail</b><p>${note ? note + ' ' : ''}Vi sender dig et link. Tryk på det, så er du logget ind.</p>
       <input type="email" required placeholder="din@mail.dk" autocomplete="email"><div class="mm-row"><button value="cancel" formnovalidate class="ghost">Annullér</button><button class="go" value="ok">Send link</button></div><p class="mm-msg"></p></form>`;
     document.body.append(d);
     const f = d.querySelector('form'), inp = d.querySelector('input'), msg = d.querySelector('.mm-msg');
@@ -31,11 +31,18 @@
     d.addEventListener('close', () => d.remove());
     d.showModal(); inp.focus();
   }
+  let cfg = null;
+  const providers = async () => {
+    if (!cfg) { try { cfg = await fetch(`${sbUrl}/auth/v1/settings`, { headers: { apikey: sbAnon } }).then(r => r.json()); } catch (e) { cfg = {}; } }
+    return (cfg && cfg.external) || {};
+  };
   async function login(provider) {
     await ready;
     if (!provider || provider === 'email') return emailDialog();
+    const on = await providers();
+    if (!on[provider]) return emailDialog(`Login med ${provider === 'apple' ? 'Apple' : 'Google'} kommer snart. Indtil da: log ind med din e-mail.`);
     const { error } = await sb.auth.signInWithOAuth({ provider, options: { redirectTo: location.origin } });
-    if (error) { alert(provider === 'apple' ? 'Login med Apple er ikke sat op endnu. Brug e-mail.' : 'Login virkede ikke: ' + error.message); }
+    if (error) emailDialog('Det virkede ikke. Log ind med din e-mail i stedet.');
   }
   window.mmAuth = { ready, login, logout: async () => { await ready; await sb.auth.signOut(); }, user: () => session && session.user };
 
