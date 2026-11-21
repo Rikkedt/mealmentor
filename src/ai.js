@@ -2,7 +2,7 @@
    Kræver at brugeren er logget ind (Supabase-token) og har et dagligt loft pr. bruger, hvis KV "LIMITS" er koblet på. */
 import { supa } from './config.js';
 
-export async function onRequestPost({ request, env }) {
+export async function handleAI(request, env) {
   const S = supa(env);
   const auth = request.headers.get('authorization') || '';
   const u = await fetch(`${S.url}/auth/v1/user`, { headers: { apikey: S.anon, authorization: auth } });
