@@ -4,9 +4,9 @@
   let sb = null, session = null, sbUrl = '', sbAnon = '';
   const ready = (async () => {
     const c = await fetch('/api/config').then(r => r.json()); sbUrl = c.url; sbAnon = c.anon;
-    sb = supabase.createClient(c.url, c.anon, { auth: { persistSession: true, autoRefreshToken: true, detectSessionInUrl: true, flowType: 'pkce' } });
+    sb = supabase.createClient(c.url, c.anon, { auth: { persistSession: true, autoRefreshToken: true, detectSessionInUrl: true, flowType: 'implicit' } });
     session = (await sb.auth.getSession()).data.session;
-    if (/[?&](code|error)=/.test(location.search)) history.replaceState(null, '', location.pathname + location.hash);
+    if (/[?&](code|error)=/.test(location.search) || /access_token=|error_description=/.test(location.hash)) history.replaceState(null, '', location.pathname + '#vejleder');
     sb.auth.onAuthStateChange((ev, s) => {
       const had = !!session; session = s;
       if ((ev === 'SIGNED_IN' && !had) || ev === 'SIGNED_OUT') location.reload();
