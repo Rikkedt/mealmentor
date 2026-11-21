@@ -1,0 +1,6 @@
+.mm-login{border:0;border-radius:22px;padding:22px;max-width:min(380px,calc(100vw - 32px));background:var(--card,#fff);color:var(--ink,#111);box-shadow:0 20px 60px rgba(0,0,0,.3)}
+.mm-login::backdrop{background:rgba(10,10,12,.4)}
+.mm-login b{font-size:20px}.mm-login p{color:var(--mute,#6B6E76);font-size:14px;margin:6px 0 12px}
+.mm-login input{width:100%;font:16px inherit;padding:12px 14px;border-radius:14px;border:1.5px solid var(--line,#E4E5EA)}
+.mm-row{display:flex;gap:8px;justify-content:flex-end;margin-top:12px}
+.mm-msg{min-height:1.2em}

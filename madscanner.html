@@ -1,0 +1,1892 @@
+<!DOCTYPE html>
+<html lang="da">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Meal Mentor</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter+Tight:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+/* VOICE: venlig, hurtig, ærlig om at maddata er estimater
+   IDEA: køkkenbordet og stuegulvet: en tallerken med deklaration, en træningsmåtte med en instruktør-figur
+   PICTURE: madfotoet + kcal-ring; en stor animeret stregfigur der laver øvelsen
+   COLOUR and TYPE: tomatrød hovedfelt, hvid, basilikumgrøn accent; Rubik + Inter
+   LAYOUT: faner i toppen; værktøjet først, figur venstre og styring højre; stakkes på mobil */
+:root{color-scheme:light dark;
+--bg:light-dark(#ffffff,#1b1413);--ink:light-dark(#22160f,#f6ece6);--mute:light-dark(#6f5d52,#bba89c);
+--tomato:#e4432a;--tomato-d:light-dark(#c3331d,#ff6a4f);--line:light-dark(#efe2da,#3a2b27);--card:light-dark(#fff,#241a18);
+--soft:light-dark(#fff6f2,#2a1d1a);--prot:#2f7d4f;--fat:#f2a516;--carb:#4f7fd9}
+:root[data-theme=light]{color-scheme:light}:root[data-theme=dark]{color-scheme:dark}
+*{box-sizing:border-box;min-width:0}
+body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.55 Inter,system-ui,sans-serif;overflow-x:clip}
+h1,h2,.big{font-family:Rubik,Inter,sans-serif;line-height:1.05;text-wrap:balance;margin:0}
+.band{padding:clamp(24px,4vw,56px) max(5vw,16px)}
+.top{background:var(--tomato);color:#fff;padding-bottom:0}
+.top h1{font-size:clamp(32px,5vw,48px);font-weight:700}
+.top p{margin:8px 0 0;max-width:62ch;opacity:.92}
+.tabs{display:flex;gap:6px;margin-top:22px;flex-wrap:wrap}
+.tabs a{color:#fff;text-decoration:none;font-weight:600;padding:12px 20px;border-radius:14px 14px 0 0;min-height:44px}
+.tabs a[aria-current]{background:var(--bg);color:var(--ink)}
+.tabs a:focus-visible{outline:3px solid #fff;outline-offset:-3px}
+.wrap{max-width:1240px;margin:0 auto}
+.grid{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:28px;align-items:start}
+@media(max-width:760px){.grid{grid-template-columns:minmax(0,1fr)}}
+[hidden]{display:none!important}
+.drop{position:relative;aspect-ratio:4/3;border:2px dashed var(--line);border-radius:20px;display:grid;place-items:center;text-align:center;overflow:hidden;background:var(--soft);cursor:pointer}
+.drop.has{border-style:solid}
+.drop img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
+.drop .hint{padding:20px;color:var(--mute)}
+.drop .hint b{display:block;font:700 20px Rubik,sans-serif;color:var(--ink);margin-bottom:4px}
+.plate{width:84px;height:84px;margin:0 auto 12px;border-radius:50%;background:radial-gradient(circle,#fff 52%,#f1e4dc 54%,#fff 70%,#e9d6cb 72%);box-shadow:0 6px 14px rgba(0,0,0,.12)}
+input[type=file]{position:absolute;width:1px;height:1px;opacity:0}
+label.f{display:block;font-weight:600;margin:16px 0 6px}
+textarea{width:100%;font:16px Inter,sans-serif;padding:12px;border-radius:12px;border:1px solid var(--line);background:var(--card);color:var(--ink);resize:vertical;min-height:52px}
+.btns{display:flex;flex-wrap:wrap;gap:10px;margin-top:14px}
+button{font:600 16px Inter,sans-serif;min-height:48px;padding:0 20px;border-radius:999px;border:0;cursor:pointer;color:inherit}
+button:focus-visible,textarea:focus-visible,input:focus-visible,.drop:focus-visible{outline:3px solid var(--carb);outline-offset:2px}
+.go{background:var(--tomato);color:#fff}.go:disabled{opacity:.5;cursor:default}
+.ghost{background:transparent;color:var(--ink);border:1px solid var(--line)}
+.result{border:1px solid var(--line);border-radius:20px;padding:22px;background:var(--card);min-height:300px}
+.empty{color:var(--mute);display:grid;place-items:center;min-height:250px;text-align:center}
+.head{display:flex;gap:20px;align-items:center;flex-wrap:wrap}
+.ring{width:128px;height:128px;flex:none;position:relative}
+.ring svg{width:100%;height:100%;transform:rotate(-90deg)}
+.ring .c{position:absolute;inset:0;display:grid;place-items:center;text-align:center}
+.big{font-size:34px;font-weight:700}
+.unit{font-size:13px;color:var(--mute)}
+.title{font:700 22px Rubik,sans-serif}
+.conf{font-size:13px;color:var(--mute)}
+.macros{display:grid;gap:10px;margin:20px 0}
+.m{display:grid;grid-template-columns:7em minmax(0,1fr) 5em;gap:10px;align-items:center}
+.bar{height:12px;border-radius:6px;background:var(--line);overflow:hidden}.bar i{display:block;height:100%;border-radius:6px}
+.m b{text-align:right;white-space:nowrap}
+table{width:100%;border-collapse:collapse;font-size:15px}
+th,td{text-align:left;padding:8px 6px;border-bottom:1px solid var(--line)}
+th{font-size:13px;color:var(--mute);font-weight:500}
+td.n,th.n{text-align:right;white-space:nowrap}
+td input{width:5.5em;font:16px Inter,sans-serif;padding:6px 8px;border-radius:8px;border:1px solid var(--line);background:var(--bg);color:var(--ink);text-align:right}
+.note{font-size:14px;color:var(--mute);margin-top:12px}
+.err{color:var(--tomato-d);font-weight:600}
+.spin{width:40px;height:40px;border-radius:50%;border:4px solid var(--line);border-top-color:var(--tomato);animation:s 1s linear infinite;margin:0 auto 12px}
+@keyframes s{to{transform:rotate(360deg)}}
+.day{border-top:1px solid var(--line)}
+.day h2,.progs h2{font-size:28px}
+.tot{display:flex;flex-wrap:wrap;gap:12px 28px;margin:14px 0 18px}
+.tot div{font-size:14px;color:var(--mute)}.tot b{display:block;font:700 26px Rubik,sans-serif;color:var(--ink)}
+.log{list-style:none;padding:0;margin:0}
+.log li{display:flex;justify-content:space-between;gap:12px;padding:10px 0;border-bottom:1px solid var(--line);flex-wrap:wrap}
+.log small{color:var(--mute)}
+.log button{min-height:36px;padding:0 12px;font-size:14px}
+.foot{font-size:13px;color:var(--mute)}
+/* træning */
+.player{display:grid;grid-template-columns:minmax(0,1.15fr) minmax(0,1fr);gap:28px;align-items:stretch}
+@media(max-width:760px){.player{grid-template-columns:minmax(0,1fr)}}
+.mat{position:relative;border-radius:24px;background:var(--soft);aspect-ratio:6/5;overflow:hidden}
+.mat svg{position:absolute;inset:0;width:100%;height:100%}
+.mat .tag{position:absolute;left:16px;top:14px;background:var(--card);border-radius:999px;padding:4px 12px;font-size:13px;font-weight:600}
+.mat .tag.rest{background:var(--prot);color:#fff}
+.ctrl{display:flex;flex-direction:column;gap:14px}
+.ex{font:700 clamp(26px,3.4vw,36px)/1.08 Rubik,sans-serif;margin:0}
+.tip{margin:0;color:var(--mute);max-width:46ch}
+.clock{font:700 clamp(56px,9vw,84px)/1 Rubik,sans-serif;font-variant-numeric:tabular-nums}
+.prog{height:10px;border-radius:5px;background:var(--line);overflow:hidden}.prog i{display:block;height:100%;background:var(--tomato);transition:width .25s linear}
+.small{font-size:14px;color:var(--mute)}
+.steps{list-style:none;margin:14px 0 0;padding:0;display:grid;gap:10px;grid-template-columns:repeat(auto-fill,minmax(min(100%,300px),1fr))}
+.steps li button{all:unset;box-sizing:border-box;cursor:pointer;width:100%;display:grid;grid-template-columns:auto 84px minmax(0,1fr);gap:12px;align-items:center;padding:10px 12px;border-radius:16px;background:var(--card);border:1px solid var(--line)}
+.steps li button:focus-visible{outline:3px solid var(--carb);outline-offset:2px}
+.steps .no{font:700 15px Rubik,sans-serif;color:var(--mute);width:1.4em;text-align:right}
+.steps svg{width:84px;height:70px;background:var(--soft);border-radius:12px}
+.steps .tx b{display:block;font:700 16px/1.2 Rubik,sans-serif}.steps .tx small{display:block;color:var(--mute);font-size:14px;line-height:1.4;margin-top:2px}
+.steps li.on button{border-color:var(--tomato);box-shadow:0 0 0 2px var(--tomato)}
+.steps li.done button{opacity:.55}
+.progs{border-top:1px solid var(--line)}
+.cards{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:14px;margin-top:16px}
+.card{text-align:left;background:var(--card);border:1px solid var(--line);border-radius:18px;padding:0 0 14px;overflow:hidden;min-height:0;display:flex;flex-direction:column;font-weight:400}
+.card.sel{border-color:var(--tomato);box-shadow:0 0 0 2px var(--tomato)}
+.card .th{background:var(--soft);aspect-ratio:12/7;position:relative}
+.card .th svg{position:absolute;inset:0;width:100%;height:100%}
+.card b{font:700 19px Rubik,sans-serif;padding:12px 14px 0}
+.card small{color:var(--mute);padding:2px 14px 0;font-size:14px}
+.card .ok{color:var(--prot);font-weight:600}
+.badge{display:inline-block;background:var(--tomato);color:#fff;font-size:12px;font-weight:600;border-radius:999px;padding:1px 9px;margin-left:6px;vertical-align:2px}
+/* vejleder */
+.vtop{display:flex;flex-wrap:wrap;gap:10px 16px;align-items:center;justify-content:space-between}
+.chips{display:flex;flex-wrap:wrap;gap:8px}
+.chip{background:var(--soft);border-radius:999px;padding:6px 14px;font-size:14px;font-weight:600;white-space:nowrap}
+.chip.ph{background:var(--prot);color:#fff}.chip.ph.ned{background:var(--fat);color:#22160f}.chip.ph.op{background:var(--carb);color:#fff}
+.seg{display:inline-flex;border:1px solid var(--line);border-radius:999px;padding:3px}
+.seg button{min-height:40px;background:transparent}.seg button[aria-pressed=true]{background:var(--ink);color:var(--bg)}
+.dnav{display:flex;align-items:center;gap:10px;margin:18px 0 6px;flex-wrap:wrap}
+.dnav button{min-height:40px;padding:0 14px}
+.dnav b{font:700 22px Rubik,sans-serif;min-width:9em}
+.strip{position:relative;height:136px;margin:8px 0 4px}
+.strip svg{position:absolute;inset:0;width:100%;height:100%}
+.tiles{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:12px;margin:16px 0}
+.tile{background:var(--soft);border-radius:16px;padding:12px 14px}
+.tile small{display:block;color:var(--mute);font-size:13px}
+.tile b{font:700 26px Rubik,sans-serif;white-space:nowrap}
+.tile i{font-style:normal;font-size:13px;color:var(--mute);display:block}
+.flags{list-style:none;padding:0;margin:8px 0;display:grid;gap:8px}
+.flags li{padding:10px 14px;border-radius:12px;background:var(--soft);border-left:5px solid var(--prot)}
+.flags li.warn{border-left-color:var(--fat)}.flags li.bad{border-left-color:var(--tomato)}
+.chart{position:relative;height:300px;margin:12px 0}
+.chart svg{position:absolute;inset:0;width:100%;height:100%}
+.legend{display:flex;flex-wrap:wrap;gap:6px 18px;font-size:13px;color:var(--mute)}
+.legend span::before{content:"";display:inline-block;width:12px;height:12px;border-radius:3px;margin-right:6px;vertical-align:-1px;background:var(--c)}
+.corr{list-style:none;padding:0;margin:0;display:grid;gap:10px}
+.corr li{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:4px 14px;padding:12px 0;border-bottom:1px solid var(--line)}
+.corr li b{white-space:nowrap;text-align:right}
+.corr li small{grid-column:1/-1;color:var(--mute)}
+.ai{background:var(--card);border:1px solid var(--line);border-radius:20px;padding:22px}
+.ai .out{margin-top:14px;font-size:16px;max-width:72ch}
+.ai .out h3{font:700 19px Rubik,sans-serif;margin:18px 0 6px}
+.ai .out ul{padding-left:1.2em;margin:6px 0}
+.ask{display:flex;gap:10px;margin-top:14px;flex-wrap:wrap}
+.ask input{flex:1 1 240px}
+input.t,select{font:16px Inter,sans-serif;padding:10px 12px;border-radius:12px;border:1px solid var(--line);background:var(--card);color:var(--ink);min-height:46px;width:100%}
+.forms{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:16px;margin-top:16px}
+.form{background:var(--card);border:1px solid var(--line);border-radius:18px;padding:16px;display:grid;gap:10px;align-content:start}
+.form h3{font:700 18px Rubik,sans-serif;margin:0}
+.form .row{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:8px}
+.form label{font-size:13px;color:var(--mute);display:grid;gap:4px}
+.form button{justify-self:start}
+.ok-msg{font-size:13px;color:var(--prot);min-height:1em}
+.entries{list-style:none;padding:0;margin:12px 0 0}
+.entries li{display:flex;justify-content:space-between;gap:10px;padding:8px 0;border-bottom:1px solid var(--line);flex-wrap:wrap;font-size:15px}
+.entries small{color:var(--mute)}
+.entries button{min-height:34px;padding:0 12px;font-size:13px}
+.vsec{border-top:1px solid var(--line)}
+.vsec h2{font-size:28px}
+textarea.data{font:13px ui-monospace,monospace;min-height:90px}
+/* vejleder v2 */
+.hello{font-size:clamp(28px,4vw,40px)}
+.recs{list-style:none;padding:0;margin:16px 0 0;display:grid;gap:10px;grid-template-columns:repeat(auto-fill,minmax(min(100%,300px),1fr))}
+.recs li{background:var(--card);border:1px solid var(--line);border-left:6px solid var(--line);border-radius:14px;padding:14px 16px;display:grid;gap:2px}
+.recs li b{font:700 17px/1.25 Rubik,sans-serif}.recs li span{color:var(--mute);font-size:15px}
+.recs li.good{border-left-color:var(--prot)}.recs li.warn{border-left-color:var(--fat)}.recs li.bad{border-left-color:var(--tomato)}
+.ainote{margin-top:12px;padding:14px 16px;border-radius:14px;background:var(--soft)}
+.ainote-h{display:flex;justify-content:space-between;align-items:center;gap:10px}
+.ainote p{margin:6px 0 0}
+button.link{background:none;min-height:36px;padding:0 4px;color:var(--tomato-d);font-size:14px}
+.quick{display:flex;flex-wrap:wrap;gap:8px;margin-top:22px}
+.quick button{background:var(--soft);font-weight:600}.quick button[aria-pressed=true]{background:var(--ink);color:var(--bg)}
+.panel{position:relative;margin-top:12px}
+.panel .form{padding-right:48px}
+.close{position:absolute;top:8px;right:8px;width:40px;min-height:40px;padding:0;background:transparent;font-size:26px;line-height:1}
+.row3{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px}
+@media(max-width:420px){.row3{grid-template-columns:minmax(0,1fr) minmax(0,1fr)}}
+.fbtn{display:flex;gap:12px;align-items:center;flex-wrap:wrap}
+.qual{display:flex;flex-wrap:wrap;gap:6px}
+.qual label{display:block;cursor:pointer}.qual input{position:absolute;opacity:0;width:1px;height:1px}
+.qual span{display:inline-flex;align-items:center;min-height:40px;padding:0 14px;border-radius:999px;background:var(--soft);font-size:14px;font-weight:600;color:var(--ink)}
+.qual input:checked+span{background:var(--ink);color:var(--bg)}.qual input:focus-visible+span{outline:3px solid var(--carb)}
+details.more{border-bottom:1px solid var(--line)}
+details.more>summary{font:700 19px Rubik,sans-serif;padding:16px 0;cursor:pointer;min-height:44px}
+details.more[open]>summary{padding-bottom:8px}
+details.more>*:last-child{margin-bottom:18px}
+.form.plain{border:0;padding:0;background:none;max-width:560px}
+.calc{background:var(--soft);border-radius:14px;padding:12px;display:grid;gap:10px}
+.aiout{margin-top:14px;max-width:72ch}.aiout h3{font:700 18px Rubik,sans-serif;margin:16px 0 4px}.aiout ul{padding-left:1.2em;margin:6px 0}
+.tiles{grid-template-columns:repeat(auto-fill,minmax(130px,1fr))}
+.sleepf{gap:14px}
+.night{display:flex;align-items:center;gap:10px}
+.night .nb{min-height:44px;width:44px;padding:0;font-size:22px;flex:none}
+.night .nt{flex:1;text-align:center}.night .nt b{display:block;font:700 20px Rubik,sans-serif}.night .nt small{color:var(--mute);font-size:14px}
+.tcards{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:10px}
+.tcard{background:var(--soft);border-radius:16px;padding:12px 14px;display:grid;gap:4px;justify-items:start}
+.tl{font-size:13px;font-weight:600;color:var(--mute)}
+.tcard input.big{font:700 30px/1.1 Rubik,sans-serif;border:0;background:transparent;color:var(--ink);padding:2px 0;width:100%;min-height:44px}
+.td{font-size:13px;color:var(--ink)}
+.s15{display:flex;gap:6px;margin-top:4px}.s15 button{min-height:36px;padding:0 12px;font-size:14px;background:var(--card);border:1px solid var(--line)}
+.nightbar{position:relative;height:64px}.nightbar svg{position:absolute;inset:0;width:100%;height:100%}
+.dur{font-size:17px}.dur b{font:700 24px Rubik,sans-serif}
+.panel .sleepf{padding-right:16px}.panel .sleepf h3{padding-right:40px}
+.amt{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:8px}
+.por button{min-height:40px;padding:0 14px;border-radius:999px;background:var(--soft);font-size:14px;font-weight:600}
+.por button[aria-pressed=true]{background:var(--ink);color:var(--bg)}
+.todo{margin-top:16px;padding:12px 16px;border-radius:14px;border:1.5px dashed var(--fat);background:var(--card)}
+.todo>b{font:700 16px Rubik,sans-serif}
+.todo ul{list-style:none;margin:6px 0 0;padding:0}
+.todo li{display:flex;justify-content:space-between;align-items:center;gap:10px;padding:6px 0;border-top:1px solid var(--line)}
+.todo li:first-child{border-top:0}
+.todo li button{min-height:38px;padding:0 16px;font-size:14px}
+.chip.sync{background:var(--prot);color:#fff}
+/* tilbage i dag */
+.left{margin-top:16px;padding:16px;border-radius:18px;background:var(--card);border:1px solid var(--line)}
+.left-empty{color:var(--mute)}
+.lgrid{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:16px}
+.lbox small{display:block;color:var(--mute);font-size:13px;font-weight:600}
+.lbox b{display:block;font:700 clamp(28px,5vw,40px)/1.05 Rubik,sans-serif;font-variant-numeric:tabular-nums;margin:2px 0 6px}
+.lbox .bar{height:10px}.lbox .bar i{background:var(--tomato)}.lbox:nth-child(2) .bar i{background:var(--prot)}
+.ltxt{margin:14px 0 6px}.ltxt b{font-weight:600}
+.slots{list-style:none;margin:6px 0 0;padding:0}
+.slots li{display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap;padding:8px 0;border-top:1px solid var(--line)}
+.slots li span:last-child{white-space:nowrap;color:var(--ink)}.slots em{font-style:normal;color:var(--tomato-d);font-weight:600}
+.ltip{margin:8px 0 0;padding:10px 12px;border-radius:12px;background:var(--soft);font-size:15px}
+.todo{margin-top:10px;padding:0;border:0;background:none}
+.todo>summary{cursor:pointer;color:var(--mute);font-size:14px;font-weight:600;min-height:40px;display:flex;align-items:center;gap:6px;list-style:none}
+.todo>summary::-webkit-details-marker{display:none}
+.todo>summary::before{content:"›";display:inline-block;transition:transform .15s}.todo[open]>summary::before{transform:rotate(90deg)}
+.todo ul{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:4px 14px}
+/* bot */
+body{padding-bottom:84px}
+.botfab{position:fixed;right:max(16px,env(safe-area-inset-right));bottom:max(16px,env(safe-area-inset-bottom));z-index:50;background:var(--ink);color:var(--bg);box-shadow:0 8px 24px rgba(0,0,0,.25);display:flex;align-items:center;gap:8px;min-height:52px;padding:0 20px}
+.botdot{width:10px;height:10px;border-radius:50%;background:var(--tomato);box-shadow:0 0 0 3px color-mix(in srgb,var(--tomato) 35%,transparent)}
+.bot{position:fixed;right:16px;bottom:16px;z-index:60;width:min(380px,calc(100vw - 32px));height:min(560px,calc(100vh - 32px));background:var(--bg);border:1px solid var(--line);border-radius:20px;box-shadow:0 16px 48px rgba(0,0,0,.28);display:flex;flex-direction:column;overflow:hidden}
+@media(max-width:600px){.bot{right:0;bottom:0;width:100vw;height:min(82vh,640px);border-radius:20px 20px 0 0}}
+.bot-h{display:flex;justify-content:space-between;align-items:center;gap:10px;padding:12px 12px 12px 16px;background:var(--tomato);color:#fff}
+.bot-h b{display:block;font:700 18px Rubik,sans-serif}.bot-h small{opacity:.9;font-size:13px}
+.bot-h button{color:#fff;border-color:rgba(255,255,255,.5);width:40px;min-height:40px;padding:0;font-size:22px}
+.bot-log{flex:1;overflow:auto;padding:14px;display:flex;flex-direction:column;gap:10px}
+.bm{max-width:88%;padding:10px 12px;border-radius:14px;font-size:15px;line-height:1.45}
+.bm p{margin:0 0 6px}.bm p:last-child{margin:0}.bm ul{margin:4px 0;padding-left:1.1em}.bm h3{font:700 15px Rubik,sans-serif;margin:6px 0 2px}
+.bm.a{background:var(--soft);align-self:flex-start;border-bottom-left-radius:4px}
+.bm.u{background:var(--ink);color:var(--bg);align-self:flex-end;border-bottom-right-radius:4px}
+.bot-chips{display:flex;flex-wrap:wrap;gap:6px;padding:0 14px 10px}
+.bot-chips button{min-height:36px;padding:0 12px;font-size:13px;background:var(--soft);font-weight:600}
+.bot-in{display:flex;gap:8px;padding:10px 12px 12px;border-top:1px solid var(--line)}
+.bot-in input{flex:1;min-height:44px}.bot-in button{min-height:44px;padding:0 16px}
+.vtop .hello{margin-right:auto}
+.regwrap{position:relative}
+.regmenu{position:absolute;left:0;top:calc(100% + 6px);z-index:40;min-width:220px;background:var(--card);border:1px solid var(--line);border-radius:14px;box-shadow:0 12px 32px rgba(0,0,0,.18);padding:6px;display:grid}
+.tabs{flex-wrap:nowrap;overflow-x:auto;scrollbar-width:none}.tabs a{flex:none}
+@media(min-width:601px){.regmenu{left:auto;right:0}}
+@media(max-width:600px){.tabs a{padding:10px 12px;font-size:15px}}
+.regmenu button{background:none;text-align:left;border-radius:10px;min-height:44px;padding:0 12px;font-weight:600}
+.regmenu button:hover,.regmenu button:focus-visible{background:var(--soft)}
+.legend .lg-meal::before{background:var(--tomato);width:6px;height:14px;border-radius:3px;vertical-align:-2px}
+.legend .lg-late::before{background:color-mix(in srgb,var(--carb) 12%,transparent);border-left:2px dashed var(--mute);width:12px;border-radius:0 3px 3px 0}
+.legend i{font-style:normal}
+.lins{margin:10px 0 0;font-size:15px}
+.ltip.eve{background:color-mix(in srgb,var(--carb) 14%,var(--card));border-left:4px solid var(--carb)}
+.profile{display:grid;gap:18px;max-width:820px}
+.pcard{background:var(--card);border:1px solid var(--line);border-radius:18px;padding:18px}
+.pcard h2{font-size:22px;margin-bottom:10px}
+.pstats{display:grid;grid-template-columns:repeat(auto-fill,minmax(110px,1fr));gap:10px;margin-top:10px}
+.pstats div{background:var(--soft);border-radius:12px;padding:10px 12px}.pstats b{display:block;font:700 22px Rubik,sans-serif}.pstats small{color:var(--mute)}
+.rem{display:grid;gap:8px;margin-top:10px}
+.rem label{display:flex;gap:12px;align-items:center;padding:10px 12px;border-radius:12px;background:var(--soft);cursor:pointer;min-height:52px}
+.rem input{width:22px;height:22px;accent-color:var(--tomato);flex:none}
+.rem b{display:block}.rem small{color:var(--mute)}
+.plans{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,240px),1fr));gap:12px}
+.plan{border:1px solid var(--line);border-radius:16px;padding:14px;display:grid;gap:8px;align-content:start}
+.plan.cur{background:var(--soft)}
+.plan b{font:700 18px Rubik,sans-serif}.plan .price{font:700 22px Rubik,sans-serif}.plan .price small{font:400 14px Inter,sans-serif;color:var(--mute)}
+.plan ul{margin:0;padding-left:1.1em;font-size:15px}
+.plan button:disabled{opacity:.6}
+#entFilter{flex-wrap:wrap;margin-bottom:6px}
+.hot{display:flex;gap:10px;align-items:center;padding:10px 12px;border-radius:12px;background:var(--soft);cursor:pointer;min-height:48px}
+.hot input{width:22px;height:22px;accent-color:var(--tomato)}
+[hidden].oaonly{display:none!important}
+.hero{margin-top:16px;border:1px solid var(--line);border-radius:20px;background:var(--card);overflow:hidden}
+.hero .left{margin:0;border:0;border-radius:0}
+.hero .ainote{margin:0;border-radius:0;border-top:1px solid var(--line);background:var(--soft)}
+.lstatus{margin:12px 0 0;color:var(--mute);font-size:14px}
+.lnext{margin-top:12px;padding:12px 14px;border-radius:14px;background:var(--soft);display:grid;gap:2px}
+.lnext small{color:var(--mute);font-size:12px;font-weight:600;text-transform:none}
+.lnext b{font:700 18px Rubik,sans-serif}.lnext em{font-style:normal;color:var(--tomato-d)}
+.lnext .small{margin-top:4px}
+.morerecs{margin-top:6px}.morerecs ul{background:none;border:0;padding:0;margin-top:6px}
+
+@media(max-width:600px){.tabs{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:4px;overflow:visible}.tabs a{padding:10px 4px;font-size:14px;text-align:center;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}}
+.tabs .sm{display:none}
+@media(max-width:420px){.tabs .lg{display:none}.tabs .sm{display:inline}}
+@media(max-width:400px){.tabs a{padding:10px 0;font-size:13px}.top{padding-left:12px;padding-right:12px}}
+@media(max-width:340px){.tabs{gap:0}.tabs a{font-size:11.5px;padding:10px 0}}
+.mat svg{overflow:hidden}
+html,body{max-width:100%;overflow-x:hidden}
+.morerecs{margin-top:10px}
+.morerecs>summary{cursor:pointer;color:var(--mute);font-size:14px;font-weight:600;min-height:40px;display:flex;align-items:center;gap:6px;list-style:none}
+.morerecs>summary::-webkit-details-marker{display:none}
+.morerecs>summary::before{content:"›";display:inline-block;transition:transform .15s}.morerecs[open]>summary::before{transform:rotate(90deg)}
+.morerecs .recs{margin-top:4px}
+.recs li b,.recs li span{overflow-wrap:anywhere;hyphens:auto}
+.recs li:not(.good):not(.warn):not(.bad){border-left-color:var(--carb)}
+.cards{grid-template-columns:repeat(auto-fill,minmax(min(100%,220px),1fr));gap:10px;margin-top:14px}
+.card{display:grid;grid-template-columns:64px minmax(0,1fr);grid-template-rows:auto auto 1fr;column-gap:12px;align-items:center;padding:8px 12px 8px 8px;border-radius:16px;min-height:72px}
+.card .th{grid-row:1/4;width:64px;height:56px;aspect-ratio:auto;border-radius:12px}
+.card b{font:700 16px/1.2 Rubik,sans-serif;padding:0}
+.card small{padding:0;font-size:13px}
+.card .badge{font-size:11px;padding:1px 7px;margin-left:4px}
+@media(max-width:600px){.cards{grid-template-columns:minmax(0,1fr) minmax(0,1fr)}.card{grid-template-columns:44px minmax(0,1fr);column-gap:8px;padding:8px}.card .th{width:44px;height:44px}.card b{font-size:14px}.card small{font-size:12px}.card .badge{display:none}}
+@media(max-width:760px){.mat{aspect-ratio:16/10}}
+.stepsd>summary{font-size:17px}
+.fchips{display:flex;flex-wrap:wrap;gap:6px;margin:4px 0 8px}
+.fchips button{min-height:36px;padding:0 14px;font-size:14px;background:var(--soft);border:1px solid transparent}
+.fchips button[aria-pressed=true]{background:var(--ink);color:var(--bg)}
+#entries{margin:0}
+#entries .eday{list-style:none;font:700 14px Rubik,sans-serif;color:var(--mute);padding:14px 0 4px;border:0;display:block}
+#entries .erow{display:grid;grid-template-columns:10px minmax(0,1fr) auto;gap:12px;align-items:center;padding:10px 0;border-bottom:1px solid var(--line)}
+#entries .etx b{display:block;font-weight:600;font-size:15px;overflow-wrap:anywhere}
+#entries .etx small{display:block;color:var(--mute);font-size:13px}
+.edot{width:10px;height:10px;border-radius:50%;background:var(--mute)}
+.t-meals{background:var(--tomato)}.t-sleep{background:var(--carb)}.t-workouts{background:var(--prot)}.t-weights{background:var(--ink)}.t-doses{background:var(--fat)}
+.edel{min-height:34px;padding:0 12px;font-size:13px;background:transparent;border:1px solid var(--line);color:var(--mute)}
+.edel:hover{color:var(--tomato-d);border-color:var(--tomato-d)}
+.dcur{display:grid;grid-template-columns:10px minmax(0,1fr);gap:12px;align-items:center;padding:12px 14px;border-radius:14px;background:var(--soft);margin-bottom:6px}
+.dcur b{display:block;font:700 17px Rubik,sans-serif}.dcur small{color:var(--mute);font-size:13px}
+.dlist{margin:0 0 12px;padding:0;list-style:none}
+.dlist .erow{display:grid;grid-template-columns:10px minmax(0,1fr) auto;gap:12px;align-items:center;padding:10px 0;border-bottom:1px solid var(--line)}
+.dlist .etx b{display:block;font-weight:600;font-size:15px}.dlist .etx small{display:block;color:var(--mute);font-size:13px}
+.mini{margin-top:22px}
+.ctitle{font:700 18px Rubik,sans-serif;margin:0 0 4px}.ctitle small{font:400 14px Inter,sans-serif;color:var(--mute);margin-left:6px}
+.chart.sm{height:170px;margin:6px 0}
+.dhist{font:600 14px Inter,sans-serif;color:var(--mute);margin:14px 0 2px}
+.chart.combo{height:auto;min-height:200px}
+.chart.combo svg{position:static;display:block;width:100%}
+.insight{margin:12px 0 0;padding:12px 14px;border-radius:14px;background:var(--soft);font-size:15px;display:grid;gap:6px}
+.insight span{display:block}
+@media(prefers-reduced-motion:reduce){.spin{animation:none}.prog i{transition:none}}
+@media(max-width:600px){table{font-size:13px}.m{grid-template-columns:6em minmax(0,1fr) 4.5em}.tabs a{padding:10px 14px}}
+
+/* ===== Sølv-design (grå/hvide gradienter, sort accent) ===== */
+:root{--bg:light-dark(#F1F1F4,#16181C);--g1:light-dark(#FAFAFB,#1C1E23);--g2:light-dark(#E2E3E8,#121317);
+--ink:light-dark(#111111,#F2F3F5);--mute:light-dark(#6B6E76,#9BA1AB);--line:light-dark(#E4E5EA,#30333B);
+--card:light-dark(#FFFFFF,#22252B);--card2:light-dark(#F4F4F6,#1D2025);--soft:light-dark(#F1F1F4,#2A2D34);
+--tomato:#E8735A;--tomato-d:light-dark(#C2412D,#FF9B85);--prot:#8E6CF0;--fat:#E0A526;--carb:#5B7CFA;
+--acc:light-dark(#111111,#F2F3F5);--accInk:light-dark(#FFFFFF,#111111);
+--sh:0 6px 22px light-dark(rgba(17,17,17,.07),rgba(0,0,0,.35));--dark:linear-gradient(135deg,#5E6168 0%,#34363C 55%,#1C1D21 100%)}
+body{font-family:'Inter Tight',system-ui,sans-serif;background:var(--bg) linear-gradient(180deg,var(--g1) 0%,var(--g2) 100%) fixed;letter-spacing:-.1px}
+h1,h2,.big,.title,.ex,.clock,.tot b,.tile b,.card b,.steps .tx b,.steps .no,.form h3,.ai .out h3,.aiout h3,details.more>summary,.recs li b,.lbox b,.lnext b,.night .nt b,.dur b,.pstats b,.plan b,.plan .price,.bot-h b,.bm h3,.todo>b,.drop .hint b,.tcard input.big,.dnav b{font-family:'Inter Tight',system-ui,sans-serif!important;letter-spacing:-.5px}
+button,textarea,input.t,select,td input,.plan .price small{font-family:'Inter Tight',system-ui,sans-serif}
+/* top: lys header + pille-faner */
+.top{background:transparent;color:var(--ink);padding-bottom:4px}
+.top h1{font-weight:800;letter-spacing:-1px}
+.top p{color:var(--mute);opacity:1}
+.tabs{gap:8px;margin-top:16px}
+.tabs a{color:var(--ink);background:var(--card);border:1.5px solid var(--line);border-radius:999px;padding:8px 18px;min-height:40px;display:inline-flex;align-items:center;box-shadow:var(--sh)}
+.tabs a[aria-current]{background:light-dark(#E4E5EA,#33363E);border-color:var(--ink);color:var(--ink)}
+.tabs a:focus-visible{outline:3px solid var(--carb);outline-offset:2px}
+@media(max-width:600px){.tabs a{padding:7px 13px}}
+/* sektionsoverskrifter som i referencen */
+.day h2,.progs h2,.vsec h2,.pcard h2{display:flex;align-items:center;gap:10px;font-size:13px!important;font-weight:800;letter-spacing:1.3px!important;text-transform:uppercase}
+.day h2::before,.progs h2::before,.vsec h2::before,.pcard h2::before{content:"";width:26px;height:26px;flex:none;border-radius:8px;background:#3A3C42 radial-gradient(circle,#fff 0 3px,transparent 3.5px)}
+.day,.progs,.vsec,details.more{border-color:transparent}
+/* kort */
+.result,.ai,.form:not(.plain),.pcard,.hero,.card,.plan,.left,.recs li,.bot,.regmenu,.todo ul,.steps li button{background:linear-gradient(160deg,var(--card) 0%,var(--card2) 100%);border:0;box-shadow:var(--sh);border-radius:22px}
+.hero .left{box-shadow:none;background:transparent}
+.recs li{border-left:0;position:relative;padding-left:22px}
+.recs li::before{content:"";position:absolute;left:10px;top:16px;bottom:16px;width:4px;border-radius:4px;background:var(--line)}
+.recs li.good::before{background:var(--prot)}.recs li.warn::before{background:var(--fat)}.recs li.bad::before{background:var(--tomato)}
+.tile,.pstats div,.tcard,.calc,.lnext,.ainote,.ltip,.chip,.quick button,.rem label,.hot,.qual span,.por button,.mat,.card .th,.steps svg,.drop{background:var(--soft)}
+.drop{border:2px dashed light-dark(#C9CBD1,#3A3D45)}
+/* næste måltid = mørkt gradient-kort */
+.lnext{background:var(--dark)!important;color:#fff;border-radius:20px;padding:16px 18px;box-shadow:0 12px 28px rgba(17,17,17,.22)}
+.lnext small{color:#C9CBD1!important}.lnext b,.lnext em{color:#fff!important}
+/* knapper: sort pille */
+.go,.botfab,.bm.u,.badge,.seg button[aria-pressed=true],.quick button[aria-pressed=true],.por button[aria-pressed=true],.qual input:checked+span{background:var(--acc)!important;color:var(--accInk)!important}
+.ghost{background:var(--card);border:1.5px solid var(--line)}
+.botdot{background:var(--tomato)}
+.bot-h{background:var(--dark);color:#fff}
+.card.sel,.steps li.on button{box-shadow:0 0 0 2px var(--acc),var(--sh)}
+.rem input,.hot input{accent-color:var(--acc)}
+.prog i{background:var(--acc)}
+.mat .tag{background:var(--card)}.mat .tag.rest{background:var(--acc);color:var(--accInk)}
+.chip.ph{background:var(--acc);color:var(--accInk)}.chip.ph.ned{background:var(--fat);color:#111}.chip.ph.op{background:var(--carb);color:#fff}
+.chip.sync{background:var(--soft);color:var(--ink)}
+.lbox .bar i{background:var(--acc)}.lbox:nth-child(2) .bar i{background:var(--prot)}
+.bar,.prog{background:light-dark(#E6E7EB,#33363E)}
+input.t,select,textarea,td input,.ask input,.bot-in input{border-radius:14px;border:1.5px solid var(--line);background:var(--card)}
+.spin{border-top-color:var(--acc)}
+button.link{color:var(--ink);text-decoration:underline;text-underline-offset:3px}
+
+/* push */
+.pushh{font:700 15px 'Inter Tight',sans-serif;margin:18px 0 8px}
+.pushlist{list-style:none;margin:0;padding:0;display:grid;gap:8px}
+.pushlist li{display:grid;grid-template-columns:52px minmax(0,1fr);gap:10px;align-items:start;padding:10px 12px;border-radius:16px;background:var(--soft)}
+.pushlist li.past{opacity:.5}
+.pushlist time{font:800 15px 'Inter Tight',sans-serif;padding-top:1px}
+.pushlist b{display:block;font-size:15px;line-height:1.3}.pushlist span{display:block;font-size:13px;color:var(--mute);line-height:1.4;margin-top:2px}
+.pushbanner{position:fixed;z-index:80;top:max(10px,env(safe-area-inset-top));left:50%;transform:translateX(-50%);width:min(420px,calc(100vw - 20px));display:flex;gap:10px;padding:12px 14px;border-radius:20px;background:light-dark(rgba(245,245,247,.92),rgba(40,42,48,.92));backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);box-shadow:0 14px 40px rgba(0,0,0,.25);cursor:pointer;animation:pbIn .35s ease-out}
+@keyframes pbIn{from{transform:translate(-50%,-120%)}to{transform:translate(-50%,0)}}
+.pushbanner .pb-ic{width:38px;height:38px;flex:none;border-radius:10px;background:var(--dark);color:#fff;display:grid;place-items:center;font-weight:800}
+.pushbanner>div{min-width:0;display:grid;gap:1px;font-size:14px;line-height:1.35}
+.pb-h{display:flex;justify-content:space-between;gap:8px;font-size:12px;color:var(--mute)}.pb-h b{font-weight:600}
+.pushbanner #pbBody{color:var(--ink)}
+
+/* ===== bundmenu ===== */
+body{padding-bottom:calc(92px + env(safe-area-inset-bottom))}
+.tabs{position:fixed;left:0;right:0;bottom:0;z-index:45;margin:0!important;display:grid!important;grid-template-columns:repeat(4,minmax(0,1fr));gap:0;padding:6px 8px max(10px,env(safe-area-inset-bottom));background:light-dark(rgba(255,255,255,.94),rgba(28,30,35,.94));backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);border-top:1px solid var(--line);overflow:visible}
+.tabs a,.tabs a[aria-current]{display:flex!important;flex-direction:column;align-items:center;justify-content:center;gap:3px;padding:6px 0!important;min-height:54px;border:0!important;background:none!important;box-shadow:none!important;border-radius:14px!important;color:var(--mute)!important;font-size:11px!important;font-weight:600;text-decoration:none}
+.tabs a[aria-current]{color:var(--ink)!important}
+.tabs a[aria-current] svg{stroke-width:2.3}
+.tabs svg{width:25px;height:25px}
+.botfab{bottom:calc(84px + env(safe-area-inset-bottom))!important}
+@media(min-width:900px){.tabs{left:50%;right:auto;transform:translateX(-50%);width:480px;bottom:14px;border:1px solid var(--line);border-radius:24px;box-shadow:var(--sh)}}
+/* sektion-hoved som referencen */
+.sec-h{display:flex;align-items:center;gap:10px;margin:22px 0 10px}
+.sec-h .sq{width:28px;height:28px;flex:none;border-radius:8px;background:#3A3C42;color:#fff;display:grid;place-items:center;font-size:14px}
+.sec-h b{font-size:13px;font-weight:800;letter-spacing:1.3px;flex:1}
+.sec-h>span:last-child:not(.sq){font-size:12px;color:var(--mute)}
+/* SPIS-kort */
+.spis-h{margin-top:18px}
+.lnext{gap:6px!important;padding:18px!important;position:relative;overflow:hidden}
+.lnext::after{content:"🥗";position:absolute;right:-8px;top:-10px;font-size:92px;opacity:.18;pointer-events:none}
+.lnext>b{font-size:21px!important;line-height:1.2!important;letter-spacing:-.4px;position:relative;z-index:1}
+.lbar{height:4px;border-radius:999px;background:rgba(255,255,255,.25);margin:6px 0 2px}.lbar i{display:block;height:100%;border-radius:999px;background:#fff}
+.lrow{display:flex;justify-content:space-between;align-items:center;gap:10px;font-size:14px}.lrow b{font-size:14px!important;display:inline!important;font-weight:800}
+.lcheck{width:44px;min-height:44px;padding:0;border-radius:12px;background:#fff!important;color:#111!important;font-size:18px;flex:none}
+.lthen{font-size:12px;color:#C9CBD1}
+/* sheet */
+.sheet{position:fixed;inset:0;z-index:70}
+.sheet-bg{position:absolute;inset:0;background:rgba(10,10,12,.35);backdrop-filter:blur(2px)}
+.sheet-c{position:absolute;left:0;right:0;bottom:0;max-height:88vh;overflow:auto;background:var(--bg) linear-gradient(180deg,var(--g1),var(--g2));border-radius:26px 26px 0 0;padding:18px 18px max(22px,env(safe-area-inset-bottom));box-shadow:0 -12px 40px rgba(0,0,0,.2);animation:shUp .25s ease-out}
+@media(min-width:700px){.sheet-c{left:50%;right:auto;transform:translateX(-50%);width:520px;bottom:20px;border-radius:26px}}
+@keyframes shUp{from{translate:0 40px;opacity:0}to{translate:0 0;opacity:1}}
+.sheet-h{display:flex;align-items:center;gap:10px}.sheet-h b{font-size:26px;font-weight:800;letter-spacing:-.8px;flex:1}
+.sheet-h .close{position:static}
+.qtiles{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px}
+.qt{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px;min-height:92px;border-radius:20px;background:linear-gradient(160deg,var(--card),var(--card2));box-shadow:var(--sh);font-size:13px;font-weight:700;padding:8px}
+.qt .qi{font-size:24px;line-height:1}
+.qt.dark{background:var(--dark);color:#fff}
+.qsub{display:block;margin:14px 0 8px;font-size:12px;font-weight:700;color:var(--mute)}
+.qfav{display:flex;flex-wrap:wrap;gap:8px}
+.qfav button{min-height:40px;padding:0 14px;border-radius:999px;background:var(--card);box-shadow:0 3px 10px rgba(17,17,17,.06);font-size:14px;font-weight:600}
+.qfav button.on{background:var(--acc);color:var(--accInk)}
+.qfav .small{padding:4px 0}
+.toast{position:fixed;z-index:90;left:50%;bottom:calc(100px + env(safe-area-inset-bottom));transform:translateX(-50%);background:#111;color:#fff;border-radius:16px;padding:12px 16px;font-size:14px;font-weight:600;box-shadow:0 10px 24px rgba(0,0,0,.25);max-width:calc(100vw - 32px)}
+/* check-in */
+.ci-card{border-radius:22px;padding:16px;background:linear-gradient(160deg,var(--card),var(--card2));box-shadow:var(--sh);display:grid;gap:4px}
+.ci-q{font-size:17px}
+.moods{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:6px;margin-top:10px}
+.moods button{min-height:64px;padding:4px 2px;border-radius:16px;background:var(--soft);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;font-size:12px;font-weight:600;border:2px solid transparent}
+.moods button span{font-size:22px;line-height:1}
+.moods button[aria-pressed=true]{background:var(--acc);color:var(--accInk);border-color:var(--acc)}
+.ci-reply{margin-top:10px;border-radius:16px;background:var(--soft);padding:12px 14px;display:flex;gap:10px;font-size:14px;line-height:1.45}
+.mtag{font-size:11px;font-weight:800;background:var(--acc);color:var(--accInk);border-radius:999px;padding:3px 9px;height:fit-content;flex:none}
+/* analyser */
+.anl-list{display:grid;gap:10px}
+.ac{all:unset;box-sizing:border-box;cursor:pointer;display:grid;gap:10px;border-radius:24px;padding:16px;background:linear-gradient(160deg,var(--card),var(--card2));box-shadow:var(--sh)}
+.ac:focus-visible{outline:3px solid var(--carb);outline-offset:2px}
+.ac-h{display:flex;justify-content:space-between;align-items:flex-start;gap:10px}
+.ac-h small{display:block;color:var(--mute);font-size:12px}.ac-h b{display:block;font-size:17px;font-weight:800;letter-spacing:-.3px;line-height:1.25}
+.badge2{font-size:11px;font-weight:700;border-radius:999px;padding:4px 10px;white-space:nowrap}
+.b-rel{background:light-dark(#FDECEA,#3A2622);color:light-dark(#C2412D,#FF9B85)}.b-pat{background:light-dark(#E9EDFF,#232A45);color:light-dark(#3D5BD9,#9DB4FF)}.b-ok{background:var(--soft);color:var(--ink)}
+.ac-bars{display:flex;align-items:flex-end;gap:6px;height:72px}
+.ac-bars div{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:flex-end;gap:4px;height:100%}
+.ac-bars i{display:block;width:100%;border-radius:8px;background:light-dark(#D3D5DB,#3A3D45);min-height:6px}
+.ac-bars i.hi{background:var(--c,var(--acc))}
+.ac-bars small{font-size:10px;color:var(--mute)}
+.ac p{margin:0;font-size:14px;line-height:1.5;color:var(--ink)}
+
+/* opstart */
+.onb{position:fixed;inset:0;z-index:95;background:var(--bg) linear-gradient(180deg,var(--g1),var(--g2));overflow:auto}
+.onb-c{max-width:480px;margin:0 auto;min-height:100%;padding:max(20px,env(safe-area-inset-top)) 20px max(24px,env(safe-area-inset-bottom));display:flex;flex-direction:column}
+.onb-top{display:flex;align-items:center;gap:12px}
+.onb-back{width:40px;min-height:40px;padding:0;border-radius:50%;background:var(--card);box-shadow:var(--sh);font-size:20px}
+.onb-back:disabled{opacity:.3}
+.onb-prog{flex:1;height:6px;border-radius:999px;background:light-dark(#DADBE0,#33363E)}.onb-prog i{display:block;height:100%;border-radius:999px;background:var(--acc);transition:width .25s}
+.onb-k{margin-top:30px;font-size:13px;font-weight:800;letter-spacing:1.3px;color:var(--mute)}
+.onb h2{font-size:30px!important;font-weight:800;letter-spacing:-.9px;margin:6px 0 0}
+.onb-s{margin:8px 0 0;color:var(--mute);font-size:15px}
+.onb-opts{display:grid;gap:10px;margin-top:22px}
+.onb-opts button{display:flex;align-items:center;gap:14px;min-height:68px;padding:12px 16px;border-radius:20px;text-align:left;background:light-dark(rgba(255,255,255,.7),rgba(34,37,43,.8));border:2px solid transparent;box-shadow:0 4px 14px rgba(17,17,17,.05);font-weight:400}
+.onb-opts button .oi{font-size:24px;width:30px;text-align:center;flex:none}
+.onb-opts button b{display:block;font-size:16px}.onb-opts button small{display:block;font-size:13px;color:var(--mute)}
+.onb-opts button .om{margin-left:auto;font-weight:800;font-size:16px}
+.onb-opts button[aria-pressed=true]{background:var(--card);border-color:var(--acc)}
+.onb-opts button.acc{background:#111;color:#fff}.onb-opts button.acc small{color:#B9BBC2}
+.onb-foot{margin-top:auto;padding-top:24px;display:grid;gap:6px;justify-items:center}
+.onb-next{width:100%;min-height:56px;font-size:17px;border-radius:18px!important}
+
+.backbtn{display:inline-flex;align-items:center;gap:6px;min-height:40px;padding:0 16px 0 12px;margin-bottom:12px;border-radius:999px;background:var(--card);box-shadow:var(--sh);font-size:15px;font-weight:700;color:var(--ink)}
+.panelback{margin:0 0 8px}
+
+/* mindre tekst */
+#lead{display:none}
+.top h1{margin-bottom:0}
+.recs li{cursor:pointer}
+.recs li span{display:-webkit-box;-webkit-line-clamp:1;-webkit-box-orient:vertical;overflow:hidden}
+.recs li.open span{display:block}
+.recs li b{padding-right:18px;position:relative}
+.recs li b::after{content:"›";position:absolute;right:0;top:0;color:var(--mute);transition:transform .15s}
+.recs li.open b::after{transform:rotate(90deg)}
+#dTiles{display:none}
+.rem small{display:none}
+.rem label{min-height:46px;padding:8px 12px}
+.pushlist span{display:none}
+.pushlist li{padding:8px 12px;align-items:center}
+
+#syncInfo2{display:none}
+details.adv{margin-top:10px}details.adv>summary{cursor:pointer;color:var(--mute);font-size:14px;font-weight:600;min-height:40px;display:flex;align-items:center}
+.trial{justify-self:start;font-size:13px;font-weight:700;background:var(--acc);color:var(--accInk);border-radius:999px;padding:4px 12px}
+</style>
+</head>
+<body>
+<header class="band top"><div class="wrap">
+<button class="backbtn" id="backBtn" hidden>‹ <span id="backLbl">Tilbage</span></button>
+<h1>Meal Mentor</h1>
+<p id="lead">Tag et billede af din mad, så får du et estimat af kalorier, protein, fedt og kulhydrat. Ret portionerne, hvis AI'en har gættet forkert.</p>
+<nav class="tabs" aria-label="Menu"><a href="#vejleder" id="t-vej"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 10.5 12 3l9 7.5V20a1 1 0 0 1-1 1h-5v-6H9v6H4a1 1 0 0 1-1-1z"/></svg><span>Mentor</span></a><a href="#mad" id="t-mad"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 8h3l2-3h6l2 3h3a1 1 0 0 1 1 1v10a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V9a1 1 0 0 1 1-1z"/><circle cx="12" cy="13.5" r="3.5"/></svg><span>Scan</span></a><a href="#traening" id="t-tr"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="14" cy="4.5" r="1.8"/><path d="M8 21l3-6 3 2v5M6 12l3-4h5l2 4 3 1"/></svg><span>Træning</span></a><a href="#profil" id="t-prof"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="8" r="4"/><path d="M4 21c1.5-4 4.5-6 8-6s6.5 2 8 6"/></svg><span>Profil</span></a></nav>
+</div></header>
+
+<div id="v-mad">
+<main class="band"><div class="wrap grid">
+<section>
+<div class="seg" id="scanMode" role="group" aria-label="Hvad vil du scanne?" style="margin-bottom:12px"><button data-m="meal" aria-pressed="true">Tallerken</button><button data-m="label" aria-pressed="false">Pakke / deklaration</button></div>
+<div class="drop" id="drop" tabindex="0" role="button" aria-label="Vælg eller tag billede">
+<div class="hint" id="hint"><div class="plate"></div><b>Tag eller vælg et billede</b>På mobilen kan du åbne kameraet direkte. På computer kan du også trække et billede herind.</div>
+</div>
+<input type="file" id="file" accept="image/*" capture="environment">
+<label class="f" for="extra">Ekstra info (valgfrit)</label>
+<textarea id="extra" placeholder="Fx: stegt i smør, stor portion, 2 skiver rugbrød"></textarea>
+<div class="btns">
+<button class="go" id="go" disabled>Beregn næringsindhold</button>
+<button class="ghost" id="reset">Nyt billede</button>
+</div>
+<p class="note" id="nocap" hidden></p>
+</section>
+<section class="result" id="result" aria-live="polite">
+<div class="empty"><div><div class="plate"></div>Resultatet kommer her</div></div>
+</section>
+</div></main>
+<section class="band day"><div class="wrap">
+<h2>I dag</h2>
+<div class="tot" id="tot"></div>
+<ul class="log" id="log"></ul>
+<p class="foot">Tal er estimater og kan afvige 20–30 %.</p>
+</div></section>
+</div>
+
+<div id="v-tr" hidden>
+<section class="band progs" style="border-top:0"><div class="wrap">
+<h2>Vælg program</h2>
+<p class="small" style="margin:4px 0 0">10 minutter: 10 øvelser á 50 sekunder. Bodyscan er 10 rolige trin.</p>
+<div class="cards" id="cards"></div>
+</div></section>
+<main class="band" style="padding-top:0"><div class="wrap player">
+<div class="mat"><svg id="fig" viewBox="0 0 120 100" aria-hidden="true"></svg><span class="tag" id="tag">Klar</span></div>
+<div class="ctrl">
+<div class="small" id="pname"></div>
+<h2 class="ex" id="exname"></h2>
+<p class="tip" id="extip"></p>
+<div class="clock" id="clock" aria-live="off">0:50</div>
+<div class="prog"><i id="bar" style="width:0"></i></div>
+<div class="small" id="count"></div>
+<div class="btns" style="margin-top:0">
+<button class="go" id="play">Start</button>
+<button class="ghost" id="prev" aria-label="Forrige øvelse">Forrige</button>
+<button class="ghost" id="next" aria-label="Næste øvelse">Næste</button>
+<button class="ghost" id="sound" aria-pressed="true">Lyd til</button>
+</div>
+</div>
+</div></main>
+<section class="band" style="padding-top:0"><div class="wrap">
+<details class="more stepsd"><summary id="stepsH">Se alle øvelser i programmet</summary><ol class="steps" id="steps"></ol></details>
+<p class="foot" style="margin-top:18px">Stop hvis noget gør ondt. Har du skader eller er gravid, så spørg din læge eller fysioterapeut om øvelserne passer til dig.</p>
+</div></section>
+</div>
+
+<div id="v-vej" hidden>
+<main class="band"><div class="wrap">
+<section class="coach">
+<div class="vtop"><h2 class="hello" id="hello"></h2>
+<div class="regwrap"><button class="go" id="regBtn" aria-haspopup="dialog" aria-expanded="false">+ Log</button>
+<div class="regmenu" id="regMenu" role="menu" hidden><button role="menuitem" data-f="fMeal">Måltid</button><button role="menuitem" data-scan="1">Scan mad med kamera</button><button role="menuitem" data-f="fSleep">Søvn</button><button role="menuitem" data-f="fWeight">Vægt</button><button role="menuitem" data-f="fWork">Træning</button><button role="menuitem" data-f="fDose">GLP-1 dosis</button></div></div></div>
+<div class="chips" id="vchips" hidden></div>
+<div class="sheet" id="qSheet" hidden><div class="sheet-bg" data-close></div><div class="sheet-c" role="dialog" aria-modal="true" aria-labelledby="qH">
+<div class="sheet-h"><b id="qH">Log hurtigt</b><span class="small" id="qDate"></span><button class="close" data-close aria-label="Luk">×</button></div>
+<div class="sec-h"><span class="sq">🍽</span><b>MAD</b></div>
+<div class="qtiles"><button class="qt dark" data-scan="photo"><span class="qi">📷</span>AI-scan</button><button class="qt" data-scan="label"><span class="qi">▥</span>Stregkode</button><button class="qt" data-f="fMeal"><span class="qi">🔍</span>Søg / skriv</button></div>
+<small class="qsub">Favoritter · ét tryk</small><div class="qfav" id="qFav"></div>
+<div class="sec-h"><span class="sq">＋</span><b>ANDET</b></div>
+<div class="qfav qother"><button data-f="fSleep">😴 Søvn</button><button data-f="fWeight">⚖️ Vægt</button><button data-f="fWork">🏃 Træning</button><button data-f="fDose">💉 GLP-1 dosis</button></div>
+</div></div>
+<div class="toast" id="toast" hidden role="status"></div>
+<section class="hero"><div class="left" id="left" aria-live="polite"></div>
+<div class="ainote" id="aiNote" hidden><div class="ainote-h"><b>Meal Mentor siger</b><button class="link" id="aiRefresh">Opdatér</button></div><div id="aiNoteTxt"></div></div></section>
+<details class="todo" id="todo" hidden><summary id="todoSum"></summary><ul id="todoList"></ul></details>
+<ul class="recs" id="recs" aria-live="polite"></ul>
+<details class="morerecs" id="moreRecs" hidden><summary id="moreRecsSum"></summary><ul class="recs" id="recs2"></ul></details>
+<section class="ci" id="checkin" hidden><div class="sec-h"><span class="sq">🌙</span><b>AFTENENS CHECK-IN</b><span id="ciWhen"></span></div>
+<div class="ci-card"><b class="ci-q">Hvordan er dagen gået?</b><span class="small">Vælg så mange du vil</span><div class="moods" id="moods"></div>
+<div class="ci-reply" id="ciReply" hidden><span class="mtag">Mentor</span><span id="ciReplyTxt"></span></div></div></section>
+<section class="anl" id="anlSec" hidden><div class="sec-h"><span class="sq">📊</span><b>ANALYSER</b><span>Sidste 8 uger · tryk for mere</span></div><div class="anl-list" id="anl"></div></section>
+
+</section>
+
+
+<div class="panel" id="panel" hidden>
+<form class="form" id="fMeal" hidden><h3>Måltid</h3>
+<div class="fbtn"><input class="t" name="titel" required placeholder="Fx 2 rugbrød med leverpostej og agurk" aria-label="Hvad spiste du?" style="flex:1 1 220px;width:auto"><button class="ghost" type="button" id="mealAI">Beregn</button></div>
+<div class="amt"><label>Mængde<input class="t" type="number" name="amt" min="0" step="any" inputmode="decimal" placeholder="Fx 200"></label><label>Enhed<select class="t" name="unit"><option value="g">gram</option><option value="stk">stk</option><option value="skiver">skiver</option><option value="dl">dl</option><option value="portion" selected>portion</option></select></label></div>
+<div class="qual por" aria-label="Portionsstørrelse"><button type="button" data-p="0.6">Lille portion</button><button type="button" data-p="1">Normal</button><button type="button" data-p="1.5">Stor portion</button></div>
+<span class="small" id="mealAIMsg"></span>
+<div class="row"><label>Dato<input class="t" type="date" name="d" required></label><label>Kl.<input class="t" type="time" name="tm" required></label></div>
+<div class="row3"><label>kcal<input class="t" type="number" name="kcal" min="0" inputmode="numeric" required></label><label>Protein g<input class="t" type="number" name="protein" min="0" step="0.1" inputmode="decimal"></label><label>Fedt g<input class="t" type="number" name="fedt" min="0" step="0.1" inputmode="decimal"></label></div>
+<div class="fbtn"><button class="go">Gem</button><a href="#mad" class="small">Eller scan med kamera</a><span class="ok-msg"></span></div></form>
+
+<form class="form sleepf" id="fSleep" hidden><h3>Søvn</h3>
+<input type="hidden" name="d">
+<div class="night"><button type="button" class="ghost nb" id="nPrev" aria-label="Forrige nat">‹</button><div class="nt"><b id="nTitle"></b><small id="nSub"></small></div><button type="button" class="ghost nb" id="nNext" aria-label="Næste nat">›</button></div>
+<div class="tcards">
+<div class="tcard"><span class="tl">I seng</span><input class="big" type="time" name="from" value="23:00" required aria-label="I seng kl."><span class="td" id="fromDay"></span>
+<div class="s15"><button type="button" data-s="from:-15" aria-label="I seng 15 minutter tidligere">−15</button><button type="button" data-s="from:15" aria-label="I seng 15 minutter senere">+15</button></div></div>
+<div class="tcard"><span class="tl">Stod op</span><input class="big" type="time" name="to" value="07:00" required aria-label="Stod op kl."><span class="td" id="toDay"></span>
+<div class="s15"><button type="button" data-s="to:-15" aria-label="Op 15 minutter tidligere">−15</button><button type="button" data-s="to:15" aria-label="Op 15 minutter senere">+15</button></div></div>
+</div>
+<div class="nightbar"><svg id="nightSvg" aria-hidden="true"></svg></div>
+<div class="dur" id="sleepLen"></div>
+<span class="tl">Hvordan sov du?</span>
+<div class="qual" role="radiogroup" aria-label="Hvordan sov du?">
+<label><input type="radio" name="q" value="1"><span>Dårligt</span></label><label><input type="radio" name="q" value="2"><span>Uroligt</span></label><label><input type="radio" name="q" value="3" checked><span>Okay</span></label><label><input type="radio" name="q" value="4"><span>Godt</span></label><label><input type="radio" name="q" value="5"><span>Rigtig godt</span></label></div>
+<label class="oaonly hot" hidden><input type="checkbox" name="hot"><span>Hedeture eller nattesved i nat</span></label>
+<div class="fbtn"><button class="go" id="sleepSave">Gem søvn</button><span class="ok-msg"></span></div></form>
+
+<form class="form" id="fWeight" hidden><h3>Vægt</h3>
+<div class="row"><label>Dato<input class="t" type="date" name="d" required></label><label>kg<input class="t" type="number" name="kg" min="20" max="400" step="0.1" inputmode="decimal" required></label></div>
+<label class="oaonly" hidden>Taljemål i cm (valgfrit, fx en gang om måneden)<input class="t" type="number" name="waist" min="40" max="200" step="0.5" inputmode="decimal"></label>
+<div class="fbtn"><button class="go">Gem</button><span class="ok-msg"></span></div></form>
+
+<form class="form" id="fWork" hidden><h3>Træning</h3>
+<input class="t" name="navn" required placeholder="Fx gåtur, styrke, cykling" aria-label="Aktivitet">
+<div class="row3"><label>Dato<input class="t" type="date" name="d" required></label><label>Kl.<input class="t" type="time" name="tm" required></label><label>Minutter<input class="t" type="number" name="min" min="1" inputmode="numeric" required></label></div>
+<div class="fbtn"><button class="go">Gem</button><span class="ok-msg"></span></div></form>
+
+<form class="form" id="fDose" hidden><h3>GLP-1 dosis</h3>
+<input class="t" name="med" placeholder="Præparat, fx Wegovy" list="meds" aria-label="Præparat">
+<datalist id="meds"><option value="Wegovy"><option value="Ozempic"><option value="Mounjaro"><option value="Saxenda"><option value="Rybelsus"></datalist>
+<div class="row3"><label>Dato<input class="t" type="date" name="d" required></label><label>mg<input class="t" type="number" name="mg" min="0" step="0.05" inputmode="decimal" required></label><label>Fase<select name="phase"><option value="op">Optrapning</option><option value="stabil" selected>Stabil</option><option value="ned">Nedtrapning</option><option value="stop">Stoppet</option></select></label></div>
+<div class="fbtn"><button class="go">Gem</button><span class="ok-msg"></span></div></form>
+<button class="backbtn panelback" id="panelBack" hidden>‹ Tilbage til Log hurtigt</button><button class="close" id="panelClose" aria-label="Luk">×</button>
+</div>
+
+<div class="vtop" style="margin-top:26px">
+<div class="dnav"><button class="ghost" id="dPrev" aria-label="Forrige dag">‹</button><b id="dLabel"></b><button class="ghost" id="dNext" aria-label="Næste dag">›</button></div>
+<div class="seg" role="group" aria-label="Visning"><button id="vDay" aria-pressed="true">Dag</button><button id="vWeek" aria-pressed="false">Uge</button></div></div>
+
+<section id="dayView">
+<div class="strip"><svg id="strip" aria-label="Søvn, måltider og træning hen over døgnet"></svg></div>
+<div class="legend"><span class="lg-meal">Måltid med kcal</span><span style="--c:var(--prot)">Træning</span><span style="--c:var(--carb)">Søvn</span><span class="lg-late">Spisepause fra kl. <i id="lgLate">20</i></span></div>
+<div class="tiles" id="dTiles"></div>
+<ul class="flags" id="dFlags"></ul>
+</section>
+
+<section id="weekView" hidden>
+<div class="tiles" id="wTiles"></div>
+<h3 class="ctitle" style="margin-top:18px">De seneste 4 uger</h3>
+<div class="chart combo"><svg id="wChart" aria-label="Dosis, kalorier, protein, søvn og vægt de seneste 28 dage"></svg></div>
+<div class="legend"><span style="--c:var(--tomato)">Kcal</span><span style="--c:color-mix(in srgb,var(--tomato) 45%,#000)">heraf i spisepausen</span><span style="--c:var(--prot)">Protein</span><span style="--c:var(--carb)">Søvn</span><span style="--c:var(--fat)">Under 6½ t søvn</span><span style="--c:var(--ink)">Vægt</span></div>
+<p class="insight" id="sleepLate"></p>
+</section>
+</div></main>
+
+<section class="band vsec"><div class="wrap">
+
+</div></section>
+</div>
+
+<div id="v-prof" hidden>
+<main class="band"><div class="wrap profile">
+<section class="pcard" id="pAccount"><h2>Min profil</h2><p id="syncInfo2" class="small"></p><div class="pstats" id="pStats"></div></section>
+
+<section class="pcard"><h2>Mål og krop</h2><form class="form plain" id="fSet">
+<label>Dit mål<select name="goal"><option value="stabil">Holde vægten stabil på GLP-1</option><option value="ned">Trappe ud af GLP-1 uden at tage på</option><option value="tab">Tabe mig</option><option value="styrke">Blive stærkere og mere markeret, men holde vægten</option></select></label>
+<label>Overgangsalder<select name="oa"><option value="nej">Ikke relevant</option><option value="peri">Måske / perimenopause</option><option value="ja">Ja, er i overgangsalderen</option><option value="efter">Efter overgangsalderen</option></select></label>
+<div class="calc">
+<b>Beregn dit behov</b>
+<div class="row"><label>Køn<select name="sex"><option value="k">Kvinde</option><option value="m">Mand</option></select></label><label>Alder<input class="t" type="number" name="age" min="18" max="100" inputmode="numeric"></label></div>
+<div class="row"><label>Højde cm<input class="t" type="number" name="cm" min="120" max="220" inputmode="numeric"></label><label>Vægt kg<input class="t" type="number" name="wkg" min="30" max="300" step="0.1" inputmode="decimal"></label></div>
+<label>Aktivitet<select name="act"><option value="1.2">Mest stillesiddende</option><option value="1.375" selected>Let aktiv</option><option value="1.55">Moderat aktiv (3–4 træninger/uge)</option><option value="1.725">Meget aktiv</option></select></label>
+<button class="ghost" type="button" id="calcBtn">Beregn forslag</button>
+<div id="calcOut" class="small" aria-live="polite"></div>
+</div>
+<div class="row3"><label>kcal/dag<input class="t" type="number" name="kcal" min="1000" step="50" inputmode="numeric"></label><label>Protein g<input class="t" type="number" name="protein" min="0" step="5" inputmode="numeric"></label><label>Spisepause fra kl.<input class="t" type="number" name="late" min="17" max="24" value="20" inputmode="numeric"></label></div>
+<div class="fbtn"><button class="go">Gem</button><span class="ok-msg"></span></div>
+</form></section>
+
+<div id="pDose" hidden></div>
+
+<section class="pcard"><h2>Påmindelser</h2>
+<div class="rem" id="rem">
+<label><input type="checkbox" data-r="sleep"><span><b>Søvn</b><small>Om morgenen fra kl. 6</small></span></label>
+<label><input type="checkbox" data-r="meal"><span><b>Måltider</b><small>På dine faste spisetider, med madforslag</small></span></label>
+<label><input type="checkbox" data-r="pause"><span><b>Spisepause</b><small>30 min før den starter</small></span></label>
+<label><input type="checkbox" data-r="checkin"><span><b>Aftenens check-in</b><small>Kl. 20.30: hvordan er dagen gået?</small></span></label>
+<label><input type="checkbox" data-r="work"><span><b>Træning</b><small>Fra kl. 17, hvis du ikke har trænet</small></span></label>
+<label><input type="checkbox" data-r="weight"><span><b>Vægt</b><small>Mandag morgen</small></span></label>
+<label><input type="checkbox" data-r="dose"><span><b>GLP-1 dosis</b><small>På din doseringsdag</small></span></label>
+</div>
+<h3 class="pushh">Dagens beskeder</h3><ul class="pushlist" id="pushList"></ul>
+<div class="btns"><button class="ghost" id="pushTest">Vis næste besked nu</button><button class="ghost" id="pushAllow">Tillad beskeder i browseren</button></div></section>
+<div class="pushbanner" id="pushBanner" hidden role="status"><span class="pb-ic">M</span><div><div class="pb-h"><b>Meal Mentor</b><small id="pbTime">nu</small></div><b id="pbTitle"></b><span id="pbBody"></span></div></div>
+
+<section class="pcard"><h2>Abonnement</h2>
+<div class="plans"><div class="plan cur"><b>Meal Mentor</b><span class="price">49 kr./md</span><span class="trial">Prøv gratis i 7 dage</span><ul><li>Ubegrænset AI-scanning af mad</li><li>Mentor med madforslag, push og analyser</li><li>Hjælp til nedtrapning af GLP-1</li><li>Alle træningsprogrammer</li></ul><span class="small">Opsig når som helst. Du betaler først efter 7 dage.</span><button class="go" disabled>Kommer i appen</button></div></div></section>
+
+<section class="pcard"><h2>Mine registreringer</h2>
+<div class="fchips" id="entFilter" role="group" aria-label="Filtrér"><button data-t="" aria-pressed="true">Alt</button><button data-t="meals" aria-pressed="false">Mad</button><button data-t="sleep" aria-pressed="false">Søvn</button><button data-t="weights" aria-pressed="false">Vægt</button><button data-t="workouts" aria-pressed="false">Træning</button><button data-t="doses" aria-pressed="false">Dosis</button></div>
+<ul class="entries" id="entries"></ul><button class="ghost" id="entMore" hidden>Vis flere</button></section>
+
+<section class="pcard"><h2>Konto og data</h2><p class="small" id="syncInfo">Kun på denne enhed.</p>
+<div class="btns"><button class="go" id="authBtn" hidden>Log ind</button><button class="ghost" id="onbAgain">Vis opstart igen</button><button class="ghost" id="demo">Indlæs eksempeldata</button></div>
+<details class="adv"><summary>Avanceret</summary>
+<div class="btns"><button class="ghost" id="copyData">Kopiér data</button><button class="ghost" id="clearAll">Slet alle data</button></div>
+<textarea class="data" id="importData" placeholder="Indsæt backup her" aria-label="Indsæt backup" style="margin-top:12px"></textarea>
+<div class="btns"><button class="ghost" id="doImport">Gendan</button></div></details>
+<span class="ok-msg" id="dataMsg"></span>
+</section>
+<p class="foot">Ikke medicinsk rådgivning. Tal med din læge, før du ændrer eller stopper GLP-1.</p>
+</div></main>
+</div>
+
+<button class="botfab" id="botFab" aria-expanded="false" aria-controls="bot"><span class="botdot"></span>Spørg Meal Mentor</button>
+<section class="bot" id="bot" hidden aria-label="Mentor-chat">
+<header class="bot-h"><div><b>Meal Mentor</b><small id="botSub">Spørg om mad, tider og resten af dagen</small></div><button class="ghost" id="botClose" aria-label="Luk">×</button></header>
+<div class="bot-log" id="botLog" aria-live="polite"></div>
+<div class="bot-chips" id="botChips"><button data-q="Hvad kan jeg spise nu?">Hvad kan jeg spise nu?</button><button data-q="Giv mig forslag til aftensmad, der passer til det, jeg har tilbage.">Forslag til aftensmad</button><button data-q="Hvornår skal jeg spise næste gang, og hvor meget?">Hvornår skal jeg spise?</button><button data-q="Jeg er sulten om aftenen. Hvad gør jeg?">Sulten om aftenen</button><button data-q="Vurdér min dag kort: hvad gik godt, og hvad kan jeg gøre i morgen?">Vurdér min dag</button><button data-q="Lav en kort ugestatus: måltider pr. dag, kcal, protein, søvn, træning og vægt, og de vigtigste mønstre.">Vurdér min uge</button><button data-q="Er det bedst for mig at spise flere små eller få store måltider ud fra mine data?">Små eller store måltider?</button></div>
+<form class="bot-in" id="botForm"><input class="t" id="botQ" placeholder="Skriv et spørgsmål …" autocomplete="off" aria-label="Spørgsmål til mentoren"><button class="go" aria-label="Send">Send</button></form>
+</section>
+
+<div class="onb" id="onb" hidden role="dialog" aria-modal="true" aria-labelledby="onbH"><div class="onb-c">
+<div class="onb-top"><button class="onb-back" id="onbBack" aria-label="Tilbage">‹</button><div class="onb-prog"><i id="onbBar"></i></div><span class="small" id="onbStep"></span></div>
+<span class="onb-k" id="onbK"></span><h2 id="onbH"></h2><p class="onb-s" id="onbS"></p>
+<div class="onb-opts" id="onbOpts"></div>
+<div class="onb-foot"><button class="go onb-next" id="onbNext"></button><button class="link" id="onbSkip">Spring over</button><span class="small">Ikke medicinsk rådgivning. Tal med din læge om din medicin.</span></div></div></div>
+<script>
+{
+const $=id=>document.getElementById(id);
+const esc=s=>String(s??'').replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const r0=n=>Math.round(n||0),r1=n=>Math.round((n||0)*10)/10;
+const reduce=matchMedia('(prefers-reduced-motion: reduce)').matches;
+const pad=n=>String(n).padStart(2,'0');
+const dayKey=d=>`${d.getFullYear()}-${pad(d.getMonth()+1)}-${pad(d.getDate())}`;
+const nowT=()=>{const d=new Date();return `${dayKey(d)}T${pad(d.getHours())}:${pad(d.getMinutes())}`;};
+const today=dayKey(new Date());
+const addDays=(k,n)=>{const d=new Date(k+'T12:00');d.setDate(d.getDate()+n);return dayKey(d);};
+const uid=()=>Date.now().toString(36)+Math.random().toString(36).slice(2,6);
+const store={get(k,d){try{return JSON.parse(localStorage.getItem(k))??d}catch(e){return d}},set(k,v){try{localStorage.setItem(k,JSON.stringify(v))}catch(e){}}};
+const blank=()=>({meals:[],weights:[],doses:[],workouts:[],sleep:[],checkins:[],settings:{late:20}});
+let D=store.get('mob-data',null);
+if(!D){D=blank();const old=store.get('madscanner-'+today,[]);old.forEach(e=>D.meals.push({id:uid(),t:today+'T'+(e.tid||'12:00').replace('.',':'),titel:e.titel,kcal:e.kcal,protein:e.protein,fedt:e.fedt,kulhydrat:e.kulhydrat}));}
+if(!D.sleep)D.sleep=[];if(!D.checkins)D.checkins=[];
+const save=()=>{store.set('mob-data',D);cloudSchedule();if(typeof refreshVej==='function')refreshVej();};
+/* ---------- login og synkronisering ---------- */
+const KINDS={meals:x=>x.t,sleep:x=>x.d,weights:x=>x.d,doses:x=>x.d,workouts:x=>x.t,checkins:x=>x.d};
+const cloud={db:null,col:null,uid:null,name:'',state:'local',sent:{},timer:0,busy:false,again:false};
+function toDocs(X){const out={meta:JSON.stringify({settings:X.settings||{},demo:!!X.demo})};
+  for(const k in KINDS){const g={};(X[k]||[]).forEach(it=>{const m=String(KINDS[k](it)||'').slice(0,7)||'0000-00';(g[m]=g[m]||[]).push(it);});
+    for(const m in g)out[`${k}_${m}`]=JSON.stringify({items:g[m]});}return out;}
+function fromDocs(docs){const X=blank();for(const d of docs){const body=d.data()||{};
+  if(d.id==='meta'){X.settings=body.settings||{late:20};X.demo=!!body.demo;continue;}
+  const k=d.id.split('_')[0];if(KINDS[k]&&Array.isArray(body.items))X[k].push(...body.items);}return X;}
+function cloudSchedule(){if(!cloud.col)return;clearTimeout(cloud.timer);cloud.timer=setTimeout(cloudPush,700);}
+async function cloudPush(){
+  if(!cloud.col)return;if(cloud.busy){cloud.again=true;return;}cloud.busy=true;setSync('saving');
+  try{const docs=toDocs(D);
+    for(const id in docs){if(cloud.sent[id]===docs[id])continue;const body=JSON.parse(docs[id]);await cloud.col.doc(id).set(body);cloud.sent[id]=docs[id];}
+    for(const id of Object.keys(cloud.sent)){if(!(id in docs)){await cloud.col.doc(id).delete();delete cloud.sent[id];}}
+    setSync('ok');}
+  catch(e){setSync(e&&e.code==='quota_exceeded'?'full':'error');}
+  finally{cloud.busy=false;if(cloud.again){cloud.again=false;cloudPush();}}
+}
+function setSync(st){cloud.state=st;const el=$('syncInfo');if(!el)return;
+  const who=cloud.name?` som ${esc(cloud.name)}`:'';
+  el.innerHTML={local:'<b>Kun på denne enhed.</b> Log ind for at gemme dine data på din konto.',
+    loading:'Henter dine data …',saving:`<b>Logget ind${who}.</b> Gemmer …`,ok:`<b>Logget ind${who}.</b> Dine data gemmes privat på din konto og følger med på alle dine enheder.`,
+    error:'<b>Kunne ikke gemme på kontoen lige nu.</b> Dine data ligger stadig på denne enhed og gemmes, når forbindelsen er tilbage.',
+    full:'<b>Kontoens lager er fuldt.</b> Slet gamle data eller kontakt support.'}[st];
+  const s2=$('syncInfo2');if(s2)s2.innerHTML=el.innerHTML;const c=$('syncChip');if(c){c.textContent=st==='ok'||st==='saving'?'Gemt på konto':st==='loading'?'Henter …':'Kun på enheden';c.className='chip'+(st==='ok'||st==='saving'?' sync':'');}}
+async function cloudInit(){
+  const [db,u]=await Promise.all([claude.use('db'),claude.use('user')]);
+  if(!db||!u){setSync('local');return;}
+  let id=null;try{id=await u.id();const me=await u.me();cloud.name=(me&&me.name)||'';}catch(e){}
+  if(!id){setSync('local');return;}
+  setSync('loading');const col=db.collection('data/users/'+id);
+  const to=setTimeout(()=>{if(cloud.state==='loading')setSync('error');},10000);
+  try{const snap=await col.get();clearTimeout(to);
+    const remote=fromDocs(snap.docs),hasRemote=snap.docs.length>0,first=store.get('mob-synced',null)!==id;
+    snap.docs.forEach(d=>{const b=d.data();cloud.sent[d.id]=JSON.stringify(d.id==='meta'?{settings:b.settings||{},demo:!!b.demo}:{items:b.items||[]});});
+    if(hasRemote){
+      if(first){for(const k in KINDS){const ids=new Set(remote[k].map(x=>x.id));D[k].forEach(x=>{if(!ids.has(x.id))remote[k].push(x);});}
+        if(!snap.docs.some(d=>d.id==='meta'))remote.settings=D.settings;}
+      D=remote;}
+    cloud.db=db;cloud.col=col;cloud.uid=id;store.set('mob-synced',id);store.set('mob-data',D);
+    drawLog();fillSettings();if(typeof refreshVej==='function')refreshVej();
+    await cloudPush();
+    col.onSnapshot(sn=>{if(sn.metadata.hasPendingWrites||sn.metadata.fromCache||cloud.busy)return;
+      const fresh={};sn.docs.forEach(d=>{const b=d.data();fresh[d.id]=JSON.stringify(d.id==='meta'?{settings:b.settings||{},demo:!!b.demo}:{items:b.items||[]});});
+      const local=toDocs(D);if(Object.keys(fresh).length===Object.keys(local).length&&Object.keys(fresh).every(k=>fresh[k]===local[k]))return;
+      if(Object.keys(fresh).some(k=>cloud.sent[k]!==fresh[k])||Object.keys(cloud.sent).some(k=>!(k in fresh))){
+        cloud.sent=fresh;D=fromDocs(sn.docs);store.set('mob-data',D);drawLog();fillSettings();if(typeof refreshVej==='function')refreshVej();}
+    },()=>{});
+  }catch(e){clearTimeout(to);setSync('error');}
+}
+
+/* ---------- faner ---------- */
+const leads={mad:"Tag et billede af maden og få kalorier og protein.",traening:"10 minutter om dagen. Vælg et program og tryk start.",vejleder:"Din AI-mentor til hvornår, hvor tit og hvor meget du skal spise.",profil:"Dine data, mål, påmindelser og abonnement."};
+function route(){const h=location.hash.slice(1),v=['traening','mad','profil'].includes(h)?h:'vejleder';if(h==='mentor')location.replace('#vejleder');
+  $('v-mad').hidden=v!=='mad';$('v-tr').hidden=v!=='traening';$('v-vej').hidden=v!=='vejleder';$('v-prof').hidden=v!=='profil';$('lead').textContent=leads[v];
+  $('t-mad').toggleAttribute('aria-current',v==='mad');$('t-tr').toggleAttribute('aria-current',v==='traening');$('t-vej').toggleAttribute('aria-current',v==='vejleder');$('t-prof').toggleAttribute('aria-current',v==='profil');
+  if(v!=='traening'&&run.on)pause();if(v==='vejleder'||v==='profil')refreshVej();window.scrollTo({top:0,behavior:'instant'});}
+addEventListener('hashchange',route);
+document.querySelectorAll('.tabs a').forEach(a=>a.addEventListener('click',()=>{if(a.getAttribute('href')===location.hash||(!location.hash&&a.id==='t-vej'))window.scrollTo({top:0,behavior:reduce?'instant':'smooth'});}));
+
+/* ---------- madscanner ---------- */
+const drop=$('drop'),file=$('file'),go=$('go'),res=$('result'),hintEl=$('hint');
+let blob=null,current=null,sample=null;
+claude.use('sample').then(s=>{sample=s;if(!s){$('nocap').hidden=false;$('nocap').textContent='AI-analyse er ikke tilgængelig i denne visning.';}else{if(blob)go.disabled=false;if(!$('v-vej').hidden)autoNote();}});
+drop.onclick=()=>file.click();
+drop.onkeydown=e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();file.click();}};
+drop.ondragover=e=>e.preventDefault();
+drop.ondrop=e=>{e.preventDefault();const f=e.dataTransfer.files[0];if(f)load(f);};
+file.onchange=()=>{if(file.files[0])load(file.files[0]);};
+$('reset').onclick=()=>{blob=null;current=null;file.value='';$('extra').value='';drop.classList.remove('has');drop.innerHTML='';drop.append(hintEl);go.disabled=true;res.innerHTML='<div class="empty"><div><div class="plate"></div>Resultatet kommer her</div></div>';};
+function load(f){
+  const img=new Image();
+  img.onload=()=>{const max=1024,k=Math.min(1,max/Math.max(img.width,img.height));
+    const c=document.createElement('canvas');c.width=Math.round(img.width*k);c.height=Math.round(img.height*k);
+    c.getContext('2d').drawImage(img,0,0,c.width,c.height);
+    c.toBlob(b=>{blob=b;go.disabled=!sample;drop.classList.add('has');drop.innerHTML='';const p=new Image();p.src=URL.createObjectURL(b);p.alt='Dit madbillede';drop.append(p);},'image/jpeg',0.85);};
+  img.src=URL.createObjectURL(f);
+}
+let scanMode='meal';
+const hints={meal:'<div class="plate"></div><b>Tag et billede af tallerkenen</b>På mobilen åbner kameraet direkte. På computer kan du trække et billede herind.',
+  label:'<div class="plate"></div><b>Fotografér næringsdeklarationen</b>Tabellen med "Næringsindhold pr. 100 g" på pakkens bagside. Så aflæser appen de præcise tal.'};
+document.querySelectorAll('#scanMode [data-m]').forEach(b=>b.onclick=()=>{scanMode=b.dataset.m;document.querySelectorAll('#scanMode [data-m]').forEach(x=>x.setAttribute('aria-pressed',x===b));
+  hintEl.innerHTML=hints[scanMode];go.textContent=scanMode==='label'?'Aflæs deklaration':'Beregn næringsindhold';$('extra').placeholder=scanMode==='label'?'Fx: jeg spiste halvdelen af pakken':'Fx: stegt i smør, stor portion, 2 skiver rugbrød';});
+const labelPrompt=extra=>`Billedet viser en fødevarepakke, typisk næringsdeklarationen. Aflæs produktnavnet og næringsindholdet pr. 100 g (eller pr. 100 ml for drikke).
+${extra?'Brugerens ekstra info: '+extra:''}
+Svar KUN med JSON: {"titel":"produktnavn på dansk","pr100":{"kcal":0,"protein":0,"fedt":0,"kulhydrat":0},"portion_g":null,"sikkerhed":"lav|middel|høj","note":"kort sætning"}
+"portion_g" er den mængde brugeren sandsynligvis har spist i gram: brug brugerens info, ellers en angivet portion på pakken, ellers pakkens størrelse hvis den er lille (fx en bar), ellers 100. Står deklarationen i kJ, så omregn til kcal. Kan du ikke se en deklaration, så estimér ud fra produktet og sæt sikkerhed til "lav".`;
+const prompt=extra=>`Du er ernæringsekspert. Analysér maden på billedet og estimér næringsindholdet så præcist som muligt.
+Brug danske fødevarenavne og typiske danske portionsstørrelser. Medregn sandsynligt skjult fedt (olie, smør, dressing).
+${extra?'Brugerens ekstra info: '+extra:''}
+Svar KUN med JSON i dette format:
+{"titel":"kort dansk navn på måltidet","emner":[{"navn":"...","gram":0,"kcal":0,"protein":0,"fedt":0,"kulhydrat":0}],"sikkerhed":"lav|middel|høj","note":"én kort sætning om usikkerhed eller antagelser"}
+Værdierne pr. emne gælder for den angivne mængde i gram. Hvis der ikke er mad på billedet, returnér {"titel":"Ingen mad fundet","emner":[],"sikkerhed":"lav","note":"..."}.`;
+go.onclick=async()=>{
+  if(!blob||!sample)return;go.disabled=true;
+  res.innerHTML=`<div class="empty"><div><div class="spin"></div>${scanMode==='label'?'Aflæser deklarationen …':'Kigger på din tallerken …'}</div></div>`;
+  try{if(scanMode==='label'){const L=await sample.json(labelPrompt($('extra').value.trim()),{images:[blob],modelTier:'quick'}),q=L.pr100||{};
+      current={titel:L.titel||'Produkt',sikkerhed:L.sikkerhed||'middel',note:(L.note?L.note+' ':'')+'Tallene er pr. 100 g fra deklarationen. Skriv hvor mange gram du spiste.',
+        emner:[{navn:L.titel||'Produkt',gram:+L.portion_g||100,base:100,kcal:+q.kcal||0,protein:+q.protein||0,fedt:+q.fedt||0,kulhydrat:+q.kulhydrat||0}]};render();return;}
+    const data=await sample.json(prompt($('extra').value.trim()),{images:[blob],modelTier:'default'});
+    current={titel:data.titel||'Måltid',sikkerhed:data.sikkerhed||'middel',note:data.note||'',
+      emner:(data.emner||[]).map(e=>({navn:e.navn,gram:+e.gram||0,base:+e.gram||1,kcal:+e.kcal||0,protein:+e.protein||0,fedt:+e.fedt||0,kulhydrat:+e.kulhydrat||0}))};
+    render();
+  }catch(e){res.innerHTML=`<div class="empty"><div><p class="err">Det gik ikke.</p><p>${e&&e.code==='rate_limited'?'For mange forsøg lige nu. Vent lidt og prøv igen.':e&&e.code==='not_granted'?'AI-adgang blev ikke givet.':'Prøv igen med et tydeligere billede.'}</p></div></div>`;}
+  finally{go.disabled=!blob;}
+};
+function sums(list){return list.reduce((a,e)=>{const f=e.base?e.gram/e.base:0;a.kcal+=e.kcal*f;a.protein+=e.protein*f;a.fedt+=e.fedt*f;a.kulhydrat+=e.kulhydrat*f;a.gram+=e.gram;return a;},{kcal:0,protein:0,fedt:0,kulhydrat:0,gram:0});}
+function ring(t){const kp=t.protein*4,kf=t.fedt*9,kk=t.kulhydrat*4,tot=kp+kf+kk||1,C=2*Math.PI*52;let off=0;
+  const seg=(v,col)=>{const len=v/tot*C;const s=`<circle cx="64" cy="64" r="52" fill="none" stroke="${col}" stroke-width="16" stroke-dasharray="${len} ${C-len}" stroke-dashoffset="${-off}"/>`;off+=len;return s;};
+  return `<svg viewBox="0 0 128 128" aria-hidden="true"><circle cx="64" cy="64" r="52" fill="none" stroke="var(--line)" stroke-width="16"/>${seg(kp,'var(--prot)')}${seg(kf,'var(--fat)')}${seg(kk,'var(--carb)')}</svg>`;}
+function render(){
+  const c=current;
+  if(!c.emner.length){res.innerHTML=`<div class="empty"><div><p class="title">${esc(c.titel)}</p><p>${esc(c.note)}</p></div></div>`;return;}
+  const t=sums(c.emner),mx=Math.max(t.protein,t.fedt,t.kulhydrat,1);
+  const mrow=(n,v,col)=>`<div class="m"><span>${n}</span><div class="bar"><i style="width:${v/mx*100}%;background:${col}"></i></div><b>${r1(v)} g</b></div>`;
+  res.innerHTML=`<div class="head"><div class="ring">${ring(t)}<div class="c"><div><div class="big">${r0(t.kcal)}</div><div class="unit">kcal</div></div></div></div>
+  <div><div class="title">${esc(c.titel)}</div><div class="conf">Sikkerhed: ${esc(c.sikkerhed)} · ca. ${r0(t.gram)} g i alt</div></div></div>
+  <div class="macros">${mrow('Protein',t.protein,'var(--prot)')}${mrow('Fedt',t.fedt,'var(--fat)')}${mrow('Kulhydrat',t.kulhydrat,'var(--carb)')}</div>
+  <table><thead><tr><th>Indhold</th><th class="n">Gram</th><th class="n">kcal</th><th class="n">Prot.</th><th class="n">Fedt</th></tr></thead><tbody>
+  ${c.emner.map((e,i)=>{const f=e.gram/e.base;return `<tr><td>${esc(e.navn)}</td><td class="n"><input type="number" min="0" step="5" inputmode="numeric" value="${r0(e.gram)}" data-i="${i}" aria-label="Gram ${esc(e.navn)}"></td><td class="n">${r0(e.kcal*f)}</td><td class="n">${r1(e.protein*f)}</td><td class="n">${r1(e.fedt*f)}</td></tr>`;}).join('')}
+  </tbody></table>${c.note?`<p class="note">${esc(c.note)}</p>`:''}
+  <div class="btns" style="align-items:center"><label class="small" for="mtime">Spist kl.</label><input class="t" type="time" id="mtime" value="${nowT().slice(11)}" style="width:8em"><button class="go" id="add">Læg til dagens log</button></div>`;
+  res.querySelectorAll('td input').forEach(inp=>inp.onchange=()=>{c.emner[+inp.dataset.i].gram=Math.max(0,+inp.value||0);render();});
+  $('add').onclick=()=>{const s=sums(c.emner);D.meals.push({id:uid(),t:today+'T'+($('mtime').value||nowT().slice(11)),titel:c.titel,kcal:s.kcal,protein:s.protein,fedt:s.fedt,kulhydrat:s.kulhydrat});save();drawLog();$('add').textContent='Tilføjet ✓';$('add').disabled=true;};
+}
+function drawLog(){
+  const log=D.meals.filter(m=>m.t.startsWith(today)).sort((a,b)=>b.t.localeCompare(a.t)).map(m=>({...m,tid:m.t.slice(11)}));
+  const t=log.reduce((a,e)=>{a.kcal+=e.kcal;a.protein+=e.protein;a.fedt+=e.fedt;a.kulhydrat+=e.kulhydrat;return a;},{kcal:0,protein:0,fedt:0,kulhydrat:0});
+  $('tot').innerHTML=`<div><b>${r0(t.kcal)}</b>kcal</div><div><b>${r0(t.protein)} g</b>protein</div><div><b>${r0(t.fedt)} g</b>fedt</div><div><b>${r0(t.kulhydrat)} g</b>kulhydrat</div>`;
+  $('log').innerHTML=log.length?log.map(e=>`<li><span><b>${esc(e.titel)}</b> <small>kl. ${esc(e.tid)} · ${r0(e.protein)} g protein · ${r0(e.fedt)} g fedt</small></span><span>${r0(e.kcal)} kcal <button class="ghost" data-d="${e.id}">Fjern</button></span></li>`).join(''):'<li><small>Ingen måltider endnu i dag.</small></li>';
+  $('log').querySelectorAll('[data-d]').forEach(b=>b.onclick=()=>{D.meals=D.meals.filter(m=>m.id!==b.dataset.d);save();drawLog();});
+}
+drawLog();
+
+/* ---------- figurer: punkter h n p e1 w1 e2 w2 k1 f1 k2 f2 [rygkurve] ---------- */
+const P={
+stand:"60,16 60,27 60,55 53,41 50,55 67,41 70,55 57,72 56,90 63,72 64,90",
+armsUp:"60,16 60,27 60,55 55,15 53,4 65,15 67,4 57,72 56,90 63,72 64,90",
+armsOut:"60,16 60,27 60,55 47,27 34,27 73,27 86,27 57,72 56,90 63,72 64,90",
+armsDiag:"60,16 60,27 60,55 49,19 40,10 71,19 80,10 57,72 56,90 63,72 64,90",
+shrug:"60,15 60,24 60,55 53,38 50,52 67,38 70,52 57,72 56,90 63,72 64,90",
+sideBend:"52,19 56,29 60,55 52,42 49,55 58,16 49,6 57,72 56,90 63,72 64,90",
+neckL:"54,18 60,27 60,55 53,41 50,55 67,41 70,55 57,72 56,90 63,72 64,90",
+neckR:"66,18 60,27 60,55 53,41 50,55 67,41 70,55 57,72 56,90 63,72 64,90",
+hips:"60,16 60,27 60,55 50,42 55,54 70,42 65,54 57,72 56,90 63,72 64,90",
+hipsB:"58,16 59,27 65,55 51,42 59,54 71,42 69,54 61,72 56,90 67,72 64,90",
+calfB:"60,12 60,23 60,51 53,37 50,51 67,37 70,51 57,68 57,87 63,68 63,87",
+side:"60,16 60,27 60,55 61,41 62,55 59,41 60,55 61,72 60,90 59,72 60,90",
+fold:"74,83 72,73 58,55 73,81 72,90 71,81 70,90 59,72 58,90 59,72 60,90",
+quad:"60,16 60,27 60,55 64,40 68,52 55,44 49,61 61,72 60,90 58,73 48,60",
+squatA:"60,16 60,27 60,55 68,32 79,33 67,33 78,34 61,72 60,90 59,72 60,90",
+squatB:"66,34 61,44 50,66 70,46 82,46 69,47 81,47 66,72 60,90 65,73 60,90",
+lungeA:"60,20 60,31 60,58 61,44 62,57 59,44 60,57 74,70 76,90 52,78 38,88",
+lungeB:"60,26 60,37 60,64 61,50 62,63 59,50 60,63 76,74 78,90 52,87 36,89",
+lungeTw:"60,26 60,37 60,64 70,40 80,44 50,40 40,36 76,74 78,90 52,87 36,89",
+hipFlex:"60,24 60,35 60,64 61,23 62,10 59,23 60,10 76,74 78,90 52,87 36,89",
+plank:"26,63 34,68 64,76 34,89 46,89 36,89 48,89 80,82 96,88 80,82 96,88",
+pushA:"26,56 34,62 66,74 34,76 34,89 36,76 36,89 82,81 98,88 82,81 98,88",
+pushB:"26,74 34,80 66,83 44,77 34,89 46,77 36,89 82,85 98,88 82,85 98,88",
+kneePushA:"26,58 34,64 62,76 34,77 34,89 36,77 36,89 78,89 92,80 78,89 92,80",
+kneePushB:"26,74 34,80 62,84 44,78 34,89 46,78 36,89 78,89 92,80 78,89 92,80",
+tapB:"26,56 34,62 66,74 38,68 30,62 36,76 36,89 82,81 98,88 82,81 98,88",
+climbB:"26,56 34,62 66,74 34,76 34,89 36,76 36,89 52,74 62,86 82,81 98,88",
+sidePl:"28,52 36,58 64,72 36,74 36,89 40,42 44,28 80,80 96,88 80,80 96,88",
+sidePlB:"28,55 36,61 64,79 36,75 36,89 40,45 44,31 80,84 96,88 80,84 96,88",
+bridgeA:"18,84 28,86 58,86 40,88 52,89 40,88 52,89 72,70 80,90 72,70 80,90",
+bridgeB:"18,84 28,86 58,70 40,88 52,89 40,88 52,89 76,68 80,90 76,68 80,90",
+crunchA:"18,82 28,86 58,86 22,74 16,80 24,74 18,80 72,70 80,90 72,70 80,90",
+crunchB:"28,68 36,76 58,86 32,66 26,70 34,66 28,70 72,70 80,90 72,70 80,90",
+bikeA:"28,68 36,76 58,86 32,66 26,70 34,66 28,70 66,66 80,70 78,82 98,82",
+bikeB:"28,68 36,76 58,86 32,66 26,70 34,66 28,70 78,82 98,82 66,66 80,70",
+legUp:"18,84 28,86 58,86 40,88 52,89 40,88 52,89 62,68 64,50 62,68 64,50",
+legDown:"18,84 28,86 58,86 40,88 52,89 40,88 52,89 76,82 94,79 76,82 94,79",
+bugA:"18,84 28,86 58,86 30,72 32,58 32,72 34,58 58,68 74,68 58,68 74,68",
+bugB:"18,84 28,86 58,86 16,86 4,86 32,72 34,58 58,68 74,68 76,80 96,82",
+twistA:"44,52 48,62 60,86 56,68 66,64 54,70 64,66 76,70 90,78 76,70 90,78",
+twistB:"42,52 47,62 60,86 44,72 38,80 46,73 40,81 76,70 90,78 76,70 90,78",
+rest:"16,84 26,86 60,86 40,88 54,89 40,88 54,89 80,87 100,87 80,87 100,87",
+four:"28,62 36,66 66,66 36,78 36,90 38,78 38,90 66,90 86,90 66,90 86,90",
+bird:"28,62 36,66 66,66 20,64 6,62 38,78 38,90 84,66 104,64 66,90 86,90",
+cow:"26,58 36,68 66,66 36,78 36,90 38,78 38,90 66,90 86,90 66,90 86,90 51,76",
+cat:"32,76 36,68 66,66 36,78 36,90 38,78 38,90 66,90 86,90 66,90 86,90 51,54",
+child:"34,84 44,83 74,82 32,87 20,89 34,88 22,90 54,90 80,90 54,90 80,90",
+cobra:"30,54 36,64 64,86 38,76 38,89 40,76 40,89 82,89 102,89 82,89 102,89",
+cobraA:"26,74 34,79 64,86 42,82 38,89 44,82 40,89 82,89 102,89 82,89 102,89",
+superA:"16,84 26,86 62,86 14,86 4,86 14,86 4,86 82,87 102,87 82,87 102,87",
+superB:"14,76 24,80 62,86 12,74 2,70 12,74 2,70 82,84 102,78 82,84 102,78",
+ham:"70,66 62,72 40,86 70,80 84,86 70,80 84,86 64,88 88,88 64,88 88,88",
+pigeon:"60,44 60,54 60,80 62,66 64,80 58,66 56,80 76,88 64,90 40,88 16,90"
+};
+const pose={};for(const k in P){const a=P[k].split(' ').map(s=>s.split(',').map(Number));if(!a[11])a[11]=[(a[1][0]+a[2][0])/2,(a[1][1]+a[2][1])/2];pose[k]=a;}
+const lerp=(A,B,t)=>A.map((p,i)=>[p[0]+(B[i][0]-p[0])*t,p[1]+(B[i][1]-p[1])*t]);
+function figAnim(A,B,mirror,delay=0){
+  if(B===A||reduce)return figure(lerp(A,B,.6),mirror);
+  const r=v=>Math.round(v*10)/10,P=q=>r(q[0])+' '+r(q[1]),L=(a,b,c)=>`M${P(a)} L${P(b)} L${P(c)}`;
+  const parts=pt=>{const [h,n,p,e1,w1,e2,w2,k1,f1,k2,f2,s]=pt;return {b1:L(n,e2,w2),b2:L(p,k2,f2),t:`M${P(n)} Q${P(s)} ${P(p)}`,l:L(p,k1,f1),a:L(n,e1,w1),nk:`M${P(n)} L${P([h[0]+(n[0]-h[0])*.4,h[1]+(n[1]-h[1])*.4])}`,hx:r(h[0]),hy:r(h[1])};};
+  const a=parts(A),b=parts(B),T=`dur="3.2s" begin="${-delay}s" repeatCount="indefinite" calcMode="spline" keyTimes="0;.5;1" keySplines=".45 0 .55 1;.45 0 .55 1"`;
+  const path=k=>`<path d="${a[k]}"><animate attributeName="d" values="${a[k]};${b[k]};${a[k]}" ${T}/></path>`;
+  return `<g ${mirror?'transform="translate(120 0) scale(-1 1)"':''} fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <line x1="-20" y1="91.5" x2="140" y2="91.5" stroke="var(--line)" stroke-width="2"/>
+  <g stroke="var(--tomato)" stroke-width="5" opacity=".45">${path('b1')}${path('b2')}</g>
+  <g stroke="var(--ink)" stroke-width="5.5">${path('t')}${path('l')}${path('a')}${path('nk')}</g>
+  <circle cx="${a.hx}" cy="${a.hy}" r="6.2" fill="var(--tomato)"><animate attributeName="cx" values="${a.hx};${b.hx};${a.hx}" ${T}/><animate attributeName="cy" values="${a.hy};${b.hy};${a.hy}" ${T}/></circle></g>`;
+}
+function figure(pt,mirror){
+  const [h,n,p,e1,w1,e2,w2,k1,f1,k2,f2,s]=pt,L=(a,b,c)=>`M${a} L${b} L${c}`;
+  return `<g ${mirror?'transform="translate(120 0) scale(-1 1)"':''} fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <line x1="-20" y1="91.5" x2="140" y2="91.5" stroke="var(--line)" stroke-width="2"/>
+  <g stroke="var(--tomato)" stroke-width="5" opacity=".45"><path d="${L(n,e2,w2)}"/><path d="${L(p,k2,f2)}"/></g>
+  <g stroke="var(--ink)" stroke-width="5.5"><path d="M${n} Q${s} ${p}"/><path d="${L(p,k1,f1)}"/><path d="${L(n,e1,w1)}"/><line x1="${n[0]}" y1="${n[1]}" x2="${h[0]+(n[0]-h[0])*.4}" y2="${h[1]+(n[1]-h[1])*.4}"/></g>
+  <circle cx="${h[0]}" cy="${h[1]}" r="6.2" fill="var(--tomato)"/></g>`;
+}
+
+/* ---------- øvelser ---------- */
+const X={
+reach:["Stræk mod loftet","Rejs dig høj, stræk armene op og træk vejret dybt. Sænk skuldrene væk fra ørerne.","stand","armsUp"],
+sideL:["Sidebøjning, venstre","Armen over hovedet. Bøj roligt til siden og mærk strækket langs flanken.","stand","sideBend"],
+sideR:["Sidebøjning, højre","Skift side. Hold hofterne stille og lad armen trække dig over.","stand","sideBend",1],
+neck:["Nakkestræk","Læg skiftevis øret mod skulderen. Langsomt, ingen ryk.","neckL","neckR"],
+fold:["Fremadbøjning","Bøj i hofterne med let bøjede knæ. Lad hoved og arme hænge tungt.","fold"],
+rollup:["Rul op og ned","Rul ned fra nakken én hvirvel ad gangen, og rul op igen.","side","fold"],
+quadL:["Lårstræk, venstre ben","Træk hælen mod numsen. Knæene samlet, stå tæt på en væg, hvis du vakler.","quad"],
+quadR:["Lårstræk, højre ben","Skift ben. Skub hoften en anelse frem for et dybere stræk.","quad",1],
+ham:["Hasestræk siddende","Sid med strakte ben og fold frem fra hofterne. Ryggen lang.","ham"],
+child:["Barnets stilling","Sæt dig på hælene og læg brystet ned mod lårene. Træk vejret ned i ryggen.","child"],
+cobra:["Kobra","Lig på maven, pres let op med hænderne. Hofterne bliver i gulvet.","cobraA","cobra"],
+hipL:["Hoftebøjer, venstre","Knæet i gulvet, skub hoften frem og stræk armene op.","hipFlex"],
+hipR:["Hoftebøjer, højre","Skift ben. Spænd numsen på det bagerste ben.","hipFlex",1],
+circles:["Armcirkler","Store, rolige cirkler. Skift retning halvvejs.","armsOut","armsDiag"],
+roll:["Skulderrul","Løft skuldrene mod ørerne, rul dem bagud og ned.","stand","shrug"],
+push:["Armstrækninger","Kroppen i én lige linje. Gå ned på knæ, hvis det er for hårdt.","pushA","pushB"],
+kpush:["Armstrækninger på knæ","Hænderne under skuldrene, albuerne skråt bagud.","kneePushA","kneePushB"],
+tap:["Planke med skulderklap","Høj planke. Klap skiftevis modsat skulder uden at vippe i hoften.","pushA","tapB"],
+plank:["Planke","Albuerne under skuldrene, spænd mave og numse. Træk vejret roligt.","plank"],
+spL:["Sideplanke, venstre","Albuen under skulderen, hoften højt. Gå på knæ for en lettere version.","sidePlB","sidePl"],
+spR:["Sideplanke, højre","Skift side. Løft den øverste arm mod loftet.","sidePlB","sidePl",1],
+superman:["Superman","Lig på maven. Løft arme og ben et par centimeter og hold kort.","superA","superB"],
+bug:["Dead bug","Lænden i gulvet. Stræk modsat arm og ben ud, skift side.","bugA","bugB"],
+bird:["Bird dog","Stræk modsat arm og ben. Hold ryggen flad som et bord.","four","bird"],
+climb:["Mountain climbers","Træk knæene skiftevis mod brystet. Find dit eget tempo.","pushA","climbB"],
+twist:["Russian twist","Læn dig lidt tilbage og drej overkroppen fra side til side.","twistA","twistB"],
+crunch:["Mavebøjninger","Løft skulderbladene fra gulvet. Hagen væk fra brystet.","crunchA","crunchB"],
+bike:["Cykelcrunch","Før albue mod modsat knæ og skift i et roligt tempo.","bikeA","bikeB"],
+legs:["Benløft","Lænden presset mod gulvet. Sænk benene så langt du kan styre det.","legUp","legDown"],
+squat:["Squat","Fødderne i hoftebredde, sæt dig bagud som på en stol. Knæene følger tæerne.","squatA","squatB"],
+deep:["Dyb squat, hold","Sid dybt med vægten på hælene og brystet løftet.","squatB"],
+lungeL:["Udfald, venstre","Langt skridt frem, sænk det bagerste knæ mod gulvet.","lungeA","lungeB"],
+lungeR:["Udfald, højre","Skift ben. Hold overkroppen rank.","lungeA","lungeB",1],
+lungeTw:["Udfald med rotation","Gå ned i udfald og drej overkroppen mod det forreste ben. Skift side halvvejs.","lungeB","lungeTw"],
+bridge:["Bækkenløft","Lig på ryggen med bøjede ben. Pres hælene i gulvet og løft hoften.","bridgeA","bridgeB"],
+calf:["Tåhævninger","Rejs dig op på tæerne og sænk langsomt.","stand","calfB"],
+catcow:["Kat og ko","Skift mellem rund ryg og svaj, i takt med vejrtrækningen.","cow","cat"],
+hipcirc:["Hoftecirkler","Hænderne på hofterne, lav store cirkler. Skift retning halvvejs.","hips","hipsB"],
+pigeonL:["Duen, venstre","Forreste ben bøjet foran dig, bagerste ben strakt. Fold frem, hvis det føles godt.","pigeon"],
+pigeonR:["Duen, højre","Skift ben. Hold hofterne lige.","pigeon",1]
+};
+const scanSteps=[["Find ro","Lig på ryggen med armene ned langs siden. Luk øjnene og træk vejret langsomt ind gennem næsen."],
+["Fødderne","Mærk dine fødder. Tæer, hæle, fodsåler. Lad dem blive tunge."],
+["Underben og knæ","Flyt opmærksomheden op gennem læggene og knæene. Slip spændinger."],
+["Lår og hofter","Mærk lårene hvile mod underlaget. Lad hofterne synke."],
+["Mave og lænd","Lad maven bevæge sig frit med vejret. Mærk lænden blive blød."],
+["Bryst og vejrtrækning","Følg brystkassen, der hæver og sænker sig. Du skal ikke ændre noget."],
+["Hænder og arme","Mærk fingrene, håndfladerne, underarmene og overarmene. Lad dem være tunge."],
+["Skuldre og nakke","Lad skuldrene glide væk fra ørerne. Slip nakken."],
+["Ansigt og kæbe","Blødgør panden, øjnene og kæben. Lad tungen hvile."],
+["Hele kroppen","Mærk hele kroppen på én gang. Bevæg fingre og tæer, og åbn øjnene, når du er klar."]];
+scanSteps.forEach((s,i)=>X['scan'+i]=[s[0],s[1],'rest']);
+
+const PROGS=[
+{id:"straek",navn:"Udstrækning",sub:"Hele kroppen",ex:"reach sideL sideR neck fold quadL quadR ham hipL hipR"},
+{id:"overkrop",navn:"Overkrop",sub:"Arme, bryst, skuldre",ex:"circles kpush tap plank push superman spL spR kpush roll"},
+{id:"core",navn:"Core",sub:"Stabilitet",ex:"plank bug bird spL spR climb twist plank bug child"},
+{id:"mave",navn:"Mave",sub:"Mavemuskler",ex:"crunch twist bug legs bike climb plank crunch legs cobra"},
+{id:"ben",navn:"Ben",sub:"Lår, numse, lægge",ex:"squat lungeL lungeR bridge squat calf deep bridge quadL quadR"},
+{id:"ryg",navn:"Ryg",sub:"Stærk og smidig ryg",ex:"catcow bird superman child bridge cobra plank bird superman child"},
+{id:"mobility",navn:"Mobility",sub:"Led og bevægelighed",ex:"neck roll circles hipcirc catcow lungeTw deep rollup pigeonL pigeonR"},
+{id:"bodyscan",navn:"Bodyscan",sub:"Ro og afspænding",ex:"scan0 scan1 scan2 scan3 scan4 scan5 scan6 scan7 scan8 scan9",scan:1}
+].map(p=>({...p,ex:p.ex.split(' ')}));
+
+/* ---------- afspiller ---------- */
+const WORK=50,REST=10,SCAN=60;
+const run={prog:null,i:0,phase:'work',left:WORK,on:false,last:0,sound:store.get('tr-sound',true)};
+let done=store.get('tr-done-'+today,[]),timer=null,raf=0,ac=null;
+const dur=()=>run.prog.scan?SCAN:run.phase==='rest'?REST:WORK;
+const fmt=s=>`${Math.floor(s/60)}:${String(Math.ceil(s)%60===0&&s>0&&Math.ceil(s)>=60?0:Math.ceil(s)%60).padStart(2,'0')}`.replace(/^(\d+):/,(m,a)=>Math.floor(Math.ceil(s)/60)+':');
+const clockTxt=s=>{const c=Math.ceil(s);return Math.floor(c/60)+':'+String(c%60).padStart(2,'0');};
+
+function beep(f=880,len=.15){if(!run.sound)return;try{ac=ac||new (window.AudioContext||window.webkitAudioContext)();const o=ac.createOscillator(),g=ac.createGain();o.frequency.value=f;g.gain.setValueAtTime(.15,ac.currentTime);g.gain.exponentialRampToValueAtTime(.001,ac.currentTime+len);o.connect(g).connect(ac.destination);o.start();o.stop(ac.currentTime+len);}catch(e){}}
+
+function pick(id){
+  pause();run.prog=PROGS.find(p=>p.id===id);run.i=0;run.phase='work';run.left=dur();store.set('tr-prog',id);
+  drawCards();drawPlayer();
+}
+function curEx(){return X[run.prog.ex[run.i]];}
+function drawPlayer(){
+  const p=run.prog,ex=curEx(),resting=run.phase==='rest';
+  const shown=resting?X[p.ex[run.i+1]]:ex;
+  $('pname').textContent=`${p.navn} · ${p.sub}`;
+  $('exname').textContent=resting?'Pause':ex[0];
+  $('extip').textContent=resting?`Næste: ${shown[0]}. ${shown[1]}`:ex[1];
+  $('tag').textContent=resting?'Gør klar':run.on?'I gang':'Klar';$('tag').className='tag'+(resting?' rest':'');
+  $('clock').textContent=clockTxt(run.left);
+  const total=p.ex.length,doneSteps=run.i+(resting?1:(1-run.left/dur()));
+  $('bar').style.width=(doneSteps/total*100)+'%';
+  $('count').textContent=`Øvelse ${Math.min(run.i+1,total)} af ${total}`;
+  $('play').textContent=run.on?'Pause':(run.i||run.left<dur()?'Fortsæt':'Start');
+  $('steps').innerHTML=p.ex.map((k,i)=>{const e=X[k],A=pose[e[2]],B=pose[e[3]]||A,both=[...A,...B],xs=both.map(q=>e[4]?120-q[0]:q[0]),ys=both.map(q=>q[1]);
+    let x0=Math.min(...xs)-9,x1=Math.max(...xs)+9,y0=Math.min(...ys)-9,y1=94;const w=Math.max(x1-x0,(y1-y0)*1.2),h=w/1.2;x0=(x0+x1)/2-w/2;y0=y1-h;
+    return `<li class="${i===run.i&&!resting?'on':i<run.i||(i===run.i&&resting)?'done':''}"><button type="button" data-j="${i}" aria-label="Gå til ${esc(e[0])}"><span class="no">${i+1}</span><svg viewBox="${x0} ${y0} ${w} ${h}" aria-hidden="true">${figAnim(A,B,e[4],i*0.4)}</svg><span class="tx"><b>${esc(e[0])}</b><small>${esc(e[1])}</small></span></button></li>`;}).join('');
+  $('stepsH').textContent=`Se alle ${p.ex.length} ${p.scan?'trin':'øvelser'} i programmet`;
+  $('steps').querySelectorAll('[data-j]').forEach(b=>b.onclick=()=>{run.restart=false;run.i=+b.dataset.j;run.phase='work';run.left=dur();drawPlayer();document.querySelector('#v-tr .player').scrollIntoView({behavior:reduce?'auto':'smooth',block:'start'});});
+  if(!run.on)drawFig(0);
+}
+function drawFig(t){
+  const resting=run.phase==='rest',ex=resting?X[run.prog.ex[run.i+1]]:curEx();
+  const A=pose[ex[2]],B=pose[ex[3]]||A;
+  const k=(!run.on||resting||reduce||B===A)?0:(1-Math.cos(t/3200*2*Math.PI))/2;
+  $('fig').innerHTML=figure(lerp(A,B,k),ex[4]);
+}
+function loop(t){drawFig(t);if(run.on)raf=requestAnimationFrame(loop);}
+function tick(){
+  const now=performance.now();run.left-=(now-run.last)/1000;run.last=now;
+  if(run.left<=3.05&&run.left>0&&Math.ceil(run.left)!==run.beeped){run.beeped=Math.ceil(run.left);beep(660,.08);}
+  if(run.left<=0)advance();else{$('clock').textContent=clockTxt(run.left);const p=run.prog,doneSteps=run.i+(run.phase==='rest'?1:(1-run.left/dur()));$('bar').style.width=(doneSteps/p.ex.length*100)+'%';}
+}
+function advance(){
+  const p=run.prog,last=run.i>=p.ex.length-1;
+  if(run.phase==='work'&&last){finish();return;}
+  if(run.phase==='work'&&!p.scan){run.phase='rest';}
+  else{run.phase='work';run.i++;}
+  run.left=dur();run.beeped=null;beep(run.phase==='work'?990:520,.25);drawPlayer();
+}
+function finish(){
+  pause();beep(990,.2);setTimeout(()=>beep(1320,.35),220);
+  if(!done.includes(run.prog.id)){done.push(run.prog.id);store.set('tr-done-'+today,done);}
+  D.workouts.push({id:uid(),t:nowT(),navn:'10 min '+run.prog.navn.toLowerCase(),min:10});save();
+  $('exname').textContent='Godt gået!';$('extip').textContent=`Du har gennemført ${run.prog.navn.toLowerCase()} i dag. Vælg et nyt program eller tag det samme igen i morgen.`;
+  $('clock').textContent='0:00';$('bar').style.width='100%';$('tag').textContent='Færdig';$('play').textContent='Start forfra';
+  $('steps').querySelectorAll('li').forEach(l=>l.className='done');
+  run.i=0;run.phase='work';run.left=dur();run.restart=true;drawCards();
+}
+function start(){
+  if(run.restart){run.restart=false;drawPlayer();}
+  run.on=true;run.last=performance.now();beep(990,.15);timer=setInterval(tick,200);cancelAnimationFrame(raf);raf=requestAnimationFrame(loop);drawPlayer();
+}
+function pause(){run.on=false;clearInterval(timer);cancelAnimationFrame(raf);if(run.prog&&!run.restart)drawPlayer();}
+$('play').onclick=()=>run.on?pause():start();
+$('next').onclick=()=>{run.restart=false;if(run.phase==='rest'||run.i<run.prog.ex.length-1){if(run.phase==='work')run.i++;run.phase='work';run.left=dur();drawPlayer();}};
+$('prev').onclick=()=>{run.restart=false;if(run.phase==='rest'){run.phase='work';}else if(run.i>0)run.i--;run.left=dur();drawPlayer();};
+const snd=$('sound');const drawSnd=()=>{snd.textContent=run.sound?'Lyd til':'Lyd fra';snd.setAttribute('aria-pressed',run.sound);};
+snd.onclick=()=>{run.sound=!run.sound;store.set('tr-sound',run.sound);drawSnd();};drawSnd();
+
+const suggest=PROGS[[6,0,1,2,3,4,5][new Date().getDay()]].id;
+function drawCards(){
+  $('cards').innerHTML=PROGS.map(p=>{const ex=X[p.ex[0]],A=pose[ex[2]],B=pose[ex[3]]||A;
+    const both=[...A,...B],xs=both.map(q=>ex[4]?120-q[0]:q[0]),ys=both.map(q=>q[1]);let x0=Math.min(...xs)-8,x1=Math.max(...xs)+8,y0=Math.min(...ys)-8,y1=94;const vw=Math.max(x1-x0,y1-y0),vh=vw;x0=(x0+x1)/2-vw/2;y0=y1-vh;
+    return `<button class="card${run.prog&&run.prog.id===p.id?' sel':''}" data-p="${p.id}"><div class="th"><svg viewBox="${x0} ${y0} ${vw} ${vh}" aria-hidden="true">${figAnim(A,B,ex[4])}</svg></div>
+    <b>${esc(p.navn)}${p.id===suggest?'<span class="badge">Dagens forslag</span>':''}</b><small>${esc(p.sub)}</small>${done.includes(p.id)?'<small class="ok">✓ Gennemført i dag</small>':''}</button>`;}).join('');
+  $('cards').querySelectorAll('[data-p]').forEach(b=>b.onclick=()=>{pick(b.dataset.p);document.querySelector('#v-tr .player').scrollIntoView({behavior:reduce?'auto':'smooth',block:'start'});});
+}
+/* ---------- vejleder ---------- */
+const PH={op:'Optrapning',stabil:'Stabil',ned:'Nedtrapning',stop:'Stoppet'};
+const GOAL={stabil:'holde vægten stabil på GLP-1',ned:'trappe ud af GLP-1 uden at tage på',tab:'tabe sig',styrke:'blive stærkere og mere markeret og holde vægten'};
+const QUAL=['','dårligt','uroligt','okay','godt','rigtig godt'];
+const nf=(n,d=0)=>(+n||0).toLocaleString('da-DK',{minimumFractionDigits:d,maximumFractionDigits:d});
+const mgTxt=mg=>nf(mg,2).replace(/,?0+$/,'');
+const hr=t=>+t.slice(11,13)+(+t.slice(14,16))/60;
+const hm=s=>+s.slice(0,2)+(+s.slice(3,5))/60;
+const fmtH=h=>{const m=Math.round(h*60);return pad(Math.floor(m/60)%24)+':'+pad(m%60);};
+const sleepLen=(a,b)=>{let x=hm(b)-hm(a);if(x<=0)x+=24;return x;};
+const dLabel=k=>k===today?'I dag':k===addDays(today,-1)?'I går':new Date(k+'T12:00').toLocaleDateString('da-DK',{weekday:'long',day:'numeric',month:'short'});
+const S=()=>D.settings||(D.settings={late:20});
+const lateH=()=>+S().late||20;
+const isOA=()=>!!S().oa&&S().oa!=='nej';
+const OAT={peri:'perimenopause',ja:'i overgangsalderen',efter:'efter overgangsalderen'};
+function doseOn(k){let cur=null;for(const d of [...D.doses].sort((a,b)=>a.d.localeCompare(b.d))){if(d.d<=k)cur=d;else break;}return cur;}
+function day(k){
+  const entries=D.meals.filter(m=>m.t.startsWith(k)).sort((a,b)=>a.t.localeCompare(b.t)),meals=[];
+  entries.forEach(e=>{const g=meals.at(-1);
+    if(g&&hr(e.t)-hr(g.lastT)<=0.5){g.items.push(e);g.lastT=e.t;g.titel=g.items.map(x=>x.titel).join(' + ');['kcal','protein','fedt','kulhydrat'].forEach(f=>g[f]=(+g[f]||0)+(+e[f]||0));}
+    else meals.push({t:e.t,lastT:e.t,titel:e.titel,kcal:+e.kcal||0,protein:+e.protein||0,fedt:+e.fedt||0,kulhydrat:+e.kulhydrat||0,items:[e]});});
+  const sum=f=>meals.reduce((a,m)=>a+(+m[f]||0),0),wo=D.workouts.filter(x=>x.t.startsWith(k)),dose=doseOn(k),wt=D.weights.find(x=>x.d===k),sl=D.sleep.find(x=>x.d===k);
+  let gap=0,gapMeal=0;
+  for(let i=1;i<meals.length;i++){const g=hr(meals[i].t)-hr(meals[i-1].t);if(g>gap){gap=g;gapMeal=meals[i].kcal;}}
+  const kcal=sum('kcal');
+  return {k,meals,n:meals.length,kcal,protein:sum('protein'),fedt:sum('fedt'),kulhydrat:sum('kulhydrat'),
+    first:meals.length?hr(meals[0].t):null,last:meals.length?hr(meals[meals.length-1].t):null,
+    lateKcal:meals.filter(m=>hr(m.t)>=lateH()).reduce((a,m)=>a+(+m.kcal||0),0),gap,gapShare:kcal?gapMeal/kcal:0,
+    wo,woMin:wo.reduce((a,x)=>a+(+x.min||0),0),weight:wt?+wt.kg:null,dose,sleep:sl||null,sleepH:sl?sleepLen(sl.from,sl.to):null,
+    sinceDose:dose?Math.round((new Date(k+'T12:00')-new Date(dose.d+'T12:00'))/864e5):null};
+}
+const range=(n,end=today)=>Array.from({length:n},(_,i)=>day(addDays(end,i-n+1)));
+const logged=a=>a.filter(d=>d.n>0);
+const avg=(a,f)=>a.length?a.reduce((s,d)=>s+f(d),0)/a.length:null;
+function baseline(){const st=logged(range(120)).filter(d=>d.dose&&d.dose.phase==='stabil');return st.length>=5?avg(st,d=>d.kcal):null;}
+function target(){const s=+S().kcal;if(s)return {v:s,src:'dit mål'};const b=baseline();return b?{v:Math.round(b/10)*10,src:'stabil periode'}:null;}
+function protTarget(){const p=+S().protein;if(p)return p;const t=target();return t?Math.round(t.v*0.25/4/5)*5:null;}
+function lastWeightBefore(k){const w=D.weights.filter(w=>w.d<=k).sort((a,b)=>b.d.localeCompare(a.d))[0];return w?+w.kg:null;}
+function sleepEffect(){const L=logged(range(56)).filter(d=>d.sleepH!=null),a=L.filter(d=>d.sleepH<6.5),b=L.filter(d=>d.sleepH>=7);return a.length>=3&&b.length>=3?{short:avg(a,d=>d.kcal),good:avg(b,d=>d.kcal),na:a.length,nb:b.length}:null;}
+function doseEffect(){const L=logged(range(56)),a=L.filter(d=>d.sinceDose!=null&&d.sinceDose<=2),b=L.filter(d=>d.sinceDose!=null&&d.sinceDose>=4&&d.sinceDose<=6);return a.length>=3&&b.length>=3?{early:avg(a,d=>d.kcal),late:avg(b,d=>d.kcal)}:null;}
+
+/* anbefalinger */
+function recs(){
+  const r=[],L7=logged(range(7)),t=target(),b=baseline(),d0=doseOn(today),taper=d0&&['ned','stop'].includes(d0.phase);
+  if(!L7.length)return [['','Kom godt i gang','Tryk + Måltid eller scan maden. Registrér også søvn og vægt, så kommer de første råd om et par dage.']];
+  const k7=avg(L7,d=>d.kcal),p7=avg(L7,d=>d.protein),pt=protTarget();
+  const wNow=lastWeightBefore(today),wThen=lastWeightBefore(addDays(today,-7)),dw=wNow!=null&&wThen!=null?wNow-wThen:null;
+  if(dw!=null&&dw>=0.8)r.push(['bad',`Vægten er steget ${nf(dw,1)} kg på en uge`,taper?'Det ses ofte under nedtrapning. Hold portionerne som i den stabile periode, og tal med din læge, hvis det fortsætter.':'Tjek om aftenspisning eller større portioner har sneget sig ind.']);
+  if(taper&&b&&k7>b*1.1)r.push(['bad',`${nf((k7/b-1)*100)} % mere mad end i den stabile periode`,`${nf(k7)} kcal mod ${nf(b)} i snit. Start dagen med protein og planlæg et mellemmåltid kl. 15.`]);
+  else if(t&&k7>t.v*1.1&&S().goal!=='styrke')r.push(['warn',`${nf(k7-t.v)} kcal over målet i snit`,`Du ligger på ${nf(k7)} kcal om dagen mod ${nf(t.v)}.`]);
+  const lateShare=avg(L7,d=>d.kcal?d.lateKcal/d.kcal:0);
+  if(lateShare>0.25)r.push(['warn',`${nf(lateShare*100)} % af maden spises i spisepausen om aftenen`,`Din spisepause starter kl. ${lateH()}. Flyt lidt af maden til frokost og eftermiddag, så aftenen bliver lettere.`]);
+  if(pt&&p7<pt*0.85)r.push(['warn',`Protein: ${nf(p7)} af ${nf(pt)} g`,'Få 25–30 g i hvert måltid, fx skyr, æg, kylling, fisk eller bønner.']);
+  const S7=range(7).filter(d=>d.sleepH!=null),sh=S7.length>=3?avg(S7,d=>d.sleepH):null,se=sleepEffect();
+  if(sh!=null&&sh<6.5)r.push(['warn',`Du sover ${nf(sh,1)} timer i snit`,se&&se.short>se.good*1.05?`Efter korte nætter spiser du ca. ${nf(se.short-se.good)} kcal mere. Gå lidt tidligere i seng i aften.`:'Kort søvn giver ofte mere sult. Sigt efter 7 timer.']);
+  const tdy=day(today),de=doseEffect();
+  if(tdy.sleepH!=null&&tdy.sleepH<6.5&&se&&se.short-se.good>=150)r.push(['warn','Kort nat i nat',`Efter nætter under 6½ time spiser du ca. ${nf(Math.round((se.short-se.good)/10)*10)} kcal mere. Hav en plan for eftermiddagen, og gå tidligere i seng i aften.`]);
+  const mi=mealCountInsight();
+  if(mi&&mi.worst.kcal-mi.best.kcal>=150)r.push(['',`${mi.best.lab} måltider om dagen virker bedst for dig`,`På dage med ${mi.best.lab} måltider spiser du i snit ${nf(mi.best.kcal)} kcal, mod ${nf(mi.worst.kcal)} kcal på dage med ${mi.worst.lab}.`]);
+  const mt=maintenance(),tp=taper||S().goal==='ned';
+  if(mt&&tp)r.push(['',`Dit vedligeholdelsesniveau er ca. ${nf(mt.kcal)} kcal`,`Spiser du mere end det, tager du typisk på. Beregnet ud fra dine sidste ${mt.weeks} uger.`]);
+  if(tdy.sinceDose!=null&&tdy.sinceDose>=4&&tdy.sinceDose<=6&&de&&de.late>de.early*1.08)r.push(['warn',`Dag ${tdy.sinceDose} efter dosis`,'Din appetit plejer at stige nu. Hav proteinrige snacks klar til eftermiddagen.']);
+  const lastWo=[...D.workouts].sort((a,b)=>b.t.localeCompare(a.t))[0],woDays=range(7).filter(d=>d.woMin).length;
+  if(L7.length>=4&&(!lastWo||lastWo.t.slice(0,10)<addDays(today,-3)))r.push(['warn','Ingen træning i 4 dage','Ti minutter tæller. Prøv dagens forslag under Træning.']);
+  const strong=D.workouts.filter(w=>w.t.slice(0,10)>addDays(today,-7)&&/styrke|overkrop|core|ben|ryg|mave|squat|vægt/i.test(w.navn)).length;
+  if(isOA()&&S().goal!=='styrke'&&strong<2&&L7.length>=4)r.push(['warn','Styrketræning 2–3 gange om ugen',`Du har ${strong?'kun haft én':'ikke haft nogen'} styrketræning den seneste uge. Musklerne svinder hurtigere i overgangsalderen, og styrketræning plus protein holder på dem.`]);
+  if(S().goal==='styrke'&&woDays<2&&L7.length>=4)r.push(['warn','Mere styrketræning','For at blive stærkere og mere markeret skal musklerne have 2–4 træninger om ugen.']);
+  const g=gaps();
+  if(g.n)r.splice(r.filter(x=>x[0]==='bad').length,0,['warn',`Usikre tal: ${g.n} ${g.n===1?'dag':'dage'} mangler eller er ufuldstændige`,`${g.miss.length?`Ingen mad logget ${g.miss.map(d=>dLabel(d.k).toLowerCase()).join(', ')}. `:''}${g.thin.length?`Kun ét måltid ${g.thin.map(d=>dLabel(d.k).toLowerCase()).join(', ')}. `:''}Rådene bygger på færre data. Har du glemt at logge, kan du nå det endnu.`]);
+  const bad=r.filter(x=>x[0]==='bad'||x[0]==='warn').length;
+  if(L7.length>=4){
+    if(!bad)r.push(['good',taper?'Nedtrapningen går godt':'Du er stabil',`${dw!=null?`Vægt ${dw>=0?'+':'−'}${nf(Math.abs(dw),1)} kg på 7 dage. `:''}${nf(k7)} kcal og ${nf(p7)} g protein om dagen. Fortsæt sådan.`]);
+    if(pt&&p7>=pt*0.95&&bad)r.push(['good','Protein er på plads',`${nf(p7)} g om dagen i snit.`]);
+    if(sh!=null&&sh>=7)r.push(['good',`${nf(sh,1)} timers søvn i snit`,'God søvn gør det lettere at styre sulten.']);
+  }else if(!bad)r.push(['',`${L7.length} ${L7.length===1?'dag':'dage'} registreret`,'Fortsæt et par dage mere, så kan mentoren se dine mønstre.']);
+  const prio=([c,t])=>/^Dag \d+ efter dosis|^Kort nat i nat/.test(t)?0:/vedligeholdelsesniveau/.test(t)?2.5:/virker bedst for dig/.test(t)?7:/Vægten er steget|mere mad end i den stabile/.test(t)?1:/over målet i snit/.test(t)?2:/spises efter kl|^Protein:/.test(t)?3:/^Du sover/.test(t)?4:/træning/i.test(t)?5:/^Usikre tal/.test(t)?6:c==='good'?8:9;
+  return r.sort((a,b)=>prio(a)-prio(b)).slice(0,6);
+}
+function missing(){
+  const out=[],h=new Date().getHours(),any=D.meals.length||D.sleep.length||D.weights.length;if(!any)return out;
+  const t=day(today),R=reminders();
+  if(R.weight&&new Date().getDay()===1&&h>=6&&t.weight==null)out.push(['fWeight',today,'Mandag: tid til at veje dig']);
+  const ld=doseOn(today);if(R.dose&&ld&&ld.phase!=='stop'&&addDays(ld.d,7)===today)out.push(['fDose',today,'I dag er din doseringsdag']);
+  if(h>=6&&!t.sleep)out.push(['fSleep',today,'Nattens søvn er ikke logget']);
+  if(h>=11&&!t.n)out.push(['fMeal',today,'Ingen måltider logget i dag']);
+  else if(h>=20&&t.n===1)out.push(['fMeal',today,'Kun ét måltid logget i dag']);
+  [1,2].forEach(i=>{const k=addDays(today,-i),d=day(k),nm=i===1?'i går':'i forgårs';
+    if(!d.n)out.push(['fMeal',k,`Ingen mad logget ${nm}`]);else if(d.n===1)out.push(['fMeal',k,`Kun ét måltid logget ${nm}`]);
+    if(!d.sleep&&D.sleep.length)out.push(['fSleep',k,`Søvn mangler for natten til ${nm}`]);});
+  if(R.work&&h>=17&&!t.woMin)out.push(['fWork',today,'Har du trænet i dag?']);
+  return out.filter(x=>(R.meal||x[0]!=='fMeal')&&(R.sleep||x[0]!=='fSleep')).slice(0,5);
+}
+function gaps(){const ds=range(7,addDays(today,-1)),miss=ds.filter(d=>!d.n),thin=ds.filter(d=>d.n===1),noSleep=D.sleep.length?ds.filter(d=>!d.sleep):[];return {miss,thin,noSleep,n:miss.length+thin.length};}
+function drawTodo(){
+  const m=missing();$('todo').hidden=!m.length;$('todoSum').textContent=`Mangler du at logge noget? (${m.length})`;
+  $('todoList').innerHTML=m.map(([f,k,t],i)=>`<li><span>${esc(t)}</span><button class="ghost" data-i="${i}">Log</button></li>`).join('');
+  $('todoList').querySelectorAll('[data-i]').forEach(b=>b.onclick=()=>{const [f,k]=m[+b.dataset.i];openForm(f,k,true);});
+}
+const median=a=>{const b=[...a].sort((x,y)=>x-y);return b.length?b[Math.floor(b.length/2)]:null;};
+const kl=h=>{const m=Math.round(h*2)/2,hh=Math.floor(m)%24;return m%1?`${hh}.30`:`${hh}`;};
+const andList=a=>a.length<2?a.join(''):a.slice(0,-1).join(', ')+' og '+a.at(-1);
+const slotName=h=>h<10.5?'Morgenmad':h<14.5?'Frokost':h<17?'Eftermiddag':h<21?'Aftensmad':'Aftensnack';
+function mealPattern(){
+  const L=logged(range(14,addDays(today,-1)));
+  if(L.length<3)return {typ:3,slots:[8,12.5,18.5],shares:[.25,.35,.4],known:false};
+  const typ=Math.max(1,median(L.map(d=>d.n))),same=L.filter(d=>d.n===typ),slots=[],shares=[];
+  for(let i=0;i<typ;i++){slots.push(avg(same,d=>hr(d.meals.at(i).t)));shares.push(avg(same,d=>d.kcal?d.meals.at(i).kcal/d.kcal:1/typ));}
+  return {typ,slots,shares,known:true,days:L.length};
+}
+function bedTime(){const s=D.sleep.filter(x=>x.d>addDays(today,-14)).map(x=>{const h=hm(x.from);return h<12?h+24:h;});return s.length>=3?avg(s,x=>x):null;}
+function remaining(){
+  const t=target(),pt=protTarget(),d=day(today),now=new Date(),nowH=now.getHours()+now.getMinutes()/60,pat=mealPattern(),bed=bedTime();
+  const kLeft=t?t.v-d.kcal:null,pLeft=pt?pt-d.protein:null;
+  const idx=[];for(let i=d.n;i<pat.typ;i++)idx.push(i);
+  const shareSum=idx.reduce((a,i)=>a+pat.shares.at(i),0)||1;
+  const slots=idx.map(i=>{const h=pat.slots.at(i),f=pat.shares.at(i)/shareSum;return {name:slotName(h),h,late:h<nowH-0.75,kcal:kLeft!=null?Math.max(0,kLeft*f):null,prot:pLeft!=null?Math.max(0,pLeft*f):null};});
+  const lastH=slots.length?Math.max(...slots.map(x=>x.h)):null,hoursLeft=lastH!=null?Math.max(0,lastH-nowH):null;
+  return {t,pt,d,nowH,pat,bed,kLeft,pLeft,slots,hoursLeft};
+}
+function reminders(){return {sleep:true,meal:true,pause:true,checkin:true,work:true,weight:false,dose:true,...(S().reminders||{})};}
+function mealCountInsight(){
+  const L=logged(range(56,addDays(today,-1))),t=target();
+  const groups=[['1–2',d=>d.n<=2],['3',d=>d.n===3],['4',d=>d.n===4],['5 eller flere',d=>d.n>=5]].map(([lab,f])=>{const a=L.filter(f);return a.length>=3?{lab,n:a.length,kcal:avg(a,d=>d.kcal),late:avg(a,d=>d.kcal?d.lateKcal/d.kcal:0)}:null;}).filter(Boolean);
+  if(groups.length<2)return null;
+  const score=g=>t?Math.abs(g.kcal-t.v)+(S().goal==='tab'?Math.max(0,g.kcal-t.v):0):g.kcal;
+  const srt=[...groups].sort((a,b)=>score(a)-score(b));const best=srt.at(0),worst=srt.at(-1);
+  return Math.abs(best.kcal-worst.kcal)<80?null:{best,worst,groups};
+}
+function drawLeft(){
+  const r=remaining(),el=$('left');
+  if(!r.t){el.innerHTML=`<div class="left-empty">Sæt dit kalorie- og proteinmål under <b>Mål og indstillinger</b>, så viser appen, hvad du har tilbage i dag.</div>`;return;}
+  const kp=Math.min(100,r.d.kcal/r.t.v*100),pp=r.pt?Math.min(100,r.d.protein/r.pt*100):0;
+  const big=(lab,left,unit,pct,eaten,goal)=>`<div class="lbox"><small>${left<0?lab.replace('tilbage','over målet'):lab}</small><b>${nf(Math.abs(left))}${unit}</b><div class="bar"><i style="width:${pct}%"></i></div><span class="small">${nf(eaten)} af ${nf(goal)}${unit}</span></div>`;
+  const bedH=r.bed||23,toBed=bedH-r.nowH,eve=kl(Math.max(r.nowH,bedH-2.5)%24),over=r.kLeft!=null&&r.kLeft<=150;
+  const parts=[`${r.d.n} af typisk ${r.pat.typ} måltider spist`];
+  if(toBed>0.5)parts.push(`ca. ${nf(toBed,0)} t til sengetid${r.bed?'':' (kl. 23)'}`);
+  const next=!over&&r.slots.length?r.slots.at(0):null;
+  let tip='';
+  if(over&&toBed>2)tip=`Dagens kalorier er brugt. Gå ikke sulten i seng: spis noget let omkring kl. ${eve}, fx grønt med hytteost, grøntsagssuppe eller skyr naturel (100–150 kcal).`;
+  else if(r.kLeft!=null&&r.kLeft<0)tip='Dagens mål er nået. Er du sulten, så vælg noget let med protein og grønt.';
+  else if(r.pLeft!=null&&r.kLeft>0&&r.pLeft*4/r.kLeft>0.4)tip='Du mangler meget protein i forhold til kalorierne: vælg skyr, hytteost, æg, kylling, fisk eller bønner.';
+  else if(r.nowH>=lateH()&&r.kLeft>300)tip=`Du er i spisepausen om aftenen. Spis hellere lidt nu end et stort måltid.`;
+  const pTxt=x=>x.prot!=null?` · ${isOA()?'mindst ':''}${nf(isOA()?Math.max(25,x.prot):x.prot)} g protein`:'';
+  el.innerHTML=`<div class="lgrid">${big('Kalorier tilbage',r.kLeft,'',kp,r.d.kcal,r.t.v)}${r.pt?big('Protein tilbage',r.pLeft,' g',pp,r.d.protein,r.pt):''}</div>
+  <p class="lstatus">${parts.map(esc).join(' · ')}</p>
+  ${next?`<div class="sec-h spis-h"><span class="sq">🍽</span><b>SPIS</b><span>${r.d.n} af ${r.pat.typ}</span></div><div class="lnext"><small>Næste måltid · ${next.late?'snarest':`ca. kl. ${kl(next.h)}`}</small><b>${next.name}: ${foodFor(next.name,next.kcal)}</b><div class="lbar"><i style="width:${kp}%"></i></div><div class="lrow"><span><b>${nf(Math.round(next.kcal/10)*10)} kcal</b>${pTxt(next)}</span><button class="lcheck" id="lCheck" aria-label="Log ${next.name.toLowerCase()}">✓</button></div>${r.slots.length>1?`<span class="lthen">Derefter: ${r.slots.slice(1).map(x=>`${x.name.toLowerCase()} ca. kl. ${kl(x.h)}, ${nf(Math.round(x.kcal/10)*10)} kcal`).join(' · ')}</span>`:''}</div>`:''}
+`;
+  if(next&&$('lCheck'))$('lCheck').onclick=()=>{openForm('fMeal',null,true);const f=$('fMeal');f.elements.titel.value=foodFor(next.name,next.kcal);if(next.kcal)f.elements.kcal.value=Math.round(next.kcal/10)*10;if(next.prot!=null)f.elements.protein.value=Math.round(next.prot);};
+}
+function drawRecs(){drawTodo();drawLeft();drawCheckin();drawAnl();
+  const h=new Date().getHours();$('hello').textContent=h<10?'God morgen':h<12?'God formiddag':h<17?'God eftermiddag':'God aften';
+  const R=recs(),li=([c,t,s])=>`<li class="${c}" tabindex="0" role="button" aria-expanded="false"><b>${esc(t)}</b><span>${esc(s)}</span></li>`;
+  $('recs').innerHTML=R.slice(0,2).map(li).join('');$('recs2').innerHTML=R.slice(2).map(li).join('');
+  $('moreRecs').hidden=R.length<=2;$('moreRecsSum').textContent=`Flere råd (${R.length-2})`;
+}
+
+/* chips */
+function drawChips(){
+  const d=doseOn(today),c=[`<span class="chip${cloud.state==='ok'||cloud.state==='saving'?' sync':''}" id="syncChip">${cloud.state==='ok'||cloud.state==='saving'?'Gemt på konto':cloud.state==='loading'?'Henter …':'Kun på enheden'}</span>`];
+  if(D.demo)c.push('<span class="chip">Eksempeldata</span>');
+  if(d){const s=Math.round((new Date(today+'T12:00')-new Date(d.d+'T12:00'))/864e5);
+    c.push(`<span class="chip ph ${d.phase}">${PH[d.phase]}</span>`,`<span class="chip">${esc(d.med||'GLP-1')} ${mgTxt(d.mg)} mg · dag ${s}</span>`);}
+  $('vchips').innerHTML=c.join('');
+}
+
+/* dag */
+let vKey=today,vMode='day';
+function flagsFor(d){
+  const f=[],t=target(),pt=protTarget(),past=d.k<today;
+  if(!d.n)return [['warn','Ingen måltider registreret.']];
+  if(t&&d.kcal>t.v*1.1)f.push(['bad',`${nf(d.kcal-t.v)} kcal over målet.`]);
+  else if(t&&past&&d.kcal<t.v*0.6)f.push(['warn','Meget lavt indtag. Husk at spise nok.']);
+  if(pt&&past&&d.protein<pt*0.8)f.push(['warn',`Protein ${nf(d.protein)} af ${nf(pt)} g.`]);
+  if(d.kcal&&d.lateKcal/d.kcal>0.3)f.push(['warn',`${nf(d.lateKcal/d.kcal*100)} % spist i spisepausen om aftenen.`]);
+  if(d.gap>=6&&d.gapShare>0.4)f.push(['warn',`${nf(d.gap,1)} timer uden mad og derefter et stort måltid (${nf(d.gapShare*100)} % af dagen). Lange pauser giver stor sult, så et mellemmåltid kan hjælpe.`]);
+  if(d.n===1&&past)f.push(['warn','Kun ét måltid.']);
+  if(d.n>=6)f.push(['warn',`${d.n} måltider og snacks.`]);
+  if(d.sleepH!=null&&d.sleepH<6)f.push(['warn',`Kun ${nf(d.sleepH,1)} timers søvn.`]);
+  const b=baseline();
+  if(d.dose&&['ned','stop'].includes(d.dose.phase)&&b&&d.kcal>b*1.1&&past)f.push(['bad',`${nf((d.kcal/b-1)*100)} % over din stabile periode.`]);
+  if(!f.length&&past)f.push(['','En god dag.']);
+  return f;
+}
+const tile=(l,v,s='')=>`<div class="tile"><small>${l}</small><b>${v}</b>${s?`<i>${s}</i>`:''}</div>`;
+function drawDay(){
+  const d=day(vKey),t=target(),pt=protTarget();
+  $('dLabel').textContent=dLabel(vKey);$('dNext').disabled=vKey>=today;$('dPrev').hidden=false;$('dNext').hidden=false;
+  const isT=vKey===today;
+  $('dTiles').innerHTML=(isT?'':tile('Kalorier',nf(d.kcal),t?`af ${nf(t.v)}`:'')+tile('Protein',nf(d.protein)+' g',pt?`af ${nf(pt)} g`:''))+tile('Måltider',d.n,d.first!=null?`${fmtH(d.first)}–${fmtH(d.last)}`:'')
+    +tile('Søvn',d.sleepH!=null?nf(d.sleepH,1)+' t':'–',d.sleep?QUAL[d.sleep.q]:'')+tile('Træning',d.woMin?d.woMin+' min':'–')+tile('Vægt',d.weight!=null?nf(d.weight,1):'–',d.weight!=null?'kg':'');
+  $('dFlags').hidden=isT;$('dFlags').innerHTML=isT?'':flagsFor(d).map(([c,s])=>`<li class="${c}">${s}</li>`).join('');
+  drawStrip();
+}
+function drawStrip(){
+  const s=$('strip'),W=s.clientWidth,H=s.clientHeight;if(!W||$('dayView').hidden)return;
+  if($('lgLate'))$('lgLate').textContent=lateH();
+  const d=day(vKey),x=h=>14+Math.min(Math.max(h,0),24)/24*(W-28),base=H-30,tr=base+2,narrow=W<520;
+  const maxK=Math.max(700,...d.meals.map(m=>+m.kcal||0)),bh=k=>8+Math.min(1,(+k||0)/maxK)*(base-30);
+  let o=`<rect x="14" y="${tr}" width="${W-28}" height="6" rx="3" fill="var(--line)"/>`;
+  for(let h=0;h<=24;h+=narrow?6:3)o+=`<text x="${x(h)}" y="${H-6}" text-anchor="${h===0?'start':h===24?'end':'middle'}" font-size="11.5" fill="var(--mute)">${h%24===0&&h?'24':pad(h)}</text>`;
+  const band=(f,t,col,title)=>`<rect x="${x(f)}" y="${tr}" width="${Math.max(6,x(t)-x(f))}" height="6" rx="3" fill="${col}"><title>${title}</title></rect>`;
+  if(d.sleep){const from=hm(d.sleep.from),to=hm(d.sleep.to),st=from>to?0:from;o+=band(st,to,'var(--carb)',`Søvn ${d.sleep.from}–${d.sleep.to}`);
+    if(x(to)-x(st)>56)o+=`<text x="${(x(st)+x(to))/2}" y="${tr-8}" text-anchor="middle" font-size="11" fill="var(--carb)">søvn ${nf(d.sleepH,1)} t</text>`;}
+  const nx=D.sleep.find(z=>z.d===addDays(vKey,1));if(nx&&hm(nx.from)>12)o+=band(hm(nx.from),24,'var(--carb)','Sengetid');
+  d.wo.forEach(w=>{const h=hr(w.t);o+=band(h,h+w.min/60,'var(--prot)',esc(w.navn)+' '+w.min+' min');});
+  o+=`<rect x="${x(lateH())}" y="6" width="${x(24)-x(lateH())}" height="${tr-8}" rx="6" fill="var(--carb)" opacity=".07"/><line x1="${x(lateH())}" x2="${x(lateH())}" y1="6" y2="${tr-2}" stroke="var(--mute)" stroke-dasharray="2 4" opacity=".55"/>`;
+  const w=narrow?8:10,ms=[...d.meals].sort((p,q)=>p.t.localeCompare(q.t)),groups=[];
+  ms.forEach(m=>{const cx=x(hr(m.t)),g=groups.at(-1);if(g&&cx-g.cx0<w*2.2)g.items.push(m);else groups.push({cx0:cx,items:[m]});});
+  let lastLab=-999,lastW=0,lastLvl=0,lastY=999;
+  groups.forEach(g=>{const n=g.items.length,span=n*w+(n-1)*3,left=g.cx0-span/2;let top=base;
+    g.items.forEach((m,i)=>{const h=bh(m.kcal),bx=left+i*(w+3);top=Math.min(top,base-h);
+      o+=`<rect x="${bx}" y="${base-h}" width="${w}" height="${h}" rx="${w/2}" fill="var(--tomato)" opacity="${i%2?0.75:1}"><title>${esc(m.titel)} kl. ${m.t.slice(11)}: ${r0(m.kcal)} kcal</title></rect>`;});
+    const lab=g.items.map(m=>r0(m.kcal)).join('+');
+    const gc=left+span/2,need=(lab.length*7.5+lastW)/2+8,clash=gc-lastLab<need,ly=clash?Math.min(top-6,lastY-15):top-6,lvl=clash?1:0;
+    if(ly>=11&&!(clash&&lastLvl===1)){o+=`<text x="${gc}" y="${ly}" text-anchor="middle" font-size="11" font-weight="600" fill="var(--ink)">${lab}</text>`;lastLab=gc;lastW=lab.length*7.5;lastLvl=lvl;lastY=ly;}});
+  if(!d.n)o+=`<text x="${W/2}" y="${base-24}" text-anchor="middle" font-size="13" fill="var(--mute)">Ingen måltider registreret</text>`;
+  s.innerHTML=o;
+}
+const stripRO=new ResizeObserver(drawStrip);stripRO.observe($('strip'));
+
+/* uge */
+function drawWeek(){
+  $('dLabel').textContent='Seneste 7 dage';$('dPrev').hidden=true;$('dNext').hidden=true;
+  const w1=range(7),w0=range(7,addDays(today,-7)),L1=logged(w1),L0=logged(w0);
+  const cmp=(f,unit='',dec=0,src1=L1,src0=L0)=>{const a=avg(src1,f),b=avg(src0,f);if(a==null)return['–',''];const diff=b!=null?a-b:null;
+    return [nf(a,dec)+unit,diff!=null?`${diff>=0?'+':'−'}${nf(Math.abs(diff),dec)} mod ugen før`:''];};
+  const s1=w1.filter(d=>d.sleepH!=null),s0=w0.filter(d=>d.sleepH!=null);
+  const wNow=lastWeightBefore(today),wThen=lastWeightBefore(addDays(today,-7));
+  $('wTiles').innerHTML=[['kcal/dag',cmp(d=>d.kcal)],['Protein',cmp(d=>d.protein,' g')],['Måltider/dag',cmp(d=>d.n,'',1)],['Søvn',cmp(d=>d.sleepH,' t',1,s1,s0)],
+    ['Træning',[w1.reduce((a,d)=>a+d.woMin,0)+' min',`${w1.filter(d=>d.woMin).length} af 7 dage`]],
+    ['Vægt',wNow!=null?[nf(wNow,1)+' kg',wThen!=null?`${wNow-wThen>=0?'+':'−'}${nf(Math.abs(wNow-wThen),1)} kg på 7 dage`:'']:['–','']]].map(([l,[v,s]])=>tile(l,v,s)).join('');
+  drawChart();drawSleepLate();
+}
+function drawChart(){
+  const s=$('wChart'),W=s.clientWidth;if(!W||$('weekView').hidden)return;
+  const ds=range(28),t=target(),pt=protTarget(),narrow=W<520,pL=narrow?54:70,pR=narrow?44:56,bw=(W-pL-pR)/28,X=i=>pL+(i+0.5)*bw,bar=Math.max(3,bw*0.62);
+  const lanes=[['dose','Dosis',22],['kcal','Kcal',110],['prot','Protein',62],['sleep','Søvn',54],['wt','Vægt',70]];let y=4;const L={};
+  lanes.forEach(([k,lab,h])=>{L[k]={y0:y,h};y+=h+14;});const H=y+16;s.setAttribute('viewBox',`0 0 ${W} ${H}`);s.style.height=H+'px';
+  let o='';const label=(k,txt,val)=>{const l=L[k];o+=`<text x="4" y="${l.y0+12}" font-size="12" font-weight="600" fill="var(--ink)">${txt}</text>`+(val?`<text x="${W-4}" y="${l.y0+12}" text-anchor="end" font-size="11.5" fill="var(--mute)">${val}</text>`:'');};
+  const sep=k=>{const l=L[k];o+=`<line x1="${pL}" x2="${W-pR}" y1="${l.y0+l.h}" y2="${l.y0+l.h}" stroke="var(--line)"/>`;};
+  /* dosis */
+  {const l=L.dose;let last=null;ds.forEach((d,i)=>{if(!d.dose)return;if(d.dose.d===d.k)o+=`<circle cx="${X(i)}" cy="${l.y0+11}" r="4.5" fill="var(--fat)"><title>${d.k}: ${d.dose.mg} mg</title></circle>`;
+    const lab=mgTxt(d.dose.mg);if(lab!==last){o+=`<text x="${X(i)+8}" y="${l.y0+15}" font-size="11" fill="var(--ink)">${lab} mg${narrow?'':' · '+PH[d.dose.phase].toLowerCase()}</text>`;last=lab;}});
+    label('dose','Dosis','');}
+  /* kcal */
+  {const l=L.kcal,mx=Math.max(t?t.v:0,...ds.map(d=>d.kcal),1000)*1.08,Yk=v=>l.y0+l.h-v/mx*(l.h-16);
+    ds.forEach((d,i)=>{if(!d.kcal)return;const yy=Yk(d.kcal),lh=d.lateKcal/mx*(l.h-16);o+=`<rect x="${X(i)-bar/2}" y="${yy}" width="${bar}" height="${l.y0+l.h-yy}" rx="2" fill="var(--tomato)" opacity=".8"><title>${d.k}: ${r0(d.kcal)} kcal, heraf ${r0(d.lateKcal)} i spisepausen</title></rect>`+(lh?`<rect x="${X(i)-bar/2}" y="${yy}" width="${bar}" height="${lh}" rx="2" fill="color-mix(in srgb,var(--tomato) 45%,#000)"/>`:'');});
+    if(t)o+=`<line x1="${pL}" x2="${W-pR}" y1="${Yk(t.v)}" y2="${Yk(t.v)}" stroke="var(--ink)" stroke-dasharray="4 4" opacity=".55"/><text x="${pL-6}" y="${Yk(t.v)+4}" text-anchor="end" font-size="10.5" fill="var(--mute)">mål ${nf(t.v)}</text>`;
+    const L7=logged(ds.slice(-7));label('kcal','Kcal',L7.length?`${nf(avg(L7,d=>d.kcal))} i snit`:'');sep('kcal');}
+  /* protein */
+  {const l=L.prot,mx=Math.max(pt||0,...ds.map(d=>d.protein),60)*1.35,Yp=v=>l.y0+l.h-v/mx*(l.h-14);
+    ds.forEach((d,i)=>{if(!d.protein)return;o+=`<rect x="${X(i)-bar/2}" y="${Yp(d.protein)}" width="${bar}" height="${l.y0+l.h-Yp(d.protein)}" rx="2" fill="var(--prot)" opacity=".85"><title>${d.k}: ${r0(d.protein)} g protein</title></rect>`;});
+    if(pt)o+=`<line x1="${pL}" x2="${W-pR}" y1="${Yp(pt)}" y2="${Yp(pt)}" stroke="var(--ink)" stroke-dasharray="4 4" opacity=".55"/><text x="${pL-6}" y="${Yp(pt)+4}" text-anchor="end" font-size="10.5" fill="var(--mute)">${nf(pt)} g</text>`;
+    const L7=logged(ds.slice(-7));label('prot','Protein',L7.length?`${nf(avg(L7,d=>d.protein))} g i snit`:'');sep('prot');}
+  /* søvn */
+  {const l=L.sleep,Ys=v=>l.y0+l.h-Math.min(v,10)/10*(l.h-14);
+    ds.forEach((d,i)=>{if(d.sleepH==null)return;const c=d.sleepH<6.5?'var(--fat)':d.sleepH<7?'color-mix(in srgb,var(--carb) 45%,transparent)':'var(--carb)';o+=`<rect x="${X(i)-bar/2}" y="${Ys(d.sleepH)}" width="${bar}" height="${l.y0+l.h-Ys(d.sleepH)}" rx="2" fill="${c}"><title>${d.k}: ${nf(d.sleepH,1)} t søvn</title></rect>`;});
+    o+=`<line x1="${pL}" x2="${W-pR}" y1="${Ys(7)}" y2="${Ys(7)}" stroke="var(--ink)" stroke-dasharray="4 4" opacity=".55"/><text x="${pL-6}" y="${Ys(7)+4}" text-anchor="end" font-size="10.5" fill="var(--mute)">7 t</text>`;
+    const S7=ds.slice(-7).filter(d=>d.sleepH!=null);label('sleep','Søvn',S7.length?`${nf(avg(S7,d=>d.sleepH),1)} t i snit`:'');sep('sleep');}
+  /* vægt */
+  {const l=L.wt,pts=ds.map((d,i)=>d.weight!=null?{i,v:d.weight}:null).filter(Boolean);
+    if(pts.length>=2){const mn=Math.min(...pts.map(p=>p.v))-0.3,mx=Math.max(...pts.map(p=>p.v))+0.3,Yw=v=>l.y0+16+(mx-v)/(mx-mn)*(l.h-20);
+      const av=pts.map(p=>({i:p.i,v:avg(pts.filter(q=>q.i<=p.i&&q.i>p.i-7),q=>q.v)}));
+      o+=pts.map(p=>`<circle cx="${X(p.i)}" cy="${Yw(p.v)}" r="2.2" fill="var(--mute)" opacity=".55"><title>${p.v} kg</title></circle>`).join('')+`<polyline points="${av.map(p=>X(p.i)+','+Yw(p.v)).join(' ')}" fill="none" stroke="var(--ink)" stroke-width="2.5" stroke-linejoin="round" stroke-linecap="round"/>`;
+      o+=`<text x="${pL-6}" y="${Yw(mx-0.3)+4}" text-anchor="end" font-size="10.5" fill="var(--mute)">${nf(mx-0.3,1)}</text><text x="${pL-6}" y="${Yw(mn+0.3)+4}" text-anchor="end" font-size="10.5" fill="var(--mute)">${nf(mn+0.3,1)}</text>`;
+      const ch=av.at(-1).v-av.at(0).v;label('wt','Vægt',`${nf(pts.at(-1).v,1)} kg · ${ch>=0?'+':'−'}${nf(Math.abs(ch),1)} kg`);}
+    else label('wt','Vægt','vej dig et par gange');}
+  ds.forEach((d,i)=>{if((27-i)%7===0){const dt=new Date(d.k+'T12:00');o+=`<line x1="${X(i)}" x2="${X(i)}" y1="${L.kcal.y0}" y2="${H-18}" stroke="var(--line)" opacity=".6"/><text x="${X(i)}" y="${H-4}" text-anchor="middle" font-size="11" fill="var(--mute)">${dt.getDate()}/${dt.getMonth()+1}</text>`;}});
+  s.innerHTML=o;
+}
+function sleepLateLink(){
+  const L=logged(range(56)),pairs=[];
+  L.forEach(d=>{const prevNight=d.sleepH,nextNight=day(addDays(d.k,1)).sleepH,share=d.kcal?d.lateKcal/d.kcal:0;pairs.push({d,prevNight,nextNight,share,late:d.lateKcal});});
+  const a=pairs.filter(p=>p.prevNight!=null&&p.prevNight<6.5),b=pairs.filter(p=>p.prevNight!=null&&p.prevNight>=7);
+  const c=pairs.filter(p=>p.nextNight!=null&&p.share>0.2),e=pairs.filter(p=>p.nextNight!=null&&p.share<=0.05);
+  return {afterShort:a.length>=3&&b.length>=3?{late:avg(a,p=>p.late),lateGood:avg(b,p=>p.late),kcal:avg(a,p=>p.d.kcal),kcalGood:avg(b,p=>p.d.kcal),n:a.length}:null,
+    afterLate:c.length>=3&&e.length>=3?{sleep:avg(c,p=>p.nextNight),sleepCalm:avg(e,p=>p.nextNight),n:c.length}:null};
+}
+function drawSleepLate(){
+  const el=$('sleepLate');if(!el)return;const r=sleepLateLink(),out=[];
+  if(r.afterShort){const dl=r.afterShort.late-r.afterShort.lateGood,dk=r.afterShort.kcal-r.afterShort.kcalGood;
+    out.push(dk>=100?`<b>Efter korte nætter spiser du mere.</b> Efter nætter under 6½ time spiser du ca. ${nf(Math.round(dk/10)*10)} kcal mere den dag${dl>=50?`, heraf ca. ${nf(Math.round(dl/10)*10)} kcal i spisepausen om aftenen`:''}.`:`Efter korte nætter spiser du ikke tydeligt mere.`);}
+  if(r.afterLate){const ds=r.afterLate.sleepCalm-r.afterLate.sleep;
+    out.push(ds>=0.3?`<b>Aftenspisning giver kortere søvn.</b> Efter aftener med meget mad i spisepausen sover du ca. ${nf(ds,1)} t mindre.`:`Mad i spisepausen ser ikke ud til at give kortere søvn.`);}
+  el.innerHTML=out.length?out.map(x=>`<span>${x}</span>`).join(' '):'Når du har logget søvn og mad i et par uger, viser mentoren her, om søvn og aftenspisning hænger sammen.';
+}
+const chartRO=new ResizeObserver(drawChart);chartRO.observe($('wChart'));
+const dshort=k=>{const d=new Date(k+'T12:00');return d.getDate()+'/'+(d.getMonth()+1);};
+function axisDates(ds,X,H){return ds.map((d,i)=>(27-i)%7===0?`<text x="${X(i)}" y="${H-6}" text-anchor="middle" font-size="11" fill="var(--mute)">${dshort(d.k)}</text>`:'').join('');}
+function drawWtChart(){
+  if(!$('wtChart'))return;const s=$('wtChart'),W=s.clientWidth,H=s.clientHeight;if(!W||$('weekView').hidden)return;
+  const ds=range(28),pts=ds.map((d,i)=>d.weight!=null?{i,v:d.weight}:null).filter(Boolean);
+  if(pts.length<2){s.innerHTML=`<text x="${W/2}" y="${H/2}" text-anchor="middle" font-size="13" fill="var(--mute)">Vej dig et par gange for at se udviklingen</text>`;$('wtTitle').textContent='Vægt';return;}
+  const pL=40,pR=16,pT=14,pB=24,mn=Math.min(...pts.map(p=>p.v))-0.4,mx=Math.max(...pts.map(p=>p.v))+0.4,X=i=>pL+(i+0.5)/28*(W-pL-pR),Y=v=>pT+(mx-v)/(mx-mn)*(H-pT-pB);
+  let o='';for(let g=0;g<=2;g++){const v=mn+(mx-mn)*g/2;o+=`<line x1="${pL}" x2="${W-pR}" y1="${Y(v)}" y2="${Y(v)}" stroke="var(--line)"/><text x="${pL-6}" y="${Y(v)+4}" text-anchor="end" font-size="11" fill="var(--mute)">${nf(v,1)}</text>`;}
+  const avgPts=pts.map(p=>{const w=pts.filter(q=>q.i<=p.i&&q.i>p.i-7);return {i:p.i,v:avg(w,q=>q.v)};});
+  o+=`<polyline points="${pts.map(p=>X(p.i)+','+Y(p.v)).join(' ')}" fill="none" stroke="var(--mute)" stroke-width="1" opacity=".5"/>`+pts.map(p=>`<circle cx="${X(p.i)}" cy="${Y(p.v)}" r="2.5" fill="var(--mute)" opacity=".6"><title>${nf(p.v,1)} kg</title></circle>`).join('');
+  o+=`<polyline points="${avgPts.map(p=>X(p.i)+','+Y(p.v)).join(' ')}" fill="none" stroke="var(--ink)" stroke-width="2.5" stroke-linejoin="round" stroke-linecap="round"/>`;
+  const last=pts.at(-1);o+=`<circle cx="${X(last.i)}" cy="${Y(last.v)}" r="4" fill="var(--ink)"/>`;
+  s.innerHTML=o+axisDates(ds,X,H);
+  const ch=avgPts.at(-1).v-avgPts.at(0).v;$('wtTitle').innerHTML=`Vægt <small>${nf(last.v,1)} kg · ${ch>=0?'+':'−'}${nf(Math.abs(ch),1)} kg på 4 uger</small>`;
+}
+function drawSlChart(){
+  if(!$('slChart'))return;const s=$('slChart'),W=s.clientWidth,H=s.clientHeight;if(!W||$('weekView').hidden)return;
+  const ds=range(28),sl=ds.filter(d=>d.sleepH!=null);
+  if(sl.length<2){s.innerHTML=`<text x="${W/2}" y="${H/2}" text-anchor="middle" font-size="13" fill="var(--mute)">Log din søvn et par nætter for at se udviklingen</text>`;$('slTitle').textContent='Søvn';return;}
+  const pL=40,pR=16,pT=14,pB=24,mx=10,X=i=>pL+(i+0.5)/28*(W-pL-pR),Y=v=>pT+(mx-Math.min(v,mx))/mx*(H-pT-pB),bw=Math.max(3,(W-pL-pR)/28*0.6);
+  let o='';[0,5,10].forEach(v=>{o+=`<line x1="${pL}" x2="${W-pR}" y1="${Y(v)}" y2="${Y(v)}" stroke="var(--line)"/><text x="${pL-6}" y="${Y(v)+4}" text-anchor="end" font-size="11" fill="var(--mute)">${v} t</text>`;});
+  ds.forEach((d,i)=>{if(d.sleepH==null)return;const c=d.sleepH<6.5?'var(--fat)':d.sleepH<7?'color-mix(in srgb,var(--carb) 45%,transparent)':'var(--carb)';
+    o+=`<rect x="${X(i)-bw/2}" y="${Y(d.sleepH)}" width="${bw}" height="${Y(0)-Y(d.sleepH)}" rx="${Math.min(3,bw/2)}" fill="${c}"><title>${dshort(d.k)}: ${nf(d.sleepH,1)} t, ${QUAL[d.sleep.q]}</title></rect>`;});
+  o+=`<line x1="${pL}" x2="${W-pR}" y1="${Y(7)}" y2="${Y(7)}" stroke="var(--ink)" stroke-dasharray="4 4" opacity=".5"/><text x="${W-pR}" y="${Y(7)-4}" text-anchor="end" font-size="11" fill="var(--ink)">7 t</text>`;
+  s.innerHTML=o+axisDates(ds,X,H);
+  $('slTitle').innerHTML=`Søvn <small>${nf(avg(sl.slice(-7),d=>d.sleepH),1)} t i snit den seneste uge</small>`;
+}
+
+
+/* sammenhænge */
+function correlations(){
+  const L=logged(range(56)),out=[];
+  const grp=(label,pred)=>{const a=L.filter(pred),b=L.filter(d=>!pred(d));if(a.length>=3&&b.length>=3){const x=avg(a,d=>d.kcal),y=avg(b,d=>d.kcal);
+    out.push({t:label,v:`${nf(x)} vs ${nf(y)} kcal`,s:Math.abs(x-y)<y*0.05?'Ingen tydelig forskel.':x<y?`${nf(y-x)} kcal mindre på de dage.`:`${nf(x-y)} kcal mere på de dage.`});}};
+  grp(`Meget spist i spisepausen om aftenen`,d=>d.kcal&&d.lateKcal/d.kcal>0.25);
+  const mi=mealCountInsight();if(mi)out.push({t:'Flere små eller få store måltider',v:`${mi.best.lab} måltider`,s:mi.groups.map(g=>`${g.lab}: ${nf(g.kcal)} kcal (${g.n} dage)`).join(' · ')});
+  if(isOA()){const nights=D.sleep.filter(x=>x.d>addDays(today,-56)),hotN=nights.filter(x=>x.hot),calm=nights.filter(x=>!x.hot);
+    if(hotN.length>=3&&calm.length>=3){const prev=x=>{const d=day(addDays(x.d,-1));return d.kcal?d.lateKcal/d.kcal:0;},nxt=x=>day(x.d).kcal;
+      const a=avg(hotN,prev),b=avg(calm,prev),c=avg(hotN.filter(x=>nxt(x)),nxt),e=avg(calm.filter(x=>nxt(x)),nxt);
+      out.push({t:'Hedeture om natten',v:`${hotN.length} af ${nights.length} nætter`,s:`${a>b+0.05?`Aftenen før hedeture spiste du ${nf(a*100)} % af dagens kalorier i spisepausen, mod ${nf(b*100)} % ellers. `:''}${c&&e&&c>e*1.05?`Dagen efter spiser du ca. ${nf(c-e)} kcal mere.`:'Ingen tydelig sammenhæng med maden endnu.'}`});}}
+  const se=sleepEffect();
+  if(se)out.push({t:'Efter korte nætter (under 6½ t)',v:`${nf(se.short)} vs ${nf(se.good)} kcal`,s:se.short>se.good*1.05?`Du spiser ${nf(se.short-se.good)} kcal mere efter en kort nat.`:'Søvnen ser ikke ud til at påvirke, hvor meget du spiser.'});
+  const de=doseEffect();
+  if(de)out.push({t:'Dag 0–2 mod dag 4–6 efter dosis',v:`${nf(de.early)} vs ${nf(de.late)} kcal`,s:de.late>de.early*1.08?`Appetitten stiger sidst i dosisugen (+${nf((de.late/de.early-1)*100)} %).`:'Appetitten er stabil hen over ugen.'});
+  const st=L.filter(d=>d.dose&&d.dose.phase==='stabil'),nd=L.filter(d=>d.dose&&['ned','stop'].includes(d.dose.phase));
+  if(st.length>=3&&nd.length>=3){const a=avg(st,d=>d.kcal),b=avg(nd,d=>d.kcal);out.push({t:'Stabil fase mod nedtrapning',v:`${nf(a)} vs ${nf(b)} kcal`,s:b>a*1.1?`${nf((b/a-1)*100)} % mere under nedtrapningen.`:'Du holder niveauet fra den stabile periode.'});}
+  const wk=[];for(let i=0;i<8;i++){const ds=range(7,addDays(today,-7*i)),Lw=logged(ds),wts=ds.filter(d=>d.weight!=null);if(Lw.length>=4&&wts.length>=2)wk.push({k:avg(Lw,d=>d.kcal),dw:wts[wts.length-1].weight-wts[0].weight});}
+  if(wk.length>=3){const mk=avg(wk,w=>w.k),mw=avg(wk,w=>w.dw),cov=wk.reduce((s,w)=>s+(w.k-mk)*(w.dw-mw),0),vr=wk.reduce((s,w)=>s+(w.k-mk)**2,0);
+    if(vr>0&&cov>0){const bb=cov/vr,k0=mk-mw/bb;if(k0>900&&k0<4500)out.push({t:'Dit vedligeholdelsesniveau',v:`ca. ${nf(Math.round(k0/50)*50)} kcal`,s:`Groft estimat ud fra ${wk.length} ugers kalorier og vægt.`});}}
+  return out;
+}
+function maintenance(){
+  const wk=[];for(let i=0;i<8;i++){const ds=range(7,addDays(today,-7*i)),Lw=logged(ds),wts=ds.filter(d=>d.weight!=null);if(Lw.length>=4&&wts.length>=2)wk.push({k:avg(Lw,d=>d.kcal),dw:wts.at(-1).weight-wts.at(0).weight});}
+  if(wk.length<3)return null;const mk=avg(wk,w=>w.k),mw=avg(wk,w=>w.dw),cov=wk.reduce((s,w)=>s+(w.k-mk)*(w.dw-mw),0),vr=wk.reduce((s,w)=>s+(w.k-mk)**2,0);
+  if(!(vr>0&&cov>0))return null;const k0=mk-mw/(cov/vr);return k0>900&&k0<4500?{kcal:Math.round(k0/50)*50,weeks:wk.length}:null;
+}
+function drawCorr(){if(!$('corr'))return;const c=correlations();$('corr').innerHTML=c.length?c.map(x=>`<li><span>${esc(x.t)}</span><b>${x.v}</b><small>${x.s}</small></li>`).join(''):'<li><span class="small">Kommer når du har registreret et par uger.</span></li>';}
+
+/* AI */
+function aiData(n){
+  return range(n).map(d=>({dato:d.k,maaltider:d.n,kcal:r0(d.kcal),protein_g:r0(d.protein),fedt_g:r0(d.fedt),
+    foerste:d.first!=null?fmtH(d.first):null,sidste:d.last!=null?fmtH(d.last):null,kcal_i_spisepausen:r0(d.lateKcal),traening_min:d.woMin,
+    soevn:d.sleep?`${d.sleep.from}-${d.sleep.to} (${nf(d.sleepH,1)} t, ${QUAL[d.sleep.q]}${d.sleep.hot?', hedeture':''})`:null,
+    vaegt_kg:d.weight,glp1:d.dose?`${d.dose.med||'GLP-1'} ${d.dose.mg} mg`:null,fase:d.dose?PH[d.dose.phase]:null,dage_efter_dosis:d.sinceDose}));
+}
+const rules=`Du er Meal Mentor, en varm, konkret dansk kost-mentor i en app for personer, der bruger GLP-1-medicin (fx Wegovy, Ozempic, Mounjaro) eller trapper ud af den.
+Regler:
+- Giv aldrig råd om at ændre, springe over, øge, sænke eller stoppe medicin eller doser. Det aftales med lægen. Du hjælper med mad, tidspunkter, mæthed, protein, søvn, bevægelse og vaner.
+- Ingen ekstreme diæter. Er indtaget meget lavt, så opfordr til at spise nok og få protein nok.
+- Stiger vægten over ca. 1 kg om ugen under nedtrapning, eller er der tegn på bivirkninger, så anbefal at kontakte lægen.
+- Brug brugerens egne tal og tidspunkter. Vær venlig og ikke moraliserende. Skriv kort, enkelt dansk.
+- Er målet at blive stærkere og mere markeret og holde vægten, så fokusér på protein fordelt over dagen, styrketræning 2–4 gange om ugen og stabil vægt.
+- Sig det, hvis der er for få data til at konkludere.
+- Mangler der logning nogle dage (se 'Manglende logning'), så nævn kort at vurderingen derfor er usikker, og at brugeren kan efterregistrere, hvis hun har glemt det. Dage med 0 måltider betyder sandsynligvis manglende logning, ikke faste.`;
+function context(){
+  const t=target();
+  return `Mål: ${S().goal?GOAL[S().goal]:'ikke angivet'}.${isOA()?` Brugeren er ${OAT[S().oa]}: læg vægt på protein fordelt over dagen (mindst 25–30 g pr. måltid), styrketræning 2–3 gange om ugen, fibre og kalk; skeln mellem vægtøgning fra overgangsalderen og fra nedtrapning af GLP-1. Nævn kun overgangsalderen, når det er relevant.`:''} Kalorimål: ${t?nf(t.v)+' kcal ('+t.src+')':'ikke angivet'}. Proteinmål: ${protTarget()?protTarget()+' g':'ikke angivet'}. Spisepausen om aftenen starter kl. ${lateH()}; kald det altid "spisepausen om aftenen", ikke "efter kl. X".
+Appens egne anbefalinger lige nu: ${recs().map(r=>r[1]+': '+r[2]).join(' | ')}.
+Sammenhænge: ${correlations().map(c=>c.t+': '+c.v+'. '+c.s).join(' | ')||'ingen endnu'}.
+Manglende logning de seneste 7 dage: ${(()=>{const g=gaps();return [g.miss.length?'ingen mad: '+g.miss.map(d=>d.k).join(', '):'',g.thin.length?'kun ét måltid: '+g.thin.map(d=>d.k).join(', '):'',g.noSleep.length?'ingen søvn: '+g.noSleep.map(d=>d.k).join(', '):''].filter(Boolean).join('; ')||'ingen'})()}.`;
+}
+function md(t){
+  let h='',ul=false;
+  for(let line of esc(t).split('\n')){line=line.replace(/\*\*(.+?)\*\*/g,'<b>$1</b>');
+    if(/^\s*[-*•] /.test(line)){if(!ul){h+='<ul>';ul=true;}h+=`<li>${line.replace(/^\s*[-*•] /,'')}</li>`;continue;}
+    if(ul){h+='</ul>';ul=false;}
+    if(/^#{1,4} /.test(line))h+=`<h3>${line.replace(/^#+ /,'')}</h3>`;else if(line.trim())h+=`<p>${line}</p>`;}
+  return h+(ul?'</ul>':'');
+}
+const aiErr=e=>e&&e.code==='login'?'Log ind for at bruge AI – det gør du under Profil.':e&&e.code==='rate_limited'?'For mange forespørgsler lige nu. Prøv igen om lidt.':e&&e.code==='not_granted'?'AI-adgang blev ikke givet.':'Mentoren kunne ikke svare. Prøv igen.';
+let noteBusy=false,noteTried=false,noteKeyTried='';
+function todayFacts(){const r=remaining(),d=r.d;
+  const k=r.t?(r.kLeft<0?`${nf(-r.kLeft)} kcal OVER målet (spist ${nf(d.kcal)} af ${nf(r.t.v)} kcal)`:`${nf(r.kLeft)} kcal tilbage (spist ${nf(d.kcal)} af ${nf(r.t.v)} kcal)`):`spist ${nf(d.kcal)} kcal, intet kalorimål`;
+  const pr=r.pt?(r.pLeft<=0?`proteinmålet er nået (${nf(d.protein)} af ${nf(r.pt)} g)`:`${nf(r.pLeft)} g protein mangler (spist ${nf(d.protein)} af ${nf(r.pt)} g)`):`${nf(d.protein)} g protein`;
+  return `FAKTA FOR I DAG (kl. ${fmtH(r.nowH)}) – brug disse tal præcist, regn ikke selv: ${k}; ${pr}; ${d.n} måltider (${d.meals.map(m=>m.t.slice(11)+' '+m.titel+' '+r0(m.kcal)+' kcal').join('; ')||'ingen'}); træning ${d.woMin} min; søvn i nat ${d.sleepH!=null?nf(d.sleepH,1)+' t':'ikke logget'}.`;}
+async function autoNote(force){
+  const box=$('aiNote'),txt=$('aiNoteTxt');
+  if(!sample||logged(range(7)).length<3){box.hidden=true;return;}
+  const td=day(today),key='ai-note3-'+today+(D.demo?'-demo':'')+'-'+[(target()||{}).v,gaps().n,td.n,Math.round(td.kcal/50),Math.round(td.protein/10),td.woMin,td.sleep?1:0].join('.'),c=store.get(key,null);
+  box.hidden=false;
+  const show=(t,at)=>{txt.innerHTML=md(t)+(at?`<p class="small" style="margin-top:6px">Ud fra det, du havde logget kl. ${at}</p>`:'');};
+  if(c&&!force){show(c.text||c,c.at);return;}
+  if(noteBusy||(!force&&noteKeyTried===key))return;noteBusy=true;noteKeyTried=key;txt.innerHTML='<p class="small">Mentoren kigger på dine data …</p>';
+  const p=`${rules}\n\n${context()}\n\n${todayFacts()}\n\nDe seneste 14 dage: ${JSON.stringify(aiData(14))}\n\nSkriv en kort, personlig kommentar til i dag (højst 50 ord, ingen overskrifter, ingen punktopstilling). Kommentaren vises lige under et kort, der allerede viser kalorier og protein tilbage eller over målet. Derfor: nævn IKKE kcal- eller proteintal og regn ikke selv; det eneste kalorimål er det i FAKTA FOR I DAG (gennemsnit fra den stabile periode er ikke dagens mål). Er brugeren over målet, så sig det kort og venligt uden at gøre det til en stor sag, og ros aldrig et indtag over målet. Giv ét konkret råd til resten af dagen. Nævn ikke træning, medmindre der er for lidt af den (fx ingen træning i 4 dage). Spisepausen om aftenen starter kl. ${lateH()}: foreslå aldrig at spise i spisepausen. Er klokken efter kl. ${lateH()}, eller er dagens kalorier brugt, så foreslå i stedet vand, te eller at vente til morgenmaden. Rådene må ikke modsige hinanden. Skriv ikke om ærlighed, og gentag ikke appens anbefalinger.`;
+  try{const r=await sample(p,{modelTier:'quick',onText:({text})=>{txt.innerHTML=md(text);}});const at=nowT().slice(11);store.set(key,{text:r.text,at});show(r.text,at);}
+  catch(e){txt.innerHTML=`<p class="small">${aiErr(e)}</p>`;}finally{noteBusy=false;}
+}
+$('aiRefresh').onclick=()=>autoNote(true);
+let aiCtl=null;
+async function askAI(kind){
+  const out=$('aiOut');if(!sample){out.innerHTML='<p class="err">AI er ikke tilgængelig i denne visning.</p>';return;}
+  const q=$('aiQ').value.trim();if(kind==='q'&&!q){$('aiQ').focus();return;}
+  if(aiCtl)aiCtl.abort();aiCtl=new AbortController();
+  const taper=S().goal==='ned'||(doseOn(today)&&['ned','stop'].includes(doseOn(today).phase));
+  let p;
+  if(kind==='day'){const d=day(vKey);p=`${rules}\n\n${context()}\n\nVurdér dagen ${d.k}. Måltider: ${JSON.stringify(d.meals.map(m=>({kl:m.t.slice(11),hvad:m.titel,kcal:r0(m.kcal),protein:r0(m.protein)})))}. Træning: ${JSON.stringify(d.wo.map(w=>({kl:w.t.slice(11),hvad:w.navn,min:w.min})))}. Søvn: ${d.sleep?`${d.sleep.from}-${d.sleep.to}, ${QUAL[d.sleep.q]}`:'ikke registreret'}.\nSeneste 14 dage: ${JSON.stringify(aiData(14))}\n\nSvar i kort markdown (højst 150 ord) med "## Dagen kort" og "## Prøv i morgen" (højst 3 punkter).`;}
+  else if(kind==='week')p=`${rules}\n\n${context()}\n\nUgestatus. Seneste 28 dage: ${JSON.stringify(aiData(28))}\n\nSvar i kort markdown (højst 220 ord) med "## Ugen i tal", "## Mønstre" (tidspunkter, mængder, søvn, træning og vægt) og "## Prøv denne uge" (højst 3 punkter)${taper?' og "## Nedtrapning" (mad og vaner, ikke dosis)':''}.`;
+  else p=`${rules}\n\n${context()}\n\nSeneste 28 dage: ${JSON.stringify(aiData(28))}\n\nSpørgsmål: ${q}\n\nSvar kort og konkret (højst 150 ord) i markdown.`;
+  out.innerHTML='<p class="small">Mentoren tænker …</p>';
+  ['aiDay','aiWeek','aiAsk'].forEach(id=>$(id).disabled=true);
+  try{const r=await sample(p,{modelTier:'quick',signal:aiCtl.signal,onText:({text})=>{out.innerHTML=md(text);}});out.innerHTML=md(r.text);}
+  catch(e){if(e&&e.name==='AbortError')return;out.innerHTML=`<p class="err">${aiErr(e)}</p>`;}
+  finally{['aiDay','aiWeek','aiAsk'].forEach(id=>$(id).disabled=false);}
+}
+
+
+/* visning */
+const setMode=m=>{vMode=m;$('vDay').setAttribute('aria-pressed',m==='day');$('vWeek').setAttribute('aria-pressed',m==='week');$('dayView').hidden=m!=='day';$('weekView').hidden=m!=='week';refreshVej();};
+$('vDay').onclick=()=>setMode('day');$('vWeek').onclick=()=>setMode('week');
+$('dPrev').onclick=()=>{vKey=addDays(vKey,-1);drawDay();};
+$('dNext').onclick=()=>{if(vKey<today){vKey=addDays(vKey,1);drawDay();}};
+
+/* hurtig registrering */
+const panel=$('panel');
+function openForm(id,date,force){
+  const open=!force&&!panel.hidden&&!$(id).hidden;
+  panel.querySelectorAll('form').forEach(f=>f.hidden=f.id!==id);panel.hidden=open;
+  document.querySelectorAll('.quick [data-f]').forEach(x=>x.setAttribute('aria-pressed',!open&&x.dataset.f===id));
+  if(open)return;resetDates(true);
+  if(id==='fSleep')setNight(date||today);
+  else if(date){$(id).querySelectorAll('input[type=date]').forEach(i=>i.value=date);if(date<today)$(id).querySelectorAll('input[type=time]').forEach(i=>i.value='12:00');}
+  const first=$(id).querySelector('input:not([type=date]):not([type=time]):not([type=radio]):not([type=hidden])');if(first)first.focus({preventScroll:true});
+  panel.scrollIntoView({behavior:reduce?'auto':'smooth',block:'nearest'});
+}
+const regMenu=$('regMenu'),regBtn=$('regBtn');
+const regClose=()=>{regMenu.hidden=true;regBtn.setAttribute('aria-expanded','false');};
+regBtn.onclick=e=>{e.stopPropagation();openSheet();};regBtn.removeAttribute('aria-haspopup');
+document.addEventListener('click',e=>{if(!regMenu.hidden&&!regMenu.contains(e.target))regClose();});
+regMenu.onkeydown=e=>{if(e.key==='Escape'){regClose();regBtn.focus();}};
+regMenu.querySelectorAll('button').forEach(b=>b.onclick=()=>{regClose();if(b.dataset.scan){location.hash='#mad';return;}openForm(b.dataset.f,null,true);});
+document.querySelectorAll('[data-open]').forEach(b=>b.onclick=()=>{location.hash='#vejleder';setTimeout(()=>openForm(b.dataset.open,null,true),60);});
+$('panelClose').onclick=()=>{panel.hidden=true;$('panelBack').hidden=true;backFrom=null;document.querySelectorAll('.quick [data-f]').forEach(x=>x.setAttribute('aria-pressed','false'));};
+const flash=(form,msg)=>{const m=form.querySelector('.ok-msg');m.textContent=msg;setTimeout(()=>m.textContent='',2500);};
+function resetDates(force){document.querySelectorAll('#v-vej input[type=date]').forEach(i=>{if(!i.value||force)i.value=today;i.max=today;});
+  document.querySelectorAll('#v-vej input[type=time]:not([name=from]):not([name=to])').forEach(i=>{if(!i.value||force)i.value=nowT().slice(11);});updSleepLen();}
+let nightKey=today;
+const dayName=k=>new Date(k+'T12:00').toLocaleDateString('da-DK',{weekday:'long'});
+const shortD=k=>new Date(k+'T12:00').toLocaleDateString('da-DK',{weekday:'short',day:'numeric',month:'short'});
+const rel=k=>k===today?'i dag':k===addDays(today,-1)?'i går':k===addDays(today,-2)?'i forgårs':'';
+function setNight(k){
+  nightKey=k;const f=$('fSleep'),ex=D.sleep.find(z=>z.d===k);f.elements.d.value=k;
+  f.elements.from.value=ex?ex.from:'23:00';f.elements.to.value=ex?ex.to:'07:00';
+  f.querySelectorAll('[name=q]').forEach(r=>r.checked=+r.value===(ex?ex.q:3));f.elements.hot.checked=!!(ex&&ex.hot);
+  $('sleepSave').textContent=ex?'Opdatér søvn':'Gem søvn';$('nNext').disabled=k>=today;updSleepLen();}
+function updSleepLen(){
+  const f=$('fSleep'),fr=f.elements.from.value,to=f.elements.to.value,W=nightKey,P=addDays(W,-1);if(!fr||!to)return;
+  const bedDay=hm(fr)>=12?P:W,cap=s=>s.charAt(0).toUpperCase()+s.slice(1);
+  $('nTitle').textContent=W===today?'I nat':`Natten til ${dayName(W)}`;
+  $('nSub').textContent=`${shortD(P)} → ${shortD(W)}`;
+  const tag=(k,extra)=>`${cap(dayName(k))}${rel(k)?' ('+rel(k)+')':''}${extra?' · '+extra:''}`;
+  $('fromDay').textContent=tag(bedDay,bedDay===W?'efter midnat':'aftenen før');
+  $('toDay').textContent=tag(W,'');
+  const L=sleepLen(fr,to),hh=Math.floor(L),mm=Math.round((L-hh)*60);
+  $('sleepLen').innerHTML=`<b>${hh} t${mm?' '+mm+' min':''}</b> søvn${L<6?' <span class="small">· kort nat</span>':L>=7?' <span class="small">· fint</span>':''}`;
+  const sv=$('nightSvg'),Wd=sv.clientWidth,H=sv.clientHeight;if(!Wd)return;
+  const s0=18,span=18,pos=h=>{let v=h<12?h+24:h;return 10+Math.min(Math.max(v-s0,0),span)/span*(Wd-20);};
+  const xb=pos(hm(fr)),xw=pos(hm(to)+(hm(to)>=12?-24:0)),y=H/2-4;
+  let o=`<rect x="10" y="${y}" width="${Wd-20}" height="14" rx="7" fill="var(--line)"/>`;
+  o+=`<rect x="${xb}" y="${y}" width="${Math.max(6,xw-xb)}" height="14" rx="7" fill="var(--carb)"/>`;
+  [[18,'18'],[24,'midnat'],[30,'06'],[36,'12']].forEach(([h,l])=>{const x=10+(h-s0)/span*(Wd-20);o+=`<line x1="${x}" x2="${x}" y1="${y-6}" y2="${y+20}" stroke="var(--mute)" stroke-width="${h===24?1.5:1}" ${h===24?'':'opacity=".5"'}/><text x="${x}" y="${H-2}" text-anchor="${h===18?'start':h===36?'end':'middle'}" font-size="12" fill="var(--mute)" ${h===24?'font-weight="600"':''}>${l}</text>`;});
+  o+=`<text x="${Math.max(10,(10+pos(24))/2)}" y="${y-10}" text-anchor="middle" font-size="12" fill="var(--mute)">${cap(dayName(P))}</text><text x="${(pos(24)+Wd-10)/2}" y="${y-10}" text-anchor="middle" font-size="12" fill="var(--mute)">${cap(dayName(W))}</text>`;
+  sv.innerHTML=o;}
+const nightRO=new ResizeObserver(updSleepLen);nightRO.observe($('nightSvg'));
+$('fSleep').oninput=updSleepLen;
+$('nPrev').onclick=()=>setNight(addDays(nightKey,-1));
+$('nNext').onclick=()=>{if(nightKey<today)setNight(addDays(nightKey,1));};
+$('fSleep').querySelectorAll('[data-s]').forEach(b=>b.onclick=()=>{const [n,d]=b.dataset.s.split(':'),inp=$('fSleep').elements[n];let m=Math.round(hm(inp.value||'00:00')*60)+(+d);m=((m%1440)+1440)%1440;inp.value=pad(Math.floor(m/60))+':'+pad(m%60);updSleepLen();});
+const val=(f,n)=>f.elements[n].value;
+$('fMeal').onsubmit=e=>{e.preventDefault();const f=e.target;
+  const at=amtTxt(f);D.meals.push({id:uid(),t:val(f,'d')+'T'+val(f,'tm'),titel:val(f,'titel').trim()+(at?` (${at})`:''),kcal:+val(f,'kcal')||0,protein:+val(f,'protein')||0,fedt:+val(f,'fedt')||0,kulhydrat:0});
+  ['titel','kcal','protein','fedt','amt'].forEach(n=>f.elements[n].value='');f.elements.unit.value='portion';mealBase=null;f.querySelectorAll('[data-p]').forEach(x=>x.removeAttribute('aria-pressed'));$('mealAIMsg').textContent='';save();drawLog();flash(f,'Gemt');};
+let mealBase=null;
+const amtTxt=f=>{const a=+val(f,'amt'),u=val(f,'unit');return a?`${nf(a,a%1?1:0)} ${u==='g'?'g':u==='portion'?(a===1?'portion':'portioner'):u}`:'';};
+function scaleMeal(){const f=$('fMeal'),a=+val(f,'amt');if(!mealBase||!a||val(f,'unit')!==mealBase.unit)return;const k=a/mealBase.amt;
+  f.elements.kcal.value=r0(mealBase.kcal*k);f.elements.protein.value=r1(mealBase.protein*k);f.elements.fedt.value=r1(mealBase.fedt*k);}
+$('fMeal').elements.amt.oninput=scaleMeal;
+$('fMeal').elements.unit.onchange=()=>{if(mealBase&&val($('fMeal'),'unit')!==mealBase.unit)$('mealAIMsg').textContent='Ny enhed: tryk Beregn igen.';};
+$('fMeal').querySelectorAll('[data-p]').forEach(b=>b.onclick=()=>{const f=$('fMeal');
+  if(mealBase&&mealBase.unit!=='portion'){f.elements.amt.value=+(mealBase.amt*b.dataset.p).toFixed(1);f.elements.unit.value=mealBase.unit;}
+  else{f.elements.unit.value='portion';f.elements.amt.value=b.dataset.p;}
+  f.querySelectorAll('[data-p]').forEach(x=>x.setAttribute('aria-pressed',x===b));scaleMeal();});
+$('mealAI').onclick=async()=>{
+  const f=$('fMeal'),q=val(f,'titel').trim(),msg=$('mealAIMsg'),b=$('mealAI');
+  if(!q){f.elements.titel.focus();return;}
+  if(!sample){msg.textContent='AI er ikke tilgængelig her. Skriv tallene selv.';return;}
+  const a=+val(f,'amt'),u=val(f,'unit');
+  b.disabled=true;msg.textContent='Beregner …';
+  try{const r=await sample.json(`Du er ernæringsekspert. Estimér næringsindholdet for dette måltid, beskrevet på dansk: "${q}".${a?` Mængde: ${a} ${u}${u==='portion'?' (1 portion = en typisk dansk voksenportion)':''}.`:' Ingen mængde angivet: antag en typisk dansk voksenportion.'}
+Svar KUN med JSON: {"kcal":0,"protein":0,"fedt":0,"kulhydrat":0,"maengde":0,"enhed":"g|stk|skiver|dl|portion","antagelse":"kort sætning om hvad portionen består af"}. "maengde" og "enhed" skal beskrive den mængde, tallene gælder for${a?` (altså ${a} ${u})`:''}.`,{modelTier:'quick'});
+    const unit=['g','stk','skiver','dl','portion'].includes(r.enhed)?r.enhed:(a?u:'portion'),amt=a||+r.maengde||1;
+    f.elements.amt.value=amt;f.elements.unit.value=unit;
+    mealBase={amt,unit,kcal:+r.kcal||0,protein:+r.protein||0,fedt:+r.fedt||0};scaleMeal();
+    msg.textContent=(r.antagelse?r.antagelse+'. ':'')+'Ændr mængden, så regnes tallene om.';}
+  catch(e){msg.textContent=aiErr(e);}finally{b.disabled=false;}
+};
+$('fMeal').elements.titel.oninput=()=>{if(mealBase){mealBase=null;$('mealAIMsg').textContent='';}};
+$('fSleep').onsubmit=e=>{e.preventDefault();const f=e.target;
+  D.sleep=D.sleep.filter(s=>s.d!==nightKey);D.sleep.push({id:uid(),d:nightKey,from:val(f,'from'),to:val(f,'to'),hot:isOA()&&f.elements.hot.checked,q:+(f.querySelector('[name=q]:checked')||{value:3}).value});save();$('sleepSave').textContent='Opdatér søvn';flash(f,'Gemt');};
+$('fWeight').onsubmit=e=>{e.preventDefault();const f=e.target;
+  D.weights=D.weights.filter(w=>w.d!==val(f,'d'));D.weights.push({id:uid(),d:val(f,'d'),kg:+val(f,'kg'),...(isOA()&&+val(f,'waist')?{waist:+val(f,'waist')}:{})});f.elements.kg.value='';f.elements.waist.value='';save();flash(f,'Gemt');};
+$('fWork').onsubmit=e=>{e.preventDefault();const f=e.target;
+  D.workouts.push({id:uid(),t:val(f,'d')+'T'+val(f,'tm'),navn:val(f,'navn').trim(),min:+val(f,'min')});f.elements.navn.value='';f.elements.min.value='';save();flash(f,'Gemt');};
+$('fDose').onsubmit=e=>{e.preventDefault();const f=e.target;
+  D.doses.push({id:uid(),d:val(f,'d'),med:val(f,'med').trim(),mg:+val(f,'mg'),phase:val(f,'phase')});save();flash(f,'Gemt');};
+$('fSet').onsubmit=e=>{e.preventDefault();const f=e.target;
+  D.settings={...S(),oa:val(f,'oa'),goal:val(f,'goal'),kcal:+val(f,'kcal')||null,protein:+val(f,'protein')||null,late:Math.min(24,Math.max(17,+val(f,'late')||20)),sex:val(f,'sex'),age:+val(f,'age')||null,cm:+val(f,'cm')||null,act:val(f,'act')};save();flash(f,'Gemt');};
+function fillSettings(){const f=$('fSet'),s=S();f.elements.oa.value=s.oa||'nej';document.querySelectorAll('.oaonly').forEach(e=>e.hidden=!isOA());f.elements.goal.value=s.goal||'stabil';f.elements.kcal.value=s.kcal||'';f.elements.protein.value=s.protein||'';f.elements.late.value=s.late||20;
+  f.elements.sex.value=s.sex||'k';f.elements.age.value=s.age||'';f.elements.cm.value=s.cm||'';f.elements.act.value=s.act||'1.375';f.elements.wkg.value=lastWeightBefore(today)??'';$('calcOut').textContent='';}
+$('calcBtn').onclick=()=>{
+  const f=$('fSet'),v=n=>val(f,n),out=$('calcOut'),sex=v('sex'),age=+v('age'),cm=+v('cm'),kg=+v('wkg'),act=+v('act'),goal=v('goal');
+  if(!age||!cm||!kg){out.innerHTML='<span class="err">Udfyld alder, højde og vægt.</span>';return;}
+  if(age<18){out.innerHTML='<span class="err">Beregneren er til voksne. Spørg en læge eller diætist.</span>';return;}
+  const bmr=10*kg+6.25*cm-5*age+(sex==='m'?5:-161),tdee=bmr*act,floor=sex==='m'?1500:1200;
+  let kcal=goal==='tab'?Math.max(tdee-500,floor):tdee;kcal=Math.round(kcal/50)*50;
+  const m=cm/100,bmi=kg/(m*m),ideal=25*m*m,ref=bmi>30?ideal+0.4*(kg-ideal):kg,st=goal==='styrke';
+  const lo=Math.round(ref*(st?1.6:1.2)/5)*5,hi=Math.round(ref*(st?2.2:1.6)/5)*5,prot=Math.round(ref*(st?1.8:goal==='tab'||age>=65||isOA()?1.5:1.4)/5)*5;
+  f.elements.kcal.value=kcal;f.elements.protein.value=prot;
+  out.innerHTML=`Forbrug ca. <b>${nf(Math.round(tdee/50)*50)} kcal</b> om dagen. Forslag: <b>${nf(kcal)} kcal</b>${goal==='tab'?' (−500)':''} og <b>${prot} g protein</b> (${lo}–${hi} g).${st?' Kombinér med styrketræning 2–4 gange om ugen.':''}${isOA()&&!st?' Overgangsalderen er regnet med: lidt mere protein og gerne styrketræning 2–3 gange om ugen.':''} Tryk Gem.`;
+};
+
+let entFilter='',entLimit=10;
+function drawEntries(){
+  const all=[...D.meals.map(m=>({id:m.id,typ:'meals',t:m.t,txt:esc(m.titel),sub:`${r0(m.kcal)} kcal`})),
+    ...D.sleep.map(s=>({id:s.id,typ:'sleep',t:s.d+'T'+s.to,txt:`Søvn ${nf(sleepLen(s.from,s.to),1)} t`,sub:`${s.from}–${s.to} · ${QUAL[s.q]}`})),
+    ...D.weights.map(w=>({id:w.id,typ:'weights',t:w.d+'T07:00',txt:`Vægt ${nf(w.kg,1)} kg`,sub:w.waist?`talje ${nf(w.waist,1)} cm`:''})),
+    ...D.doses.map(d=>({id:d.id,typ:'doses',t:d.d+'T08:00',txt:`${esc(d.med||'GLP-1')} ${mgTxt(d.mg)} mg`,sub:PH[d.phase]})),
+    ...D.workouts.map(w=>({id:w.id,typ:'workouts',t:w.t,txt:esc(w.navn),sub:`${w.min} min`}))].filter(e=>!entFilter||e.typ===entFilter).sort((a,b)=>b.t.localeCompare(a.t));const tot=all.length;all.splice(entLimit);$('entMore').hidden=tot<=entLimit;
+  const TY={meals:'Mad',sleep:'Søvn',weights:'Vægt',doses:'Dosis',workouts:'Træning'};let lastDay='';
+  $('entries').innerHTML=all.length?all.map(e=>{const dk=e.t.slice(0,10),head=dk!==lastDay?`<li class="eday">${dLabel(dk)}</li>`:'';lastDay=dk;
+    const when=e.typ==='meals'||e.typ==='workouts'?'kl. '+e.t.slice(11):'';const sub=[when,e.sub].filter(Boolean).join(' · ');
+    return head+`<li class="erow"><span class="edot t-${e.typ}" title="${TY[e.typ]}"></span><span class="etx"><b>${e.txt}</b>${sub?`<small>${sub}</small>`:''}</span><button class="edel" data-x="${e.typ}:${e.id}" aria-label="Slet ${TY[e.typ].toLowerCase()}">Slet</button></li>`;}).join(''):'<li class="eday">Intet registreret endnu.</li>';
+  $('entries').querySelectorAll('[data-x]').forEach(b=>b.onclick=()=>{const [typ,id]=b.dataset.x.split(':');D[typ]=D[typ].filter(x=>x.id!==id);save();drawLog();});
+}
+function drawProfile(){
+  fillSettings();drawEntries();
+  const n=k=>D[k].length,days=new Set(D.meals.map(m=>m.t.slice(0,10))).size;
+  $('pStats').innerHTML=[[n('meals'),'måltider'],[days,'dage med mad'],[n('sleep'),'nætter'],[n('weights'),'vejninger'],[n('workouts'),'træninger'],[n('doses'),'doser']].map(([v,l])=>`<div><b>${nf(v)}</b><small>${l}</small></div>`).join('');
+  const ds=[...D.doses].sort((a,b)=>b.d.localeCompare(a.d)),cur=ds.at(0);
+  $('pDose').innerHTML=cur?`<div class="dcur"><span class="edot t-doses"></span><div><b>${esc(cur.med||'GLP-1')} ${mgTxt(cur.mg)} mg</b><small>${PH[cur.phase]} · seneste dosis ${cur.d===today||cur.d===addDays(today,-1)?dLabel(cur.d).toLowerCase():new Date(cur.d+'T12:00').toLocaleDateString('da-DK',{day:'numeric',month:'short'})}</small></div></div>${ds.length>1?`<h3 class="dhist">Tidligere doser</h3>`:''}<ul class="entries dlist">${ds.slice(1,7).map(d=>`<li class="erow"><span class="edot t-doses"></span><span class="etx"><b>${mgTxt(d.mg)} mg</b><small>${PH[d.phase]}</small></span><span class="small">${d.d===today||d.d===addDays(today,-1)?dLabel(d.d):new Date(d.d+'T12:00').toLocaleDateString('da-DK',{day:'numeric',month:'short'})}</span></li>`).join('')}</ul>`:'<p class="small">Ingen doser registreret.</p>';
+  const R=reminders();$('rem').querySelectorAll('[data-r]').forEach(c=>c.checked=!!R[c.dataset.r]);drawPush();
+}
+$('rem').onchange=e=>{const c=e.target.closest('[data-r]');if(!c)return;D.settings={...S(),reminders:{...reminders(),[c.dataset.r]:c.checked}};save();drawPush();};
+$('entFilter').querySelectorAll('[data-t]').forEach(b=>b.onclick=()=>{entFilter=b.dataset.t;entLimit=10;$('entFilter').querySelectorAll('[data-t]').forEach(x=>x.setAttribute('aria-pressed',x===b));drawEntries();});
+$('entMore').onclick=()=>{entLimit+=20;drawEntries();};
+function refreshVej(){if(!$('v-prof').hidden)drawProfile();if($('v-vej').hidden)return;drawRecs();drawChips();if(vMode==='day')drawDay();else drawWeek();drawCorr();drawEntries();autoNote();}
+
+/* data */
+$('copyData').onclick=async()=>{try{await navigator.clipboard.writeText(JSON.stringify(D));$('dataMsg').textContent='Kopieret.';}catch(e){$('importData').value=JSON.stringify(D);$('dataMsg').textContent='Markér og kopiér teksten i feltet.';}};
+$('doImport').onclick=()=>{try{const x=JSON.parse($('importData').value);if(!['meals','weights','doses','workouts'].every(k=>Array.isArray(x[k])))throw 0;D={...blank(),...x};if(!D.sleep)D.sleep=[];save();drawLog();fillSettings();$('dataMsg').textContent='Gendannet.';$('importData').value='';}catch(e){$('dataMsg').textContent='Ikke en gyldig backup.';}};
+let clearArm=false;$('clearAll').onclick=()=>{if(!clearArm){clearArm=true;$('clearAll').textContent='Tryk igen for at slette';setTimeout(()=>{clearArm=false;$('clearAll').textContent='Slet alle data';},4000);return;}
+  D=blank();noteTried=false;noteKeyTried='';save();drawLog();fillSettings();clearArm=false;$('clearAll').textContent='Slet alle data';$('dataMsg').textContent='Alle data er slettet.';};
+$('demo').onclick=()=>{
+  let seed=7;const rnd=()=>(seed=(seed*9301+49297)%233280)/233280,jit=(v,p)=>v*(1+(rnd()-0.5)*p);
+  const X=blank();X.demo=true;X.settings={goal:'ned',kcal:null,protein:100,late:20};let kg=81.2;
+  for(let i=27;i>=0;i--){const k=addDays(today,-i),taper=i<14,dd=(27-i)%7;
+    if(dd===0)X.doses.push({id:uid(),d:k,med:'Wegovy',mg:taper?1.7:2.4,phase:taper?'ned':'stabil'});
+    const bed=22.5+rnd()*(taper?2.2:1.2),up=6.4+rnd()*0.9,sh=24-bed+up;
+    X.sleep.push({id:uid(),d:k,from:fmtH(bed),to:fmtH(up),q:sh<6.3?2:sh<7?3:4});
+    let app=taper?1+(dd>=4?0.2:0.08):1+(dd>=5?0.06:0);if(sh<6.5)app*=1.12;
+    const m=(tm,titel,kc,pr,fe)=>X.meals.push({id:uid(),t:`${k}T${tm}`,titel,kcal:r0(jit(kc*app,0.2)),protein:r1(jit(pr,0.2)),fedt:r1(jit(fe*app,0.25)),kulhydrat:r1(jit(kc*app*0.45/4,0.2))});
+    if(rnd()>0.15)m(`0${7+Math.floor(rnd()*2)}:${pad(Math.floor(rnd()*6)*10)}`,'Skyr med bær og müsli',330,24,8);
+    m(`12:${pad(Math.floor(rnd()*5)*10)}`,['Rugbrød med æg og kylling','Salat med laks','Suppe og rugbrød'][i%3],480,30,18);
+    if(taper&&rnd()>0.4)m(`15:${pad(Math.floor(rnd()*5)*10)}`,'Kaffe og kage',260,4,13);
+    m(`18:${pad(20+Math.floor(rnd()*4)*10)}`,['Kylling med ris og grønt','Frikadeller med kartofler','Pasta med kødsauce','Torsk med kartofler'][i%4],620,38,22);
+    if(taper&&dd>=3&&rnd()>0.3)m(`21:${pad(Math.floor(rnd()*5)*10)}`,['Chips og dip','Ostemadder','Is'][i%3],330,7,19);
+    if(rnd()>0.5)X.workouts.push({id:uid(),t:`${k}T17:${pad(Math.floor(rnd()*5)*10)}`,navn:['Gåtur','Styrketræning','10 min core'][i%3],min:[35,40,10][i%3]});
+    kg+=taper?0.055+(rnd()-0.5)*0.35:-0.04+(rnd()-0.5)*0.35;if(rnd()>0.15)X.weights.push({id:uid(),d:k,kg:r1(kg)});}
+  D=X;noteTried=false;noteKeyTried='';save();drawLog();fillSettings();$('dataMsg').textContent='Eksempeldata indlæst.';window.scrollTo({top:0,behavior:reduce?'auto':'smooth'});};
+
+/* ---------- vejleder-bot ---------- */
+const bot={msgs:[],busy:false,ctl:null};
+function statusNow(){const r=remaining();
+  return todayFacts()+' '+`[Status lige nu, kl. ${fmtH(r.nowH)}: spist i dag ${nf(r.d.kcal)} kcal og ${nf(r.d.protein)} g protein i ${r.d.n} måltider (${r.d.meals.map(m=>m.t.slice(11)+' '+m.titel+' '+r0(m.kcal)+' kcal').join('; ')||'ingen'}). `+
+  (r.t?`Tilbage: ${nf(r.kLeft)} kcal${r.pt?` og ${nf(r.pLeft)} g protein`:''}. `:'Intet kalorimål sat. ')+
+  `Plejer at spise ${r.pat.typ} gange (ca. kl. ${r.pat.slots.map(kl).join(', ')})${r.pat.known?'':' (antaget)'}. Planlagte resterende måltider: ${r.slots.map(x=>`${x.name} ${x.late?'snarest':'ca. kl. '+kl(x.h)} ca. ${r0(x.kcal)} kcal/${r0(x.prot)} g protein`).join('; ')||'ingen'}. `+
+  `${r.bed?`Går typisk i seng ca. ${fmtH(r.bed%24)}. `:''}Træning i dag: ${r.d.woMin} min. Søvn i nat: ${r.d.sleepH!=null?nf(r.d.sleepH,1)+' t':'ikke logget'}.]`;}
+const botRules=`${rules}
+Du er appens chat-mentor, Meal Mentor. Svar kort (højst 120 ord), venligt og konkret på dansk. Foreslå gerne konkrete danske måltider med omtrentlige kcal og protein, der passer til det, brugeren har tilbage, og til tidspunktet. Brug punktopstilling ved forslag. Spørg kort tilbage, hvis noget er uklart. Hvis spørgsmålet handler om medicindosis, så henvis til lægen. Respektér spisepausen om aftenen: foreslå ikke mad i spisepausen, medmindre brugeren selv spørger, og nævn så at det er i spisepausen. Ros ikke træning, medmindre brugeren spørger.`;
+function botRender(){
+  const log=$('botLog');
+  if(!bot.msgs.length){log.innerHTML=`<div class="bm a"><p>Hej! Jeg kan se, hvad du har spist i dag, og hvad du har tilbage. Spørg fx, hvad du kan spise, eller hvornår du skal spise næste gang.</p></div>`;return;}
+  log.innerHTML=bot.msgs.map(m=>`<div class="bm ${m.role==='user'?'u':'a'}">${m.role==='user'?`<p>${esc(m.show||m.content)}</p>`:md(m.content)||'<p class="small">Tænker …</p>'}</div>`).join('');
+  log.scrollTop=log.scrollHeight;
+}
+async function botAsk(q){
+  q=(q||'').trim();if(!q||bot.busy)return;
+  if(!sample){bot.msgs.push({role:'user',content:q,show:q},{role:'assistant',content:'AI er ikke tilgængelig i denne visning.'});botRender();return;}
+  const first=!bot.msgs.length;
+  bot.msgs.push({role:'user',show:q,content:(first?`${botRules}\n\n${context()}\n\n`:'')+statusNow()+'\n\n'+q});
+  const a={role:'assistant',content:''};bot.msgs.push(a);bot.busy=true;botRender();$('botChips').hidden=true;
+  try{bot.ctl=new AbortController();
+    const r=await sample(bot.msgs.slice(0,-1).map(m=>({role:m.role,content:m.content})),{modelTier:'quick',cache:false,signal:bot.ctl.signal,onText:({text})=>{a.content=text;botRender();}});
+    a.content=r.text;}
+  catch(e){a.content=e&&e.name==='AbortError'?'(afbrudt)':aiErr(e);}
+  finally{bot.busy=false;botRender();store.set('bot-'+today,bot.msgs);}
+}
+function openBot(){$('bot').hidden=false;$('botFab').setAttribute('aria-expanded','true');$('botFab').hidden=true;botRender();setTimeout(()=>$('botQ').focus({preventScroll:true}),50);}
+function closeBot(){$('bot').hidden=true;$('botFab').setAttribute('aria-expanded','false');$('botFab').hidden=false;}
+$('botFab').onclick=openBot;$('botClose').onclick=closeBot;
+$('botForm').onsubmit=e=>{e.preventDefault();const q=$('botQ').value;$('botQ').value='';botAsk(q);};
+$('botChips').querySelectorAll('[data-q]').forEach(b=>b.onclick=()=>botAsk(b.dataset.q));
+document.addEventListener('keydown',e=>{if(e.key==='Escape'&&!$('bot').hidden)closeBot();});
+bot.msgs=store.get('bot-'+today,[]);if(bot.msgs.length)$('botChips').hidden=true;
+setInterval(()=>{if(!$('v-vej').hidden)drawLeft();},60000);
+
+resetDates();fillSettings();setSync('local');cloudInit();
+
+pick(store.get('tr-prog',suggest));
+route();
+
+/* ===== push-beskeder ===== */
+function foodFor(n,k){const FOOD={Morgenmad:[[250,'skyr med bær og lidt müsli'],[420,'2 æg på rugbrød med tomat'],[1e9,'havregrød med skyr og bær']],
+ Frokost:[[350,'en stor salat med kylling'],[560,'rugbrød med æg og laks'],[1e9,'kyllingewrap med masser af grønt']],
+ Eftermiddag:[[150,'skyr naturel med bær'],[260,'hytteost og gulerødder'],[1e9,'rugbrød med hytteost og agurk']],
+ Aftensmad:[[420,'fisk med masser af grønt'],[650,'kylling, ris og grønt'],[1e9,'kylling, kartofler og salat']],
+ Aftensnack:[[160,'en kop te og lidt skyr'],[1e9,'skyr med bær']]};
+return (FOOD[n]||FOOD.Eftermiddag).find(([lim])=>(k??300)<=lim)[1];}
+function pushPlan(){
+  const R=reminders(),out=[],r=remaining(),t=day(today),y=day(addDays(today,-1)),h=new Date().getHours(),dow=new Date().getDay();
+  const add=(hh,key,title,body,form)=>out.push({h:hh,key,title,body,form});
+  if(R.sleep)add(7,'sleep','Godmorgen – hvordan sov du?','Log nattens søvn med to tryk, så kan Mentoren tage højde for den i dag.','fSleep');
+  if(R.weight&&dow===1)add(7.5,'weight','Mandag: tid til at veje dig','Vej dig før morgenmaden, så tallene kan sammenlignes.','fWeight');
+  const ld=doseOn(today);if(R.dose&&ld&&ld.phase!=='stop'&&addDays(ld.d,7)===today)add(8,'dose','I dag er din dosisdag',`${ld.med||'GLP-1'} ${nf(ld.mg,2)} mg. Husk at logge den, når du har taget den.`,'fDose');
+  if(R.meal&&r.t){
+    const why=s=>{const sd=t.sinceDose;
+      if(sd!=null&&sd>=4&&sd<=6&&s.name!=='Morgenmad')return `Dag ${sd} efter dosis – appetitten stiger nu, så spis til tiden.`;
+      if(t.sleep&&t.sleepH<6.5)return 'Efter en kort nat hjælper faste måltider mod sult i aften.';
+      if(s.prot!=null&&s.prot>=30)return `Du mangler ${nf(r.pLeft)} g protein i dag.`;
+      return r.pat.known?`Du plejer at spise omkring kl. ${kl(s.h)}.`:'';};
+    r.slots.forEach((s,i)=>{if(r.kLeft!=null&&r.kLeft<=150)return;const k=s.kcal!=null?Math.round(s.kcal/10)*10:null;
+      add(s.h,'meal'+i,`Tid til ${s.name.toLowerCase()} kl. ${kl(s.h)}`,`Fx ${foodFor(s.name,k)}${k!=null?` (ca. ${nf(k)} kcal${s.prot!=null?`, ${nf(s.prot)} g protein`:''})`:''}. ${why(s)}`.trim(),'fMeal');});
+  }
+  if(R.meal&&r.t&&t.sinceDose!=null&&t.sinceDose>=4&&t.sinceDose<=6&&r.kLeft>300&&!r.slots.some(x=>x.name==='Eftermiddag')&&r.nowH<15)
+    add(15,'snack','Mellemmåltid kl. 15',`Fx ${foodFor('Eftermiddag',200)} (ca. 200 kcal). Dag ${t.sinceDose} efter dosis stiger appetitten – et lille måltid nu gør aftenen lettere.`,'fMeal');
+  if(R.pause){const L=lateH();add(L-0.5,'pause',`Spisepausen starter kl. ${kl(L)}`,r.nowH<L-1.5?'Spis det sidste nu, hvis du er sulten – derefter kun vand og te.':r.kLeft!=null&&r.kLeft>150?`Du har ca. ${nf(Math.round(r.kLeft/10)*10)} kcal tilbage. Spis nu, hvis du er sulten – derefter kun vand og te.`:'Dagens mad er spist. Fra nu kun vand og te.','');}
+  if(R.checkin&&!D.checkins.some(x=>x.d===today))add(20.5,'checkin','Hvordan er dagen gået?','Tag aftenens check-in – det tager 10 sekunder.','');
+  if(R.work&&!t.woMin)add(17,'work','10 minutters træning?','Et kort program nu giver bedre søvn i nat.','');
+  return out.sort((a,b)=>a.h-b.h);
+}
+function pushKey(p){return `push-${today}-${p.key}`;}
+function showPush(p){
+  const b=$('pushBanner');$('pbTitle').textContent=p.title;$('pbBody').textContent=p.body;$('pbTime').textContent=`kl. ${kl(p.h)}`;
+  b.hidden=false;b.onclick=()=>{b.hidden=true;if(p.form)openForm(p.form,today,true);else if(p.key==='work')location.hash='#traening';else if(p.key==='checkin'){location.hash='#vejleder';setTimeout(()=>{drawCheckin();$('checkin').hidden=false;$('checkin').scrollIntoView({behavior:'smooth',block:'center'});},200);}};
+  clearTimeout(showPush.t);showPush.t=setTimeout(()=>b.hidden=true,9000);
+  try{if(window.Notification&&Notification.permission==='granted'&&document.hidden)new Notification(p.title,{body:p.body});}catch(e){}
+}
+function checkPush(){if(!D.meals.length&&!D.sleep.length)return;const now=new Date().getHours()+new Date().getMinutes()/60;
+  const due=pushPlan().filter(p=>p.h<=now&&p.h>now-0.5&&!localStorage.getItem(pushKey(p)));
+  if(due.length){const p=due.at(-1);try{localStorage.setItem(pushKey(p),'1');}catch(e){}showPush(p);}}
+function drawPush(){const now=new Date().getHours()+new Date().getMinutes()/60,P=pushPlan();
+  $('pushList').innerHTML=P.length?P.map(p=>`<li class="${p.h<now?'past':''}"><time>${kl(p.h)}</time><div><b>${esc(p.title)}</b><span>${esc(p.body)}</span></div></li>`).join(''):'<li><time>–</time><div><span>Ingen beskeder i dag. Slå påmindelser til ovenfor.</span></div></li>';}
+$('pushTest').onclick=()=>{const now=new Date().getHours()+new Date().getMinutes()/60,P=pushPlan();const p=P.find(x=>x.h>=now)||P.at(-1);if(p)showPush(p);};
+$('pushAllow').onclick=async()=>{try{const r=await Notification.requestPermission();$('pushAllow').textContent=r==='granted'?'Beskeder er tilladt ✓':'Browseren tillod det ikke';}catch(e){$('pushAllow').textContent='Ikke muligt her – virker i appen';}};
+setInterval(checkPush,60000);setTimeout(checkPush,1500);
+
+
+/* ===== log hurtigt ===== */
+function toast(t){const el=$('toast');el.textContent=t;el.hidden=false;clearTimeout(toast.t);toast.t=setTimeout(()=>el.hidden=true,2600);}
+function favorites(){const m={};D.meals.forEach(x=>{const k=String(x.titel||'').trim().toLowerCase();if(!k||!x.kcal)return;(m[k]=m[k]||{n:0,last:x}).n++;if(x.t>m[k].last.t)m[k].last=x;});
+  return Object.values(m).filter(x=>x.n>=2).sort((a,b)=>b.n-a.n).slice(0,8).map(x=>x.last);}
+function openSheet(){const sh=$('qSheet');$('qDate').textContent=new Date().toLocaleDateString('da-DK',{weekday:'long',day:'numeric',month:'short'});
+  const F=favorites();$('qFav').innerHTML=F.length?F.map((x,i)=>`<button data-fav="${i}">${esc(x.titel.length>28?x.titel.slice(0,26)+'…':x.titel)}</button>`).join(''):'<span class="small">Dine faste måltider dukker op her, når du har logget dem et par gange.</span>';
+  $('qFav').querySelectorAll('[data-fav]').forEach(b=>b.onclick=()=>{const x=F[+b.dataset.fav],n=new Date(),hh=String(n.getHours()).padStart(2,'0'),mm=String(n.getMinutes()).padStart(2,'0');
+    D.meals.push({id:uid(),t:`${today}T${hh}:${mm}`,titel:x.titel,kcal:x.kcal,protein:x.protein||0,fedt:x.fedt||0,kulhydrat:x.kulhydrat||0});save();b.classList.add('on');b.disabled=true;toast(`${x.titel} tilføjet · ${nf(x.kcal)} kcal`);});
+  sh.hidden=false;$('regBtn').setAttribute('aria-expanded','true');setTimeout(()=>sh.querySelector('.qt').focus(),30);}
+function closeSheet(){$('qSheet').hidden=true;$('regBtn').setAttribute('aria-expanded','false');}
+$('qSheet').addEventListener('click',e=>{const t=e.target.closest('[data-close],[data-scan],[data-f]');if(!t)return;closeSheet();
+  if(t.dataset.close){backFrom=null;return;}
+  backFrom={hash:location.hash||'#vejleder',sheet:true};
+  if(t.dataset.scan){location.hash='#mad';setTimeout(()=>{const b=document.querySelector(`#scanMode [data-m="${t.dataset.scan==='label'?'label':'meal'}"]`);if(b)b.click();if(t.dataset.scan==='label')toast('Tag et billede af stregkoden eller deklarationen');},300);return;}
+  if(t.dataset.f){openForm(t.dataset.f,null,true);$('panelBack').hidden=false;}});
+$('qSheet').addEventListener('keydown',e=>{if(e.key==='Escape')closeSheet();});
+/* ===== aftenens check-in ===== */
+function moodList(){return [['😴','Træt'],['🌤','Frisk'],['⚡','Energisk'],['😠','Sur'],['😊','Glad'],['😐','Normal'],['🪫','Energiforladt'],['😰','Stresset'],['😌','Rolig'],['🤢','Kvalm'],['🍽','Sulten'],['💪','Stolt']];}
+function ciReply(sel,t){const on=x=>sel.includes(x),r=remaining();
+  if(on('Kvalm'))return 'Kvalme er almindeligt på GLP-1. Spis små portioner, drik lidt ad gangen og undgå fed mad. Bliver det ved, så tal med din læge.';
+  if(on('Sulten')&&(on('Træt')||on('Energiforladt')))return 'Træthed gør os sultne. Spisepausen er startet – drik en kop te og gå tidligt i seng. I morgen starter vi med protein til morgenmad.';
+  if(on('Træt')||on('Energiforladt'))return `Det har været en tung dag. Prioritér søvnen i nat${D.sleep.length?' – efter gode nætter spiser du mindre om aftenen':''}.`;
+  if(on('Stresset')||on('Sur'))return 'Tak fordi du siger det. Stress kan give lyst til mad om aftenen. Prøv 10 minutters bodyscan under Træning før sengetid.';
+  if(on('Sulten'))return r.kLeft!=null&&r.kLeft>200?`Du har ca. ${nf(Math.round(r.kLeft/10)*10)} kcal tilbage – spis noget let med protein, fx skyr eller hytteost, og så er det spisepause.`:'Spisepausen er startet. Er det rigtig sult, så tag vand eller te – i morgen lægger vi mere protein i frokosten.';
+  if(on('Stolt')||on('Glad')||on('Energisk')||on('Frisk'))return t.n>=2?`Dejligt! ${t.n} måltider logget i dag – det giver Mentoren et godt billede. Godt gået.`:'Dejligt! Husk at logge dagens måltider, så kan Mentoren følge med.';
+  return 'En helt almindelig dag – og det er godt nok. Hold fast i rytmen i morgen.';}
+function drawCheckin(){const h=new Date().getHours(),c=D.checkins.find(x=>x.d===today);$('checkin').hidden=!(h>=18||c);if($('checkin').hidden)return;
+  const sel=c?c.moods:[];$('ciWhen').textContent=c?'gemt':'i aften';
+  $('moods').innerHTML=moodList().map(([e,t])=>`<button aria-pressed="${sel.includes(t)}" data-m="${t}"><span>${e}</span>${t}</button>`).join('');
+  $('moods').querySelectorAll('[data-m]').forEach(b=>b.onclick=()=>{const cur=D.checkins.find(x=>x.d===today)||(D.checkins.push({id:uid(),d:today,moods:[]}),D.checkins.at(-1));
+    const m=b.dataset.m;cur.moods=cur.moods.includes(m)?cur.moods.filter(x=>x!==m):[...cur.moods,m];if(!cur.moods.length)D.checkins=D.checkins.filter(x=>x!==cur);save();});
+  $('ciReply').hidden=!sel.length;if(sel.length)$('ciReplyTxt').textContent=ciReply(sel,day(today));}
+/* ===== analyser ===== */
+function drawAnl(){const L=logged(range(56)),cards=[];const open=drawAnl.open||{};
+  const bars=(arr,lab,hi,c)=>{const mx=Math.max(...arr.map(x=>x.v))||1;return `<div class="ac-bars" style="--c:${c}">${arr.map(x=>`<div><i class="${hi(x)?'hi':''}" style="height:${Math.max(8,x.v/mx*56)}px" title="${nf(x.v)} kcal"></i><small>${lab(x)}</small></div>`).join('')}</div>`;};
+  const sg=[['under 6½ t',d=>d.sleepH<6.5],['6½–7 t',d=>d.sleepH>=6.5&&d.sleepH<7],['7 t +',d=>d.sleepH>=7]].map(([l,f])=>{const a=L.filter(d=>d.sleepH!=null&&f(d));return a.length>=2?{l,v:avg(a,d=>d.kcal),n:a.length}:null;});
+  if(sg[0]&&sg[2]){const rel=sg[0].v>sg[2].v*1.05;cards.push({k:'sleep',sub:'Søvn og spisning',h:rel?'Korte nætter → mere mad':'Søvnen påvirker ikke maden',badge:rel?['Sammenhæng','b-rel']:['Stabilt','b-ok'],
+    body:bars(sg.filter(Boolean),x=>x.l,x=>rel&&x===sg[0],'var(--tomato)'),more:rel?`Efter nætter under 6½ time spiser du i snit ${nf(Math.round(sg[0].v/10)*10)} kcal. Efter mindst 7 timers søvn er det ${nf(Math.round(sg[2].v/10)*10)} kcal – ${nf(Math.round((sg[0].v-sg[2].v)/10)*10)} kcal mindre. Søvnen er en af dine stærkeste genveje.`:'Du spiser nogenlunde det samme, uanset hvor længe du har sovet.'});}
+  const dd=[0,1,2,3,4,5,6].map(i=>{const a=L.filter(d=>d.sinceDose===i);return a.length>=2?{l:'D'+i,i,v:avg(a,d=>d.kcal)}:null;}).filter(Boolean);
+  if(dd.length>=5){const m=avg(dd,x=>x.v),hiDays=dd.filter(x=>x.v>m*1.05),late=hiDays.filter(x=>x.i>=4);cards.push({k:'dose',sub:'Appetit gennem dosisugen',h:late.length?`Dag ${late[0].i}–${late.at(-1).i} er de sværeste`:'Appetitten er stabil hele ugen',badge:late.length?['Mønster','b-pat']:['Stabilt','b-ok'],
+    body:bars(dd,x=>x.l,x=>late.length&&x.i>=4&&x.v>m*1.05,'var(--carb)'),more:late.length?`Du spiser mest på dag ${andList(late.map(x=>x.i))} efter dosis – i snit ${nf(Math.round((avg(late,x=>x.v)-m)/10)*10)} kcal over ugens gennemsnit. Mentoren lægger et ekstra proteinrigt mellemmåltid ind de dage.`:'Der er ikke stor forskel på, hvor meget du spiser hen over dosisugen.'});}
+  const mi=mealCountInsight();
+  if(mi){cards.push({k:'meals',sub:'Antal måltider om dagen',h:`${mi.best.lab} måltider passer bedst til dig`,badge:['Godt','b-ok'],
+    body:bars(mi.groups.map(g=>({l:g.lab+' mål.',v:g.kcal,g})),x=>x.l,x=>x.g===mi.best,'var(--acc)'),more:mi.groups.map(g=>`${g.lab} måltider: ${nf(Math.round(g.kcal/10)*10)} kcal i snit (${g.n} dage)`).join(' · ')+'.'});}
+  $('anlSec').hidden=!cards.length;
+  $('anl').innerHTML=cards.map(c=>`<button class="ac" data-k="${c.k}" aria-expanded="${!!open[c.k]}"><div class="ac-h"><div><small>${c.sub}</small><b>${esc(c.h)}</b></div><span class="badge2 ${c.badge[1]}">${c.badge[0]}</span></div>${c.body}${open[c.k]?`<p>${esc(c.more)}</p>`:''}</button>`).join('');
+  $('anl').querySelectorAll('.ac').forEach(b=>b.onclick=()=>{drawAnl.open={...open,[b.dataset.k]:!open[b.dataset.k]};drawAnl();});}
+
+
+/* ===== opstart ===== */
+function applyTheme(){const t=S().theme;if(t==='light'||t==='dark')document.documentElement.dataset.theme=t;else delete document.documentElement.dataset.theme;}
+const onb={s:0,p:{}};
+function onbSteps(){const st=S(),R=reminders();return [
+ {k:'OPRET KONTO',h:'Velkommen til Meal Mentor',s:'Din AI-mentor til hvornår, hvor tit og hvor meget du skal spise.',o:[['','Fortsæt med Apple','Hurtigst på iPhone','acc'],['G','Fortsæt med Google','Brug din Google-konto'],['✉️','Fortsæt med e-mail','Få et login-link på mail']],acct:1},
+ {k:'DIT MÅL',h:'Hvad vil du helst?',s:'Vi bruger det til at sætte dit daglige mål for kalorier og protein.',key:'goal',def:st.goal||'stabil',o:[['⬇️','Tabe mig','Roligt og sundt tempo','tab'],['⚖️','Holde vægten stabil på GLP-1','Spis nok – og det rigtige','stabil'],['📉','Trappe ud af GLP-1','Uden at tage på igen','ned'],['💪','Stærkere og mere markeret','Mere protein og træning','styrke']]},
+ {k:'AKTIVITET',h:'Hvor aktiv er du?',s:'Tænk på en almindelig uge.',key:'act',def:String(st.act||'1.375'),o:[['🪑','Mest stillesiddende','Kontor og lidt gåture','1.2'],['🚶','Let aktiv','Gåture eller træning 1–2 gange','1.375'],['🏃','Moderat aktiv','Træning 3–4 gange om ugen','1.55'],['🔥','Meget aktiv','Hård træning næsten hver dag','1.725']]},
+ {k:'PÅMINDELSER',h:'Hvornår må vi minde dig om noget?',s:'Mentoren sender dem, når det passer bedst for dig. Du kan altid ændre det under Profil.',multi:1,def:R,o:[['🍽️','Måltider','Med forslag til hvad du kan spise','meal'],['💉','Dosisdag','Morgenen på din dosisdag','dose'],['⏰','Spisepause','30 min før den starter','pause'],['🌙','Aftenens check-in','Hvordan er dagen gået?','checkin']]},
+ {k:'TEMA',h:'Vælg dit look',s:'Lyst, mørkt eller som din telefon.',key:'theme',def:st.theme||'auto',o:[['☀️','Lys','Hvid og grå','light'],['🌙','Mørk','Grafit – til aftenen','dark'],['◐','Automatisk','Følger din telefon','auto']]}];}
+function drawOnb(){const S_=onbSteps(),i=onb.s,c=S_[i];
+  $('onbBar').style.width=`${(i+1)/S_.length*100}%`;$('onbStep').textContent=`${i+1}/${S_.length}`;$('onbBack').disabled=!i;
+  $('onbK').textContent=c.k;$('onbH').textContent=c.h;$('onbS').textContent=c.acct&&cloud.state==='ok'?`Du er logget ind${cloud.name?' som '+cloud.name:''} – dine data gemmes på din konto.`:c.s;
+  const val=c.multi?(onb.p.rem||c.def):(onb.p[c.key]??c.def);
+  $('onbOpts').innerHTML=c.o.map(([ic,t,d,v],oi)=>{const on=c.multi?!!val[v]:c.acct?false:String(val)===v;return `<button data-v="${v||''}" data-i="${oi}" class="${c.acct&&v==='acc'?'acc':''}" ${c.acct?'':`aria-pressed="${on}"`}><span class="oi">${ic}</span><span><b>${t}</b><small>${d}</small></span><span class="om">${c.multi?(on?'●':'○'):on?'✓':''}</span></button>`;}).join('');
+  $('onbOpts').querySelectorAll('button').forEach(b=>b.onclick=()=>{if(c.acct){if(window.mmAuth&&!window.mmAuth.user()){store.set('mm-onb',{s:1});return window.mmAuth.login(['apple','google','email'][+b.dataset.i]);}onb.s=1;return drawOnb();}
+    if(c.multi)onb.p.rem={...val,[b.dataset.v]:!val[b.dataset.v]};else{onb.p[c.key]=b.dataset.v;if(c.key==='theme'){D.settings={...S(),theme:b.dataset.v};applyTheme();}}drawOnb();});
+  $('onbNext').textContent=c.acct?'Jeg har allerede en konto':i===S_.length-1?'Kom i gang':'Næste';
+}
+function openOnb(){onb.s=window.mmAuth&&window.mmAuth.user()?1:0;onb.p={};$('onb').hidden=false;drawOnb();}
+function finishOnb(){const p=onb.p,st=S();D.settings={...st,...(p.goal?{goal:p.goal}:{}),...(p.act?{act:p.act}:{}),...(p.theme?{theme:p.theme}:{}),reminders:{...reminders(),...(p.rem||{})},onboarded:true};
+  applyTheme();save();try{fillSettings();}catch(e){}$('onb').hidden=true;location.hash='#vejleder';
+  if(!st.kcal)setTimeout(()=>toast('Sæt din højde, alder og vægt under Profil, så beregner vi dit mål'),400);}
+$('onbNext').onclick=()=>{const n=onbSteps().length;if(onb.s===0){finishOnb();return;}if(onb.s>=n-1)finishOnb();else{onb.s++;drawOnb();}};
+$('onbBack').onclick=()=>{onb.s=Math.max(0,onb.s-1);drawOnb();};
+$('onbSkip').onclick=finishOnb;
+$('onbAgain').onclick=openOnb;
+applyTheme();
+if(!S().onboarded&&!D.meals.length&&!D.demo)openOnb();
+
+
+/* ===== tilbage-pile ===== */
+var backFrom=null;
+function goBack(){const b=backFrom;backFrom=null;$('backBtn').hidden=true;$('panelBack').hidden=true;
+  if(!b){location.hash='#vejleder';return;}
+  if(location.hash!==b.hash)location.hash=b.hash;
+  if(b.sheet)setTimeout(openSheet,60);}
+$('backBtn').onclick=goBack;
+document.querySelectorAll('.tabs a').forEach(a=>a.addEventListener('click',()=>{backFrom=null;$('backBtn').hidden=true;$('panelBack').hidden=true;}));
+$('panelBack').onclick=()=>{panel.hidden=true;goBack();};
+addEventListener('hashchange',()=>{const v=location.hash||'#vejleder';$('backBtn').hidden=!(backFrom&&v!==backFrom.hash);if(backFrom&&v===backFrom.hash&&!panel.hidden)return;});
+
+
+/* ===== råd: fold ud ===== */
+document.addEventListener('click',e=>{const li=e.target.closest('.recs li');if(!li)return;const o=li.classList.toggle('open');li.setAttribute('aria-expanded',String(o));});
+document.addEventListener('keydown',e=>{if((e.key==='Enter'||e.key===' ')&&e.target.matches&&e.target.matches('.recs li')){e.preventDefault();e.target.click();}});
+
+
+/* ===== login på mealmentor.com ===== */
+function drawAuth(){const b=$('authBtn');if(!window.mmAuth){b.hidden=true;return;}const u=window.mmAuth.user();b.hidden=false;b.className=u?'ghost':'go';b.textContent=u?`Log ud${u.email?' ('+u.email+')':''}`:'Log ind';
+  b.onclick=()=>u?window.mmAuth.logout():window.mmAuth.login();}
+if(window.mmAuth)window.mmAuth.ready.then(()=>{drawAuth();if(window.mmAuth.user()&&!$('onb').hidden&&onb.s===0){onb.s=1;drawOnb();}});
+
+}
+</script>
+</body>
+</html>
