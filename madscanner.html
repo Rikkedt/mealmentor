@@ -115,7 +115,7 @@ td input{width:5.5em;font:16px Inter,sans-serif;padding:6px 8px;border-radius:8p
 .chip{background:var(--soft);border-radius:999px;padding:6px 14px;font-size:14px;font-weight:600;white-space:nowrap}
 .chip.ph{background:var(--prot);color:#fff}.chip.ph.ned{background:var(--fat);color:#22160f}.chip.ph.op{background:var(--carb);color:#fff}
 .seg{display:inline-flex;border:1px solid var(--line);border-radius:999px;padding:3px}
-.langrow{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-top:14px}.seg button{min-height:40px;background:transparent}.seg button[aria-pressed=true]{background:var(--ink);color:var(--bg)}
+.langrow + .langrow{margin-top:10px}.langrow{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-top:14px}.seg button{min-height:40px;background:transparent}.seg button[aria-pressed=true]{background:var(--ink);color:var(--bg)}
 .dnav{display:flex;align-items:center;gap:10px;margin:18px 0 6px;flex-wrap:wrap}
 .dnav button{min-height:40px;padding:0 14px}
 .dnav b{font:700 22px Rubik,sans-serif;min-width:9em}
@@ -522,10 +522,10 @@ details.adv{margin-top:10px}details.adv>summary{cursor:pointer;color:var(--mute)
 input,select,textarea{font-size:16px!important}
 html{-webkit-text-size-adjust:100%;text-size-adjust:100%}
 
-.onb-opts.locked button{opacity:.4;pointer-events:auto}
+.onb-opts.locked button{opacity:1;pointer-events:auto}
 .onb-opts.locked button.acc{background:light-dark(rgba(255,255,255,.7),rgba(34,37,43,.8));color:var(--ink)}
 .onb-opts.locked button.acc small{color:var(--mute)}
-.onb-next.locked{opacity:.4}
+.onb-next.locked{opacity:.85}
 
 .startc{border:2px solid var(--tomato);border-radius:22px;padding:16px;margin-bottom:16px;background:light-dark(#FFF7F4,#2A201E);display:grid;gap:12px;animation:scGlow 2.4s ease-in-out infinite}
 @keyframes scGlow{0%,100%{box-shadow:0 0 0 0 rgba(232,115,90,.0)}50%{box-shadow:0 0 0 6px rgba(232,115,90,.18)}}
@@ -860,7 +860,7 @@ body.kb .tabs,body.kb #botFab{display:none!important}
 
 <div id="v-prof" hidden>
 <main class="band"><div class="wrap profile">
-<section class="pcard" id="pAccount"><h2>Min profil</h2><p id="syncInfo2" class="small"></p><div class="pstats" id="pStats"></div><div class="langrow"><small>Sprog · Language</small><div class="seg" id="langSeg"><button type="button" data-lang="da">Dansk</button><button type="button" data-lang="en">English</button></div></div></section>
+<section class="pcard" id="pAccount"><h2>Min profil</h2><p id="syncInfo2" class="small"></p><div class="pstats" id="pStats"></div><div class="langrow"><small>Visning</small><div class="seg" id="themeSeg"><button type="button" data-th="light">Lys</button><button type="button" data-th="dark">Mørk</button><button type="button" data-th="auto">Automatisk</button></div></div><div class="langrow"><small>Sprog · Language</small><div class="seg" id="langSeg"><button type="button" data-lang="da">Dansk</button><button type="button" data-lang="en">English</button></div></div></section>
 
 <section class="pcard"><h2>Mål og krop</h2><form class="form plain" id="fSet">
 <label>Dit mål<select name="goal"><option value="stabil">Holde vægten stabil på GLP-1</option><option value="ned">Trappe ud af GLP-1 uden at tage på</option><option value="tab">Tabe mig</option><option value="styrke">Blive stærkere og mere markeret, men holde vægten</option></select></label>
@@ -905,7 +905,7 @@ body.kb .tabs,body.kb #botFab{display:none!important}
 
 <section class="pcard"><h2>Konto og data</h2><p class="small" id="syncInfo">Kun på denne enhed.</p>
 <div class="btns"><button class="go" id="authBtn" hidden>Log ind</button><button class="ghost" id="delAcc" hidden>Slet min konto</button></div>
-<details class="adv"><summary>Avanceret</summary>
+<details class="adv" hidden><summary>Avanceret</summary>
 <div class="btns"><button class="ghost" id="copyData">Kopiér data</button><button class="ghost" id="clearAll">Slet alle data</button></div>
 <textarea class="data" id="importData" placeholder="Indsæt backup her" aria-label="Indsæt backup" style="margin-top:12px"></textarea>
 <div class="btns"><button class="ghost" id="doImport">Gendan</button></div></details>
@@ -2225,6 +2225,12 @@ function drawAnl(){const L=logged(range(56)),cards=[];const open=drawAnl.open||{
 
 /* ===== opstart ===== */
 function applyTheme(){const t=S().theme;if(t==='light'||t==='dark')document.documentElement.dataset.theme=t;else delete document.documentElement.dataset.theme;}
+/* ===== visning (lys/mørk) ===== */
+(function(){const box=document.getElementById('themeSeg');if(!box)return;
+  const draw=()=>{const cur=S().theme||'auto';box.querySelectorAll('button').forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.th===cur)));};
+  box.querySelectorAll('button').forEach(b=>b.onclick=()=>{D.settings={...S(),theme:b.dataset.th};applyTheme();save();draw();});
+  setTimeout(draw,0);window.addEventListener('hashchange',draw);})();
+
 const onb={s:0,p:{}};
 function onbSteps(){const st=S(),R=reminders();return [
  {k:'OPRET KONTO',h:'Velkommen til Meal Mentor AI',s:'Din AI-mentor til hvornår, hvor tit og hvor meget du skal spise.',o:[['','Fortsæt med Apple','Hurtigst på iPhone','acc'],['G','Fortsæt med Google','Brug din Google-konto'],['✉️','Fortsæt med e-mail','Få et login-link på mail']],acct:1},

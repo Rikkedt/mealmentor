@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,viewport-fit=cover">
-<title>Meal Mentor AI</title><meta name="mm-version" content="bd6012b771"><link rel="manifest" href="/manifest.webmanifest"><link rel="apple-touch-icon" href="/apple-touch-icon.png"><link rel="icon" href="/icon-192.png"><meta name="theme-color" content="#F1F1F4"><link rel="stylesheet" href="/mm.css"><script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script><script src="/mm.en.js"></script>
+<title>Meal Mentor AI</title><meta name="mm-version" content="bef3f0d0a4"><link rel="manifest" href="/manifest.webmanifest"><link rel="apple-touch-icon" href="/apple-touch-icon.png"><link rel="icon" href="/icon-192.png"><meta name="theme-color" content="#F1F1F4"><link rel="stylesheet" href="/mm.css"><script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script><script src="/mm.en.js"></script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Inter+Tight:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <style>
@@ -115,7 +115,7 @@ td input{width:5.5em;font:16px Inter,sans-serif;padding:6px 8px;border-radius:8p
 .chip{background:var(--soft);border-radius:999px;padding:6px 14px;font-size:14px;font-weight:600;white-space:nowrap}
 .chip.ph{background:var(--prot);color:#fff}.chip.ph.ned{background:var(--fat);color:#22160f}.chip.ph.op{background:var(--carb);color:#fff}
 .seg{display:inline-flex;border:1px solid var(--line);border-radius:999px;padding:3px}
-.langrow{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-top:14px}.seg button{min-height:40px;background:transparent}.seg button[aria-pressed=true]{background:var(--ink);color:var(--bg)}
+.langrow + .langrow{margin-top:10px}.langrow{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-top:14px}.seg button{min-height:40px;background:transparent}.seg button[aria-pressed=true]{background:var(--ink);color:var(--bg)}
 .dnav{display:flex;align-items:center;gap:10px;margin:18px 0 6px;flex-wrap:wrap}
 .dnav button{min-height:40px;padding:0 14px}
 .dnav b{font:700 22px Rubik,sans-serif;min-width:9em}
@@ -522,10 +522,10 @@ details.adv{margin-top:10px}details.adv>summary{cursor:pointer;color:var(--mute)
 input,select,textarea{font-size:16px!important}
 html{-webkit-text-size-adjust:100%;text-size-adjust:100%}
 
-.onb-opts.locked button{opacity:.4;pointer-events:auto}
+.onb-opts.locked button{opacity:1;pointer-events:auto}
 .onb-opts.locked button.acc{background:light-dark(rgba(255,255,255,.7),rgba(34,37,43,.8));color:var(--ink)}
 .onb-opts.locked button.acc small{color:var(--mute)}
-.onb-next.locked{opacity:.4}
+.onb-next.locked{opacity:.85}
 
 .startc{border:2px solid var(--tomato);border-radius:22px;padding:16px;margin-bottom:16px;background:light-dark(#FFF7F4,#2A201E);display:grid;gap:12px;animation:scGlow 2.4s ease-in-out infinite}
 @keyframes scGlow{0%,100%{box-shadow:0 0 0 0 rgba(232,115,90,.0)}50%{box-shadow:0 0 0 6px rgba(232,115,90,.18)}}
@@ -860,7 +860,7 @@ body.kb .tabs,body.kb #botFab{display:none!important}
 
 <div id="v-prof" hidden>
 <main class="band"><div class="wrap profile">
-<section class="pcard" id="pAccount"><h2>My profile</h2><p id="syncInfo2" class="small"></p><div class="pstats" id="pStats"></div><div class="langrow"><small>Sprog · Language</small><div class="seg" id="langSeg"><button type="button" data-lang="da">Dansk</button><button type="button" data-lang="en">English</button></div></div></section>
+<section class="pcard" id="pAccount"><h2>My profile</h2><p id="syncInfo2" class="small"></p><div class="pstats" id="pStats"></div><div class="langrow"><small>Appearance</small><div class="seg" id="themeSeg"><button type="button" data-th="light">Light</button><button type="button" data-th="dark">Dark</button><button type="button" data-th="auto">Automatic</button></div></div><div class="langrow"><small>Sprog · Language</small><div class="seg" id="langSeg"><button type="button" data-lang="da">Dansk</button><button type="button" data-lang="en">English</button></div></div></section>
 
 <section class="pcard"><h2>Goals and body</h2><form class="form plain" id="fSet">
 <label>Your goal<select name="goal"><option value="stabil">Keep my weight stable on GLP-1</option><option value="ned">Taper off GLP-1 without regaining weight</option><option value="tab">Lose weight</option><option value="styrke">Get stronger and more toned, but keep the weight</option></select></label>
@@ -905,7 +905,7 @@ body.kb .tabs,body.kb #botFab{display:none!important}
 
 <section class="pcard"><h2>Account and data</h2><p class="small" id="syncInfo">Only on this device.</p>
 <div class="btns"><button class="go" id="authBtn" hidden>Log in</button><button class="ghost" id="delAcc" hidden>Delete my account</button></div>
-<details class="adv"><summary>Advanced</summary>
+<details class="adv" hidden><summary>Advanced</summary>
 <div class="btns"><button class="ghost" id="copyData">Copy data</button><button class="ghost" id="clearAll">Delete all data</button></div>
 <textarea class="data" id="importData" placeholder="Paste backup here" aria-label="Paste backup" style="margin-top:12px"></textarea>
 <div class="btns"><button class="ghost" id="doImport">Restore</button></div></details>
@@ -2225,6 +2225,12 @@ function drawAnl(){const L=logged(range(56)),cards=[];const open=drawAnl.open||{
 
 /* ===== opstart ===== */
 function applyTheme(){const t=S().theme;if(t==='light'||t==='dark')document.documentElement.dataset.theme=t;else delete document.documentElement.dataset.theme;}
+/* ===== visning (lys/mørk) ===== */
+(function(){const box=document.getElementById('themeSeg');if(!box)return;
+  const draw=()=>{const cur=S().theme||'auto';box.querySelectorAll('button').forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.th===cur)));};
+  box.querySelectorAll('button').forEach(b=>b.onclick=()=>{D.settings={...S(),theme:b.dataset.th};applyTheme();save();draw();});
+  setTimeout(draw,0);window.addEventListener('hashchange',draw);})();
+
 const onb={s:0,p:{}};
 function onbSteps(){const st=S(),R=reminders();return [
  {k:'CREATE ACCOUNT',h:'Welcome to Meal Mentor AI',s:'Your AI mentor for when, how often and how much to eat.',o:[['','Continue with Apple','Fastest on iPhone','acc'],['G','Continue with Google','Use your Google account'],['✉️','Continue with email','Get a login link by email']],acct:1},
