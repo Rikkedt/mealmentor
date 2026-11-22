@@ -1,3 +1,8 @@
+/* Sprog: vælg / eller /en/ ud fra valg eller telefonens sprog */
+(function(){try{if(location.protocol==='file:')return;const p=location.pathname,onEn=/^\/en(\/|$)/.test(p);
+  if(!/^\/(index\.html)?$|^\/en(\/(index\.html)?)?$/.test(p))return;
+  let l=localStorage.getItem('mm-lang');if(!l)l=/^da/i.test(navigator.language||'da')?'da':'en';
+  if(l==='en'&&!onEn)location.replace('/en/'+location.search+location.hash);else if(l==='da'&&onEn)location.replace('/'+location.search+location.hash);}catch(e){}})();
 function daErr(e){const m=(e&&e.message)||'';let t;
   if((t=m.match(/after (\d+) seconds?/i)))return 'Vent '+t[1]+' sekunder, og prøv så igen.';
   if(/rate limit|too many/i.test(m))return 'Der er sendt for mange mails lige nu. Prøv igen om lidt.';

@@ -115,7 +115,7 @@ td input{width:5.5em;font:16px Inter,sans-serif;padding:6px 8px;border-radius:8p
 .chip{background:var(--soft);border-radius:999px;padding:6px 14px;font-size:14px;font-weight:600;white-space:nowrap}
 .chip.ph{background:var(--prot);color:#fff}.chip.ph.ned{background:var(--fat);color:#22160f}.chip.ph.op{background:var(--carb);color:#fff}
 .seg{display:inline-flex;border:1px solid var(--line);border-radius:999px;padding:3px}
-.seg button{min-height:40px;background:transparent}.seg button[aria-pressed=true]{background:var(--ink);color:var(--bg)}
+.langrow{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-top:14px}.seg button{min-height:40px;background:transparent}.seg button[aria-pressed=true]{background:var(--ink);color:var(--bg)}
 .dnav{display:flex;align-items:center;gap:10px;margin:18px 0 6px;flex-wrap:wrap}
 .dnav button{min-height:40px;padding:0 14px}
 .dnav b{font:700 22px Rubik,sans-serif;min-width:9em}
@@ -860,7 +860,7 @@ body.kb .tabs,body.kb #botFab{display:none!important}
 
 <div id="v-prof" hidden>
 <main class="band"><div class="wrap profile">
-<section class="pcard" id="pAccount"><h2>Min profil</h2><p id="syncInfo2" class="small"></p><div class="pstats" id="pStats"></div></section>
+<section class="pcard" id="pAccount"><h2>Min profil</h2><p id="syncInfo2" class="small"></p><div class="pstats" id="pStats"></div><div class="langrow"><small>Sprog · Language</small><div class="seg" id="langSeg"><button type="button" data-lang="da">Dansk</button><button type="button" data-lang="en">English</button></div></div></section>
 
 <section class="pcard"><h2>Mål og krop</h2><form class="form plain" id="fSet">
 <label>Dit mål<select name="goal"><option value="stabil">Holde vægten stabil på GLP-1</option><option value="ned">Trappe ud af GLP-1 uden at tage på</option><option value="tab">Tabe mig</option><option value="styrke">Blive stærkere og mere markeret, men holde vægten</option></select></label>
@@ -2310,6 +2310,11 @@ document.addEventListener('click',e=>{const b=e.target.closest('[data-start]');i
   location.hash='#profil';setTimeout(()=>{const f=$('fSet');if(!f)return;f.scrollIntoView({behavior:'smooth',block:'start'});const age=f.elements.age||f.querySelector('input');if(age)setTimeout(()=>age.focus({preventScroll:true}),400);},250);});
 
 }
+
+/* ===== sprog ===== */
+(function(){const cur=document.documentElement.lang==='en'?'en':'da';const box=document.getElementById('langSeg');if(!box)return;
+  box.querySelectorAll('button').forEach(b=>{b.setAttribute('aria-pressed',String(b.dataset.lang===cur));b.onclick=()=>{try{localStorage.setItem('mm-lang',b.dataset.lang);}catch(e){}
+    if(b.dataset.lang!==cur&&location.protocol!=='file:')location.href=b.dataset.lang==='en'?'/en/':'/';};});})();
 </script>
 </body>
 </html>
