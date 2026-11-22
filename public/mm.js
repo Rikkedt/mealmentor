@@ -65,7 +65,8 @@ function daErr(e){const m=(e&&e.message)||'';let t;
     const { error } = await sb.auth.signInWithOAuth({ provider, options: { redirectTo: location.origin } });
     if (error) emailDialog('Det virkede ikke. Log ind med din e-mail i stedet.');
   }
-  window.mmAuth = { ready, login, logout: async () => { await ready; await sb.auth.signOut(); }, user: () => session && session.user };
+  window.mmAuth = { ready, login, logout: async () => { await ready; await sb.auth.signOut(); },
+    deleteAccount: async () => { await ready; const { error } = await sb.rpc('delete_my_account'); if (error) throw error; try { await sb.auth.signOut({ scope: 'local' }); } catch (e) {} }, user: () => session && session.user };
 
   /* ---------- data ---------- */
   const col = {

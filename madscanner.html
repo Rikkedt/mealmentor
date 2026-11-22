@@ -746,7 +746,7 @@ html{-webkit-text-size-adjust:100%;text-size-adjust:100%}
 <ul class="entries" id="entries"></ul><button class="ghost" id="entMore" hidden>Vis flere</button></section>
 
 <section class="pcard"><h2>Konto og data</h2><p class="small" id="syncInfo">Kun på denne enhed.</p>
-<div class="btns"><button class="go" id="authBtn" hidden>Log ind</button><button class="ghost" id="onbAgain">Vis opstart igen</button></div>
+<div class="btns"><button class="go" id="authBtn" hidden>Log ind</button><button class="ghost" id="onbAgain">Vis opstart igen</button><button class="ghost" id="delAcc" hidden>Slet min konto</button></div>
 <details class="adv"><summary>Avanceret</summary>
 <div class="btns"><button class="ghost" id="copyData">Kopiér data</button><button class="ghost" id="clearAll">Slet alle data</button></div>
 <textarea class="data" id="importData" placeholder="Indsæt backup her" aria-label="Indsæt backup" style="margin-top:12px"></textarea>
@@ -1711,6 +1711,8 @@ function refreshVej(){if(!$('v-prof').hidden)drawProfile();if($('v-vej').hidden)
 /* data */
 $('copyData').onclick=async()=>{try{await navigator.clipboard.writeText(JSON.stringify(D));$('dataMsg').textContent='Kopieret.';}catch(e){$('importData').value=JSON.stringify(D);$('dataMsg').textContent='Markér og kopiér teksten i feltet.';}};
 $('doImport').onclick=()=>{try{const x=JSON.parse($('importData').value);if(!['meals','weights','doses','workouts'].every(k=>Array.isArray(x[k])))throw 0;D={...blank(),...x};if(!D.sleep)D.sleep=[];save();drawLog();fillSettings();$('dataMsg').textContent='Gendannet.';$('importData').value='';}catch(e){$('dataMsg').textContent='Ikke en gyldig backup.';}};
+let delArm=false;$('delAcc').onclick=async()=>{const b=$('delAcc');if(!delArm){delArm=true;b.textContent='Tryk igen: slet konto og alle data for altid';setTimeout(()=>{delArm=false;b.textContent='Slet min konto';},5000);return;}
+  b.disabled=true;b.textContent='Sletter …';try{await window.mmAuth.deleteAccount();try{localStorage.clear();}catch(e){}location.replace(location.pathname);}catch(e){b.disabled=false;delArm=false;b.textContent='Slet min konto';$('dataMsg').textContent='Kontoen kunne ikke slettes. Prøv igen, eller skriv til info@mealmentorai.com.';}};
 let clearArm=false;$('clearAll').onclick=()=>{if(!clearArm){clearArm=true;$('clearAll').textContent='Tryk igen for at slette';setTimeout(()=>{clearArm=false;$('clearAll').textContent='Slet alle data';},4000);return;}
   D=blank();noteTried=false;noteKeyTried='';save();drawLog();fillSettings();clearArm=false;$('clearAll').textContent='Slet alle data';$('dataMsg').textContent='Alle data er slettet.';};
 
@@ -1902,7 +1904,7 @@ document.addEventListener('keydown',e=>{if((e.key==='Enter'||e.key===' ')&&e.tar
 
 
 /* ===== login på mealmentor.com ===== */
-function drawAuth(){const b=$('authBtn');if(!window.mmAuth){b.hidden=true;return;}const u=window.mmAuth.user();b.hidden=false;b.className=u?'ghost':'go';b.textContent=u?`Log ud${u.email?' ('+u.email+')':''}`:'Log ind';
+function drawAuth(){const b=$('authBtn');if(!window.mmAuth){b.hidden=true;return;}const u=window.mmAuth.user();$('delAcc').hidden=!u;b.hidden=false;b.className=u?'ghost':'go';b.textContent=u?`Log ud${u.email?' ('+u.email+')':''}`:'Log ind';
   b.onclick=()=>u?window.mmAuth.logout():S().consent?window.mmAuth.login():openOnb();}
 if(window.mmAuth)window.mmAuth.ready.then(()=>{drawAuth();if(window.mmAuth.user()&&!$('onb').hidden&&onb.s===0){onb.s=1;drawOnb();}});
 
@@ -1910,7 +1912,7 @@ if(window.mmAuth)window.mmAuth.ready.then(()=>{drawAuth();if(window.mmAuth.user(
 /* ===== privatliv og vilkår ===== */
 const LEGAL=/claude|usercontent|^$/.test(location.hostname)||location.protocol==='file:'?'https://mealmentor.rikkedt.workers.dev':'';
 $('lnkTerms').href=LEGAL+'/vilkaar/';$('lnkPriv').href=LEGAL+'/privatliv/';
-$('legalLinks').innerHTML=`<a href="${LEGAL}/privatliv/" target="_blank" rel="noopener">Privatlivspolitik</a> · <a href="${LEGAL}/vilkaar/" target="_blank" rel="noopener">Vilkår</a> · Slet konto: skriv til <a href="mailto:info@mealmentorai.com">info@mealmentorai.com</a>`;
+$('legalLinks').innerHTML=`<a href="${LEGAL}/privatliv/" target="_blank" rel="noopener">Privatlivspolitik</a> · <a href="${LEGAL}/vilkaar/" target="_blank" rel="noopener">Vilkår</a>`;
 
 
 $('onbOk').addEventListener('change',()=>{if(!$('onb').hidden)drawOnb();});
