@@ -1184,7 +1184,15 @@ piB:"40,50 43,58 52,84 44,72 40,88 45,72 41,88 60,64 74,72 61,65 75,73",
 jjB:"60,16 60,27 60,55 48,18 40,6 72,18 80,6 52,72 44,90 68,72 76,90",
 starB:"60,12 60,23 60,51 44,16 32,8 76,16 88,8 48,68 38,84 72,68 82,84",
 hkA:"60,16 60,27 60,55 54,41 60,35 66,41 70,49 68,56 64,72 63,72 64,90",
-hkB:"60,16 60,27 60,55 54,41 50,49 66,41 60,35 57,72 56,90 68,56 64,72"
+hkB:"60,16 60,27 60,55 54,41 50,49 66,41 60,35 57,72 56,90 68,56 64,72",
+rowB:"76,42 71,47 58,56 61,50 69,58 62,50 70,58 61,73 60,90 62,73 61,90",
+ytB:"18,80 27,83 62,86 16,76 6,68 18,74 8,64 82,87 102,87 82,87 102,87",
+dipA:"54,30 54,40 54,64 46,52 42,62 47,52 43,62 74,66 76,90 75,66 77,90",
+dipB:"54,42 54,52 54,76 40,58 42,62 41,58 43,62 74,72 76,90 75,72 77,90",
+stwStA:"60,16 60,27 60,55 70,38 82,38 50,38 38,38 55,72 50,90 65,72 70,90",
+stwStB:"60,16 60,27 60,55 66,36 72,30 54,40 48,46 55,72 50,90 65,72 70,90",
+bearA:"28,62 36,66 66,66 36,78 36,90 38,78 38,90 66,86 86,90 66,86 86,90",
+bearB:"28,60 36,64 66,62 36,77 36,90 38,77 38,90 66,82 86,90 66,82 86,90"
 };
 const pose={};for(const k in P){const a=P[k].split(' ').map(s=>s.split(',').map(Number));if(!a[11])a[11]=[(a[1][0]+a[2][0])/2,(a[1][1]+a[2][1])/2];pose[k]=a;}
 const lerp=(A,B,t)=>A.map((p,i)=>[p[0]+(B[i][0]-p[0])*t,p[1]+(B[i][1]-p[1])*t]);
@@ -1261,6 +1269,13 @@ twist:["Russian twist","Læn dig lidt tilbage og drej overkroppen fra side til s
 crunch:["Mavebøjninger","Løft skulderbladene fra gulvet. Hagen væk fra brystet.","crunchA","crunchB"],
 bike:["Albue til knæ","Før albue mod modsat knæ og skift i et roligt tempo.","bikeA","bikeB",0,30],
 legs:["Liggende benløft","Lænden presset mod gulvet. Sænk benene så langt du kan styre det.","legUp","legDown",0,45],
+standTwist:["Stående rotation","Stå med let bøjede knæ, armene ud foran dig. Drej overkroppen roligt fra side til side.","stwStA","stwStB"],
+bear:["Bjørne-hold","På alle fire med knæene to centimeter over gulvet. Hold ryggen flad, og træk vejret roligt.","bearA","bearB"],
+boat:["Bådstilling","Sid i en V med benene løftet og armene strakt frem. Hold – bøj knæene for en lettere version.","jkB",null,0,30],
+pushHold:["Armstræk-hold","Hold dig halvvejs nede i en armstrækning med kroppen i én lige linje. Gå på knæ for en lettere version.","pushB",null,0,30],
+row:["Foroverbøjet roning","Bøj frem med ret ryg, og træk albuerne bagud mod hoften. Brug en vandflaske eller et elastikbånd.","rdlB","rowB"],
+ytRaise:["Y-løft på maven","Lig på maven, og løft armene i et Y fra gulvet. Klem skulderbladene sammen.","superA","ytB"],
+dips:["Dips på stol","Hænderne på kanten af en stol bag dig. Bøj albuerne, og pres dig op igen.","dipA","dipB"],
 jjack:["Sprællemand","Hop ud med arme og ben, og hop sammen igen. Uden hop: træd skiftevis ud til siden.","stand","jjB"],
 lungeAlt:["Udfald, begge ben","Langt skridt frem, og sænk det bagerste knæ mod gulvet. Skift ben, når det bipper.","lungeA","lungeB",0,0,1],
 spB:["Sideplanke, begge sider","Albuen under skulderen, hoften højt. Gå på knæ for en lettere version. Skift side, når det bipper.","sidePlB","sidePl",0,0,1],
@@ -1302,10 +1317,10 @@ scanSteps.forEach((s,i)=>X['scan'+i]=[s[0],s[1],'rest']);
 const PROGS=[
 {id:"straek",navn:"Stræk og mobilitet",sub:"Hele kroppen",w:20,r:5,ex:"fold catcow child cobra seatTw shoulder sideB quadB ham butterfly hipB calfS dog spineTw neck chest"},
 {id:"overkrop",navn:"Overkrop",sub:"Arme, bryst, skuldre",ex:"circles kpush tap plank push superman spL spR kpush roll"},
-{id:"core",navn:"Core",sub:"Stabilitet",ex:"plank bug bird spL spR climb twist plank bug child"},
+{id:"core",navn:"Core",sub:"Stabilitet og styrke",w:40,r:10,ex:"seatTw standTwist crunch bug bridge bear tap spB boat bike twist superman"},
 {id:"mave",navn:"Mave",sub:"Nedre mave og core",ex:"legs revCrunch flutter bike jackknife pullIn crunch plank cobra"},
 {id:"ben",navn:"Ben",sub:"Lår, numse, lægge",ex:"squat lungeL lungeR rdl sideLunge wallsit bridge scissor calf quadB"},
-{id:"ryg",navn:"Ryg",sub:"Stærk og smidig ryg",ex:"catcow bird superman child bridge cobra plank bird superman child"},
+{id:"ryg",navn:"Ryg",sub:"Stærk og smidig ryg",ex:"catcow pushHold spB row ytRaise dips superman bird row child"},
 {id:"fullbody",navn:"Hele kroppen",sub:"Kondi og styrke",w:40,r:10,ex:"jjack squat lungeAlt kpush plank bridge climb spB highKnees burpee tap bike rdl starjump"},
 {id:"morgen",navn:"Morgenrutine",sub:"Vågn op i kroppen",w:20,r:5,ex:"meditate child catcow dog cobra hlunge triangle fold mountain"},
 {id:"sovn",navn:"Bedre søvn",sub:"Ro før sengetid",w:20,r:5,ex:"hero child cobra camel bfold spineTw bridge kneeChest corpse"},
