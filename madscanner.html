@@ -525,6 +525,18 @@ html{-webkit-text-size-adjust:100%;text-size-adjust:100%}
 .onb-opts.locked button.acc{background:light-dark(rgba(255,255,255,.7),rgba(34,37,43,.8));color:var(--ink)}
 .onb-opts.locked button.acc small{color:var(--mute)}
 .onb-next.locked{opacity:.4}
+
+.startc{border:2px solid var(--tomato);border-radius:22px;padding:16px;margin-bottom:16px;background:light-dark(#FFF7F4,#2A201E);display:grid;gap:12px;animation:scGlow 2.4s ease-in-out infinite}
+@keyframes scGlow{0%,100%{box-shadow:0 0 0 0 rgba(232,115,90,.0)}50%{box-shadow:0 0 0 6px rgba(232,115,90,.18)}}
+@media(prefers-reduced-motion:reduce){.startc{animation:none}}
+.sc-h{display:flex;justify-content:space-between;align-items:baseline}.sc-h b{font-size:18px;font-weight:800}.sc-h span{font-size:13px;color:var(--mute);font-weight:600}
+.sc-step{display:flex;align-items:center;gap:12px;padding:12px;border-radius:16px;background:var(--card)}
+.sc-step.ok{opacity:.55}
+.sc-n{width:32px;height:32px;flex:none;border-radius:50%;display:grid;place-items:center;font-weight:800;background:var(--soft);color:var(--ink)}
+.sc-step.now .sc-n{background:var(--tomato);color:#fff}.sc-step.ok .sc-n{background:var(--acc);color:var(--accInk)}
+.sc-t{flex:1;min-width:0;display:grid;gap:2px}.sc-t b{font-size:15px}.sc-t span{font-size:13px;color:var(--mute);line-height:1.4}
+.sc-go{min-height:40px;padding:0 14px;font-size:14px;flex:none}
+@media(max-width:360px){.sc-step{flex-wrap:wrap}.sc-go{width:100%}}
 </style>
 </head>
 <body>
@@ -1184,7 +1196,7 @@ function doseEffect(){const L=logged(range(56)),a=L.filter(d=>d.sinceDose!=null&
 /* anbefalinger */
 function recs(){
   const r=[],L7=logged(range(7)),t=target(),b=baseline(),d0=doseOn(today),taper=d0&&['ned','stop'].includes(d0.phase);
-  if(!L7.length)return [['','Kom godt i gang','Tryk + Måltid eller scan maden. Registrér også søvn og vægt, så kommer de første råd om et par dage.']];
+  if(!L7.length)return [];
   const k7=avg(L7,d=>d.kcal),p7=avg(L7,d=>d.protein),pt=protTarget();
   const wNow=lastWeightBefore(today),wThen=lastWeightBefore(addDays(today,-7)),dw=wNow!=null&&wThen!=null?wNow-wThen:null;
   if(dw!=null&&dw>=0.8)r.push(['bad',`Vægten er steget ${nf(dw,1)} kg på en uge`,taper?'Det ses ofte under nedtrapning. Hold portionerne som i den stabile periode, og tal med din læge, hvis det fortsætter.':'Tjek om aftenspisning eller større portioner har sneget sig ind.']);
@@ -1268,9 +1280,13 @@ function mealCountInsight(){
   const srt=[...groups].sort((a,b)=>score(a)-score(b));const best=srt.at(0),worst=srt.at(-1);
   return Math.abs(best.kcal-worst.kcal)<80?null:{best,worst,groups};
 }
+function startCard(goalDone){const done=goalDone,logDone=!!D.meals.length;
+  return `<div class="startc"><div class="sc-h"><b>Kom i gang</b><span>${(done?1:0)+(logDone?1:0)} af 2</span></div>
+  <div class="sc-step ${done?'ok':'now'}"><span class="sc-n">${done?'✓':'1'}</span><div class="sc-t"><b>Sæt dit mål</b><span>Alder, højde og vægt – så regner vi dine kalorier og protein ud.</span></div>${done?'':'<button class="go sc-go" type="button" data-start="goal">Sæt mål</button>'}</div>
+  <div class="sc-step ${logDone?'ok':done?'now':''}"><span class="sc-n">${logDone?'✓':'2'}</span><div class="sc-t"><b>Log dit første måltid</b><span>Tag et billede af maden, eller skriv hvad du har spist.</span></div>${logDone?'':`<button class="${done?'go':'ghost'} sc-go" type="button" data-start="log">Log måltid</button>`}</div></div>`;}
 function drawLeft(){
   const r=remaining(),el=$('left');
-  if(!r.t){el.innerHTML=`<div class="left-empty">Sæt dit kalorie- og proteinmål under <b>Mål og indstillinger</b>, så viser appen, hvad du har tilbage i dag.</div>`;return;}
+  if(!r.t){el.innerHTML=startCard(false);return;}
   const kp=Math.min(100,r.d.kcal/r.t.v*100),pp=r.pt?Math.min(100,r.d.protein/r.pt*100):0;
   const big=(lab,left,unit,pct,eaten,goal)=>`<div class="lbox"><small>${left<0?lab.replace('tilbage','over målet'):lab}</small><b>${nf(Math.abs(left))}${unit}</b><div class="bar"><i style="width:${pct}%"></i></div><span class="small">${nf(eaten)} af ${nf(goal)}${unit}</span></div>`;
   const bedH=r.bed||23,toBed=bedH-r.nowH,eve=kl(Math.max(r.nowH,bedH-2.5)%24),over=r.kLeft!=null&&r.kLeft<=150;
@@ -1283,7 +1299,7 @@ function drawLeft(){
   else if(r.pLeft!=null&&r.kLeft>0&&r.pLeft*4/r.kLeft>0.4)tip='Du mangler meget protein i forhold til kalorierne: vælg skyr, hytteost, æg, kylling, fisk eller bønner.';
   else if(r.nowH>=lateH()&&r.kLeft>300)tip=`Du er i spisepausen om aftenen. Spis hellere lidt nu end et stort måltid.`;
   const pTxt=x=>x.prot!=null?` · ${isOA()?'mindst ':''}${nf(isOA()?Math.max(25,x.prot):x.prot)} g protein`:'';
-  el.innerHTML=`<div class="lgrid">${big('Kalorier tilbage',r.kLeft,'',kp,r.d.kcal,r.t.v)}${r.pt?big('Protein tilbage',r.pLeft,' g',pp,r.d.protein,r.pt):''}</div>
+  el.innerHTML=(D.meals.length?'':startCard(true))+`<div class="lgrid">${big('Kalorier tilbage',r.kLeft,'',kp,r.d.kcal,r.t.v)}${r.pt?big('Protein tilbage',r.pLeft,' g',pp,r.d.protein,r.pt):''}</div>
   <p class="lstatus">${parts.map(esc).join(' · ')}</p>
   ${next?`<div class="sec-h spis-h"><span class="sq">🍽</span><b>SPIS</b><span>${r.d.n} af ${r.pat.typ}</span></div><div class="lnext"><small>Næste måltid · ${next.late?'snarest':`ca. kl. ${kl(next.h)}`}</small><b>${next.name}: ${foodFor(next.name,next.kcal)}</b><div class="lbar"><i style="width:${kp}%"></i></div><div class="lrow"><span><b>${nf(Math.round(next.kcal/10)*10)} kcal</b>${pTxt(next)}</span><button class="lcheck" id="lCheck" aria-label="Log ${next.name.toLowerCase()}">✓</button></div>${r.slots.length>1?`<span class="lthen">Derefter: ${r.slots.slice(1).map(x=>`${x.name.toLowerCase()} ca. kl. ${kl(x.h)}, ${nf(Math.round(x.kcal/10)*10)} kcal`).join(' · ')}</span>`:''}</div>`:''}
 `;
@@ -1898,6 +1914,12 @@ $('legalLinks').innerHTML=`<a href="${LEGAL}/privatliv/" target="_blank" rel="no
 
 
 $('onbOk').addEventListener('change',()=>{if(!$('onb').hidden)drawOnb();});
+
+
+/* ===== kom i gang ===== */
+document.addEventListener('click',e=>{const b=e.target.closest('[data-start]');if(!b)return;
+  if(b.dataset.start==='log'){openSheet();return;}
+  location.hash='#profil';setTimeout(()=>{const f=$('fSet');if(!f)return;f.scrollIntoView({behavior:'smooth',block:'start'});const age=f.elements.age||f.querySelector('input');if(age)setTimeout(()=>age.focus({preventScroll:true}),400);},250);});
 
 }
 </script>
