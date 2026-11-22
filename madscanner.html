@@ -542,6 +542,15 @@ html{-webkit-text-size-adjust:100%;text-size-adjust:100%}
 #botClose.bot-x{all:unset;box-sizing:border-box;flex:0 0 auto;width:42px;height:42px;border-radius:50%;display:grid;place-items:center;background:rgba(255,255,255,.16);color:#fff;cursor:pointer;-webkit-tap-highlight-color:transparent}
 #botClose.bot-x:active{background:rgba(255,255,255,.3)}
 #botClose.bot-x svg{display:block}
+
+#botFab.botfab{width:54px;height:54px;min-height:0;padding:0;border-radius:50%;justify-content:center;gap:0;right:max(14px,env(safe-area-inset-right))}
+#botFab .botdot{position:absolute;top:9px;right:9px;width:10px;height:10px;margin:0;border:2px solid var(--acc)}
+main,.page,section.view{scroll-padding-bottom:160px}
+body{padding-bottom:calc(150px + env(safe-area-inset-bottom))}
+
+.onb-body{display:grid;gap:12px}.onb-body label{display:grid;gap:6px;font-weight:700;font-size:14px}
+.onb-body input{font:inherit;font-size:18px!important;padding:14px 16px;border-radius:16px;border:1.5px solid var(--line,#E4E5EA);background:var(--card);color:var(--ink);width:100%;box-sizing:border-box}
+.onb-body .seg{display:grid;grid-template-columns:1fr 1fr;gap:8px}.onb-body .seg button{min-height:48px;border-radius:14px;font-weight:700}
 </style>
 </head>
 <body>
@@ -762,7 +771,7 @@ html{-webkit-text-size-adjust:100%;text-size-adjust:100%}
 </div></main>
 </div>
 
-<button class="botfab" id="botFab" aria-expanded="false" aria-controls="bot"><span class="botdot"></span>Spørg Meal Mentor AI</button>
+<button class="botfab" id="botFab" aria-expanded="false" aria-controls="bot" aria-label="Spørg Meal Mentor AI"><svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12a8 8 0 0 1-11.6 7.1L4 20.5l1.4-4.9A8 8 0 1 1 21 12z"/><path d="M8.5 11.5h.01M12 11.5h.01M15.5 11.5h.01" stroke-width="2.8"/></svg><span class="botdot"></span></button>
 <section class="bot" id="bot" hidden aria-label="Mentor-chat">
 <header class="bot-h"><div><b>Meal Mentor AI</b><small id="botSub">Spørg om mad, tider og resten af dagen</small></div><button id="botClose" class="bot-x" type="button" aria-label="Luk chat"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round"><path d="M6 6l12 12M18 6L6 18"/></svg></button></header>
 <div class="bot-log" id="botLog" aria-live="polite"></div>
@@ -1671,6 +1680,8 @@ $('fWork').onsubmit=e=>{e.preventDefault();const f=e.target;
 $('fDose').onsubmit=e=>{e.preventDefault();const f=e.target;
   D.doses.push({id:uid(),d:val(f,'d'),med:val(f,'med').trim(),mg:+val(f,'mg'),phase:val(f,'phase')});save();flash(f,'Gemt');};
 $('fSet').onsubmit=e=>{e.preventDefault();const f=e.target;
+  if(!+val(f,'kcal')&&+val(f,'age')&&+val(f,'cm')&&+val(f,'wkg'))$('calcBtn').click();
+  {const kg=+val(f,'wkg');if(kg>=30&&kg<=300&&kg!==lastWeightBefore(today)){D.weights=D.weights.filter(w=>w.d!==today);D.weights.push({id:uid(),d:today,kg});}}
   D.settings={...S(),oa:val(f,'oa'),goal:val(f,'goal'),kcal:+val(f,'kcal')||null,protein:+val(f,'protein')||null,late:Math.min(24,Math.max(17,+val(f,'late')||20)),sex:val(f,'sex'),age:+val(f,'age')||null,cm:+val(f,'cm')||null,act:val(f,'act')};save();flash(f,'Gemt');};
 function fillSettings(){const f=$('fSet'),s=S();f.elements.oa.value=s.oa||'nej';document.querySelectorAll('.oaonly').forEach(e=>e.hidden=!isOA());f.elements.goal.value=s.goal||'stabil';f.elements.kcal.value=s.kcal||'';f.elements.protein.value=s.protein||'';f.elements.late.value=s.late||20;
   f.elements.sex.value=s.sex||'k';f.elements.age.value=s.age||'';f.elements.cm.value=s.cm||'';f.elements.act.value=s.act||'1.375';f.elements.wkg.value=lastWeightBefore(today)??'';$('calcOut').textContent='';}
@@ -1685,6 +1696,9 @@ $('calcBtn').onclick=()=>{
   f.elements.kcal.value=kcal;f.elements.protein.value=prot;
   out.innerHTML=`Forbrug ca. <b>${nf(Math.round(tdee/50)*50)} kcal</b> om dagen. Forslag: <b>${nf(kcal)} kcal</b>${goal==='tab'?' (−500)':''} og <b>${prot} g protein</b> (${lo}–${hi} g).${st?' Kombinér med styrketræning 2–4 gange om ugen.':''}${isOA()&&!st?' Overgangsalderen er regnet med: lidt mere protein og gerne styrketræning 2–3 gange om ugen.':''} Tryk Gem.`;
 };
+function calcTargets({sex,age,cm,kg,act,goal}){if(!age||!cm||!kg||age<18)return null;const bmr=10*kg+6.25*cm-5*age+(sex==='m'?5:-161),tdee=bmr*act,floor=sex==='m'?1500:1200;
+  let kcal=goal==='tab'?Math.max(tdee-500,floor):tdee;kcal=Math.round(kcal/50)*50;const m=cm/100,bmi=kg/(m*m),ideal=25*m*m,ref=bmi>30?ideal+0.4*(kg-ideal):kg,st=goal==='styrke';
+  return {kcal,protein:Math.round(ref*(st?1.8:goal==='tab'||age>=65||isOA()?1.5:1.4)/5)*5};}
 
 let entFilter='',entLimit=10;
 function drawEntries(){
@@ -1882,11 +1896,19 @@ function onbSteps(){const st=S(),R=reminders();return [
  {k:'OPRET KONTO',h:'Velkommen til Meal Mentor AI',s:'Din AI-mentor til hvornår, hvor tit og hvor meget du skal spise.',o:[['','Fortsæt med Apple','Hurtigst på iPhone','acc'],['G','Fortsæt med Google','Brug din Google-konto'],['✉️','Fortsæt med e-mail','Få et login-link på mail']],acct:1},
  {k:'DIT MÅL',h:'Hvad vil du helst?',s:'Vi bruger det til at sætte dit daglige mål for kalorier og protein.',key:'goal',def:st.goal||'stabil',o:[['⬇️','Tabe mig','Roligt og sundt tempo','tab'],['⚖️','Holde vægten stabil på GLP-1','Spis nok – og det rigtige','stabil'],['📉','Trappe ud af GLP-1','Uden at tage på igen','ned'],['💪','Stærkere og mere markeret','Mere protein og træning','styrke']]},
  {k:'AKTIVITET',h:'Hvor aktiv er du?',s:'Tænk på en almindelig uge.',key:'act',def:String(st.act||'1.375'),o:[['🪑','Mest stillesiddende','Kontor og lidt gåture','1.2'],['🚶','Let aktiv','Gåture eller træning 1–2 gange','1.375'],['🏃','Moderat aktiv','Træning 3–4 gange om ugen','1.55'],['🔥','Meget aktiv','Hård træning næsten hver dag','1.725']]},
+ {k:'OM DIG',h:'Lidt om dig',s:'Så kan vi regne dit mål for kalorier og protein ud. Du kan altid ændre det under Profil.',body:1},
  {k:'PÅMINDELSER',h:'Hvornår må vi minde dig om noget?',s:'Mentoren sender dem, når det passer bedst for dig. Du kan altid ændre det under Profil.',multi:1,def:R,o:[['🍽️','Måltider','Med forslag til hvad du kan spise','meal'],['💉','Dosisdag','Morgenen på din dosisdag','dose'],['⏰','Spisepause','30 min før den starter','pause'],['🌙','Aftenens check-in','Hvordan er dagen gået?','checkin']]},
  {k:'TEMA',h:'Vælg dit look',s:'Lyst, mørkt eller som din telefon.',key:'theme',def:st.theme||'auto',o:[['☀️','Lys','Hvid og grå','light'],['🌙','Mørk','Grafit – til aftenen','dark'],['◐','Automatisk','Følger din telefon','auto']]}];}
+function st0(){return S();}
 function drawOnb(){const S_=onbSteps(),i=onb.s,c=S_[i];
   $('onbBar').style.width=`${(i+1)/S_.length*100}%`;$('onbStep').textContent=`${i+1}/${S_.length}`;$('onbBack').disabled=!i;
   $('onbK').textContent=c.k;$('onbH').textContent=c.h;$('onbS').textContent=c.acct&&cloud.state==='ok'?`Du er logget ind${cloud.name?' som '+cloud.name:''} – dine data gemmes på din konto.`:c.s;
+  if(c.body){const b=onb.p.body||{sex:st0().sex||'k',age:st0().age||'',cm:st0().cm||'',kg:lastWeightBefore(today)??''};
+    $('onbOpts').innerHTML=`<div class="onb-body"><div class="seg ob-sex"><button type="button" data-sex="k" aria-pressed="${b.sex!=='m'}">Kvinde</button><button type="button" data-sex="m" aria-pressed="${b.sex==='m'}">Mand</button></div>
+      <label>Alder<input type="number" inputmode="numeric" min="18" max="100" data-b="age" value="${b.age}"></label><label>Højde (cm)<input type="number" inputmode="numeric" min="120" max="220" data-b="cm" value="${b.cm}"></label><label>Vægt (kg)<input type="number" inputmode="decimal" step="0.1" min="30" max="300" data-b="kg" value="${b.kg}"></label></div>`;
+    onb.p.body=b;$('onbOpts').querySelectorAll('[data-b]').forEach(x=>x.oninput=()=>{onb.p.body[x.dataset.b]=x.value;});
+    $('onbOpts').querySelectorAll('[data-sex]').forEach(x=>x.onclick=()=>{onb.p.body.sex=x.dataset.sex;drawOnb();});
+    $('onbConsent').hidden=true;$('onbSkip').hidden=false;$('onbOpts').classList.remove('locked');$('onbNext').classList.remove('locked');$('onbNext').textContent='Næste';return;}
   const val=c.multi?(onb.p.rem||c.def):(onb.p[c.key]??c.def);
   $('onbOpts').innerHTML=c.o.map(([ic,t,d,v],oi)=>{const on=c.multi?!!val[v]:c.acct?false:String(val)===v;return `<button data-v="${v||''}" data-i="${oi}" class="" ${c.acct?'':`aria-pressed="${on}"`}><span class="oi">${ic}</span><span><b>${t}</b><small>${d}</small></span><span class="om">${c.multi?(on?'●':'○'):on?'✓':''}</span></button>`;}).join('');
   $('onbOpts').querySelectorAll('button').forEach(b=>b.onclick=()=>{if(c.acct&&!$('onbOk').checked){$('onbConsent').classList.add('need');$('onbConsent').scrollIntoView({block:'center',behavior:'smooth'});return;}if(c.acct){D.settings={...S(),consent:new Date().toISOString()};save();if(window.mmAuth&&!window.mmAuth.user()){store.set('mm-onb',{s:1});return window.mmAuth.login(['apple','google','email'][+b.dataset.i]);}onb.s=1;return drawOnb();}
@@ -1897,14 +1919,22 @@ function drawOnb(){const S_=onbSteps(),i=onb.s,c=S_[i];
 }
 function openOnb(){onb.s=window.mmAuth&&window.mmAuth.user()?1:0;onb.p={};$('onb').hidden=false;drawOnb();}
 function finishOnb(){const p=onb.p,st=S();D.settings={...st,...(p.goal?{goal:p.goal}:{}),...(p.act?{act:p.act}:{}),...(p.theme?{theme:p.theme}:{}),reminders:{...reminders(),...(p.rem||{})},onboarded:true};
+  try{store.set('mm-onb',null);}catch(e){}
+  if(p.body){const b=p.body,age=+b.age,cm=+b.cm,kg=+String(b.kg).replace(',','.');
+    D.settings={...D.settings,sex:b.sex||'k',...(age?{age}:{}),...(cm?{cm}:{})};
+    if(kg>=30&&kg<=300){D.weights=D.weights.filter(w=>w.d!==today);D.weights.push({id:uid(),d:today,kg});}
+    const t=calcTargets({sex:b.sex,age,cm,kg,act:+(D.settings.act||1.375),goal:D.settings.goal||'stabil'});
+    if(t&&!st.kcal)D.settings={...D.settings,kcal:t.kcal,protein:t.protein};}
   applyTheme();save();try{fillSettings();}catch(e){}$('onb').hidden=true;location.hash='#vejleder';
-  if(!st.kcal)setTimeout(()=>toast('Sæt din højde, alder og vægt under Profil, så beregner vi dit mål'),400);}
+  if(!D.settings.kcal)setTimeout(()=>toast('Sæt din højde, alder og vægt under Profil, så beregner vi dit mål'),400);}
 $('onbNext').onclick=()=>{const n=onbSteps().length;if(onb.s===0){if(!$('onbOk').checked&&!S().consent){$('onbConsent').classList.add('need');return;}if($('onbOk').checked){D.settings={...S(),consent:S().consent||new Date().toISOString()};save();}if(window.mmAuth&&!window.mmAuth.user()){window.mmAuth.login('email');return;}finishOnb();return;}if(onb.s>=n-1)finishOnb();else{onb.s++;drawOnb();}};
 $('onbBack').onclick=()=>{onb.s=Math.max(0,onb.s-1);drawOnb();};
 $('onbSkip').onclick=finishOnb;
 $('onbAgain').onclick=openOnb;
 applyTheme();
-if(window.mmAuth)window.mmAuth.ready.then(()=>{if(!window.mmAuth.user()&&$('onb').hidden)openOnb();});
+if(window.mmAuth)window.mmAuth.ready.then(()=>{const u=window.mmAuth.user();if(!u){if($('onb').hidden)openOnb();return;}
+  const resume=store.get('mm-onb',null);if(resume&&$('onb').hidden){openOnb();return;}
+  setTimeout(()=>{if(!S().onboarded&&$('onb').hidden&&!D.meals.length)openOnb();},2500);});
 else if(!S().onboarded&&!D.meals.length&&!D.demo)openOnb();
 
 
