@@ -638,6 +638,14 @@ h1.brand .brand-ai{display:inline-grid;place-items:center;height:30px;padding:0 
 body.kb .tabs,body.kb #botFab{display:none!important}
 
 #sound.on{background:var(--ink)!important;color:var(--bg)!important;border-color:var(--ink)!important}
+
+.lg{margin-top:28px}
+.lg-row{display:flex;align-items:center;gap:14px;padding:14px;border-radius:20px;margin-top:10px;color:#fff;cursor:pointer}
+.lg-m{background:linear-gradient(135deg,#D0674E,#B04A34)}.lg-a{background:linear-gradient(135deg,#4A4FB0,#33378A)}.lg-b{background:linear-gradient(135deg,#2C2E48,#17182A)}
+.lg-play{all:unset;flex:0 0 auto;width:46px;height:46px;border-radius:50%;background:rgba(255,255,255,.2);display:grid;place-items:center;font-size:15px;cursor:pointer}
+.lg-t{flex:1;min-width:0}.lg-t b{display:block;font-size:16px}.lg-t small{display:block;font-size:13px;opacity:.85;margin-top:2px}
+.lg-bar{height:4px;border-radius:99px;background:rgba(255,255,255,.2);margin-top:8px;overflow:hidden}.lg-bar i{display:block;height:100%;width:0;background:#fff}
+.lg-time{flex:0 0 auto;font-size:13px;font-weight:700;opacity:.9;font-variant-numeric:tabular-nums}
 </style>
 </head>
 <body>
@@ -704,6 +712,11 @@ body.kb .tabs,body.kb #botFab{display:none!important}
 </div></main>
 <section class="band" style="padding-top:0"><div class="wrap">
 <details class="more stepsd"><summary id="stepsH">Se alle øvelser i programmet</summary><ol class="steps" id="steps"></ol></details>
+<section class="lg" id="lg"><div class="sec-h"><b>LYDGUIDES</b><span>5 min · sæt høretelefonerne i</span></div>
+<div class="lg-row lg-m" data-g="morgenloeft"><button class="lg-play" type="button" aria-label="Afspil Morgenløft">▶</button><div class="lg-t"><b>Morgenløft</b><small>Energi og selvtillid til dagen</small><div class="lg-bar"><i></i></div></div><span class="lg-time">5:17</span></div>
+<div class="lg-row lg-a" data-g="aftenro"><button class="lg-play" type="button" aria-label="Afspil Aftenro">▶</button><div class="lg-t"><b>Aftenro</b><small>Slip dagen og sov godt</small><div class="lg-bar"><i></i></div></div><span class="lg-time">5:00</span></div>
+<div class="lg-row lg-b" data-g="bodyscan"><button class="lg-play" type="button" aria-label="Afspil Bodyscan">▶</button><div class="lg-t"><b>Bodyscan</b><small>Ro og afspænding i kroppen</small><div class="lg-bar"><i></i></div></div><span class="lg-time">4:52</span></div>
+<audio id="lgAudio" preload="none"></audio></section>
 <p class="foot" style="margin-top:18px">Stop hvis noget gør ondt. Har du skader eller er gravid, så spørg din læge eller fysioterapeut om øvelserne passer til dig.</p>
 </div></section>
 </div>
@@ -1197,8 +1210,7 @@ const PROGS=[
 {id:"mave",navn:"Mave",sub:"Mavemuskler",ex:"crunch twist bug legs bike climb plank crunch legs cobra"},
 {id:"ben",navn:"Ben",sub:"Lår, numse, lægge",ex:"squat lungeL lungeR bridge squat calf deep bridge quadL quadR"},
 {id:"ryg",navn:"Ryg",sub:"Stærk og smidig ryg",ex:"catcow bird superman child bridge cobra plank bird superman child"},
-{id:"mobility",navn:"Mobility",sub:"Led og bevægelighed",w:20,r:5,ex:"neck roll circles hipcirc catcow thread lungeTw deep pigeonB"},
-{id:"bodyscan",navn:"Bodyscan",sub:"Ro og afspænding",ex:"scan0 scan1 scan2 scan3 scan4 scan5 scan6 scan7 scan8 scan9",scan:1}
+{id:"mobility",navn:"Mobility",sub:"Led og bevægelighed",w:20,r:5,ex:"neck roll circles hipcirc catcow thread lungeTw deep pigeonB"}
 ].map(p=>({...p,ex:p.ex.split(' ')}));
 
 /* ---------- afspiller ---------- */
@@ -1212,7 +1224,7 @@ const clockTxt=s=>{const c=Math.ceil(s);return Math.floor(c/60)+':'+String(c%60)
 function beep(f=880,len=.15){if(!run.sound)return;try{ac=ac||new (window.AudioContext||window.webkitAudioContext)();const o=ac.createOscillator(),g=ac.createGain();o.frequency.value=f;g.gain.setValueAtTime(.15,ac.currentTime);g.gain.exponentialRampToValueAtTime(.001,ac.currentTime+len);o.connect(g).connect(ac.destination);o.start();o.stop(ac.currentTime+len);}catch(e){}}
 
 function pick(id){
-  pause();run.prog=PROGS.find(p=>p.id===id);run.i=0;run.phase='work';run.left=dur();store.set('tr-prog',id);
+  pause();run.prog=PROGS.find(p=>p.id===id)||PROGS[0];run.i=0;run.phase='work';run.left=dur();store.set('tr-prog',id);
   drawCards();drawPlayer();
 }
 function curEx(){return X[run.prog.ex[run.i]];}
@@ -1979,6 +1991,20 @@ setInterval(checkPush,60000);setTimeout(checkPush,1500);
 /* ===== Morgenløft ===== */
 const AUDIO=location.protocol.startsWith('http')&&!/claude|anthropic/.test(location.host)?'':'https://mealmentor.rikkedt.workers.dev';
 
+
+/* Lydguides på Træning */
+{const a=$('lgAudio');let cur=null;const fm=x=>Math.floor(x/60)+':'+String(Math.floor(x%60)).padStart(2,'0');
+  const rows=()=>[...document.querySelectorAll('#lg .lg-row')];
+  const paint=()=>rows().forEach(r=>{const on=r.dataset.g===cur&&!a.paused;r.classList.toggle('on',r.dataset.g===cur);r.querySelector('.lg-play').textContent=on?'❚❚':'▶';});
+  document.getElementById('lg').addEventListener('click',e=>{const r=e.target.closest('.lg-row');if(!r)return;const g=r.dataset.g;
+    {const la=$('liftAudio');if(la&&!la.paused)la.pause();}
+    if(cur!==g){cur=g;a.src=(typeof AUDIO!=='undefined'?AUDIO:'')+'/audio/'+g+'.mp3';a.play().catch(()=>toast('Lyden kunne ikke afspilles'));}
+    else if(a.paused)a.play().catch(()=>{});else a.pause();paint();});
+  a.onplay=paint;a.onpause=paint;
+  a.ontimeupdate=()=>{const r=rows().find(x=>x.dataset.g===cur);if(r&&a.duration){r.querySelector('.lg-bar i').style.width=(a.currentTime/a.duration*100)+'%';r.querySelector('.lg-time').textContent=fm(a.currentTime)+' / '+fm(a.duration);}};
+  a.onended=()=>{if(cur==='bodyscan'){D.workouts.push({id:uid(),t:nowT(),navn:'Bodyscan',min:5});save();}
+    const k=cur==='morgenloeft'?'mm-lift-'+today:cur==='aftenro'?'mm-ro-'+today:null;if(k){store.set(k,'done');try{drawLift();}catch(x){}}
+    toast(cur==='morgenloeft'?'Flot! En god start på dagen 🌞':cur==='aftenro'?'Sov godt 🌙':'Godt gået – bodyscan klaret 🌙');a.currentTime=0;paint();};}
 /* Bodyscan fra Soft Motel (lyd) */
 {const a=$('bsaAudio'),fm=x=>Math.floor(x/60)+':'+String(Math.floor(x%60)).padStart(2,'0');
   $('bsaPlay').onclick=()=>{if(!a.src)a.src=(typeof AUDIO!=='undefined'?AUDIO:'')+'/audio/bodyscan.mp3';
