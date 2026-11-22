@@ -511,7 +511,7 @@ body{padding-bottom:calc(92px + env(safe-area-inset-bottom))}
 details.adv{margin-top:10px}details.adv>summary{cursor:pointer;color:var(--mute);font-size:14px;font-weight:600;min-height:40px;display:flex;align-items:center}
 .trial{justify-self:start;font-size:13px;font-weight:700;background:var(--acc);color:var(--accInk);border-radius:999px;padding:4px 12px}
 
-.onb-consent{display:flex;gap:12px;align-items:flex-start;margin-top:16px;padding:14px 16px;border-radius:16px;background:light-dark(rgba(255,255,255,.7),rgba(34,37,43,.8));font-size:13px;line-height:1.45;color:var(--mute);border:2px solid transparent;cursor:pointer}
+.onb-consent{display:flex;gap:12px;align-items:flex-start;margin-top:20px;padding:14px 16px;border-radius:16px;background:light-dark(rgba(255,255,255,.7),rgba(34,37,43,.8));font-size:13px;line-height:1.45;color:var(--mute);border:2px solid transparent;cursor:pointer}
 .onb-consent input{width:22px;height:22px;flex:none;accent-color:var(--acc);margin:0}
 .onb-consent a{color:var(--ink)}
 .onb-consent.need{border-color:var(--tomato)}
@@ -520,6 +520,11 @@ details.adv{margin-top:10px}details.adv>summary{cursor:pointer;color:var(--mute)
 /* iPhone zoomer ind på felter under 16px – hold alle felter på mindst 16px */
 input,select,textarea{font-size:16px!important}
 html{-webkit-text-size-adjust:100%;text-size-adjust:100%}
+
+.onb-opts.locked button{opacity:.4;pointer-events:auto}
+.onb-opts.locked button.acc{background:light-dark(rgba(255,255,255,.7),rgba(34,37,43,.8));color:var(--ink)}
+.onb-opts.locked button.acc small{color:var(--mute)}
+.onb-next.locked{opacity:.4}
 </style>
 </head>
 <body>
@@ -752,8 +757,8 @@ html{-webkit-text-size-adjust:100%;text-size-adjust:100%}
 <div class="onb" id="onb" hidden role="dialog" aria-modal="true" aria-labelledby="onbH"><div class="onb-c">
 <div class="onb-top"><button class="onb-back" id="onbBack" aria-label="Tilbage">‹</button><div class="onb-prog"><i id="onbBar"></i></div><span class="small" id="onbStep"></span></div>
 <span class="onb-k" id="onbK"></span><h2 id="onbH"></h2><p class="onb-s" id="onbS"></p>
-<div class="onb-opts" id="onbOpts"></div>
 <label class="onb-consent" id="onbConsent" hidden><input type="checkbox" id="onbOk"><span>Jeg er over 18 år, accepterer <a id="lnkTerms" target="_blank" rel="noopener">vilkårene</a> og giver samtykke til, at Meal Mentor AI behandler mine helbredsoplysninger (fx vægt, søvn, måltider og medicin) for at give mig råd. Læs <a id="lnkPriv" target="_blank" rel="noopener">privatlivspolitikken</a>.</span></label>
+<div class="onb-opts" id="onbOpts"></div>
 <div class="onb-foot"><button class="go onb-next" id="onbNext"></button><button class="link" id="onbSkip">Spring over</button><span class="small">Ikke medicinsk rådgivning. Tal med din læge om din medicin.</span></div></div></div>
 <script>
 {
@@ -1847,6 +1852,7 @@ function drawOnb(){const S_=onbSteps(),i=onb.s,c=S_[i];
   $('onbOpts').querySelectorAll('button').forEach(b=>b.onclick=()=>{if(c.acct&&!$('onbOk').checked){$('onbConsent').classList.add('need');$('onbConsent').scrollIntoView({block:'center',behavior:'smooth'});return;}if(c.acct){D.settings={...S(),consent:new Date().toISOString()};save();if(window.mmAuth&&!window.mmAuth.user()){store.set('mm-onb',{s:1});return window.mmAuth.login(['apple','google','email'][+b.dataset.i]);}onb.s=1;return drawOnb();}
     if(c.multi)onb.p.rem={...val,[b.dataset.v]:!val[b.dataset.v]};else{onb.p[c.key]=b.dataset.v;if(c.key==='theme'){D.settings={...S(),theme:b.dataset.v};applyTheme();}}drawOnb();});
   $('onbConsent').hidden=!c.acct;$('onbConsent').classList.remove('need');
+  const lock=c.acct&&!$('onbOk').checked&&!S().consent;$('onbOpts').classList.toggle('locked',lock);$('onbNext').classList.toggle('locked',lock);
   $('onbNext').textContent=c.acct?'Jeg har allerede en konto':i===S_.length-1?'Kom i gang':'Næste';
 }
 function openOnb(){onb.s=window.mmAuth&&window.mmAuth.user()?1:0;onb.p={};$('onb').hidden=false;drawOnb();}
@@ -1888,6 +1894,9 @@ if(window.mmAuth)window.mmAuth.ready.then(()=>{drawAuth();if(window.mmAuth.user(
 const LEGAL=/claude|usercontent|^$/.test(location.hostname)||location.protocol==='file:'?'https://mealmentor.rikkedt.workers.dev':'';
 $('lnkTerms').href=LEGAL+'/vilkaar/';$('lnkPriv').href=LEGAL+'/privatliv/';
 $('legalLinks').innerHTML=`<a href="${LEGAL}/privatliv/" target="_blank" rel="noopener">Privatlivspolitik</a> · <a href="${LEGAL}/vilkaar/" target="_blank" rel="noopener">Vilkår</a> · Slet konto: skriv til <a href="mailto:info@mealmentorai.com">info@mealmentorai.com</a>`;
+
+
+$('onbOk').addEventListener('change',()=>{if(!$('onb').hidden)drawOnb();});
 
 }
 </script>
