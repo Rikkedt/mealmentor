@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,viewport-fit=cover">
-<title>Meal Mentor AI</title><meta name="mm-version" content="22a1373eea"><link rel="manifest" href="/manifest.webmanifest"><link rel="apple-touch-icon" href="/apple-touch-icon.png"><meta name="theme-color" content="#F1F1F4"><link rel="stylesheet" href="/mm.css"><script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script><script src="/mm.js"></script>
+<title>Meal Mentor AI</title><meta name="mm-version" content="303bcf03d5"><link rel="manifest" href="/manifest.webmanifest"><link rel="apple-touch-icon" href="/apple-touch-icon.png"><meta name="theme-color" content="#F1F1F4"><link rel="stylesheet" href="/mm.css"><script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script><script src="/mm.js"></script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Inter+Tight:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <style>
@@ -1180,7 +1180,11 @@ flB:"18,80 27,84 58,86 40,88 54,88 41,88 55,88 76,84 96,84 76,80 96,74",
 jkA:"30,84 38,86 64,86 24,86 12,86 25,86 13,86 80,86 98,86 81,86 99,86",
 jkB:"42,58 46,66 58,86 58,58 70,50 59,58 71,50 70,64 80,48 71,65 81,49",
 piA:"36,52 40,60 52,84 42,74 38,88 43,74 39,88 70,78 88,74 71,79 89,75",
-piB:"40,50 43,58 52,84 44,72 40,88 45,72 41,88 60,64 74,72 61,65 75,73"
+piB:"40,50 43,58 52,84 44,72 40,88 45,72 41,88 60,64 74,72 61,65 75,73",
+jjB:"60,16 60,27 60,55 48,18 40,6 72,18 80,6 52,72 44,90 68,72 76,90",
+starB:"60,12 60,23 60,51 44,16 32,8 76,16 88,8 48,68 38,84 72,68 82,84",
+hkA:"60,16 60,27 60,55 54,41 60,35 66,41 70,49 68,56 64,72 63,72 64,90",
+hkB:"60,16 60,27 60,55 54,41 50,49 66,41 60,35 57,72 56,90 68,56 64,72"
 };
 const pose={};for(const k in P){const a=P[k].split(' ').map(s=>s.split(',').map(Number));if(!a[11])a[11]=[(a[1][0]+a[2][0])/2,(a[1][1]+a[2][1])/2];pose[k]=a;}
 const lerp=(A,B,t)=>A.map((p,i)=>[p[0]+(B[i][0]-p[0])*t,p[1]+(B[i][1]-p[1])*t]);
@@ -1257,6 +1261,12 @@ twist:["Russian twist","Læn dig lidt tilbage og drej overkroppen fra side til s
 crunch:["Mavebøjninger","Løft skulderbladene fra gulvet. Hagen væk fra brystet.","crunchA","crunchB"],
 bike:["Albue til knæ","Før albue mod modsat knæ og skift i et roligt tempo.","bikeA","bikeB",0,30],
 legs:["Liggende benløft","Lænden presset mod gulvet. Sænk benene så langt du kan styre det.","legUp","legDown",0,45],
+jjack:["Sprællemand","Hop ud med arme og ben, og hop sammen igen. Uden hop: træd skiftevis ud til siden.","stand","jjB"],
+lungeAlt:["Udfald, begge ben","Langt skridt frem, og sænk det bagerste knæ mod gulvet. Skift ben, når det bipper.","lungeA","lungeB",0,0,1],
+spB:["Sideplanke, begge sider","Albuen under skulderen, hoften højt. Gå på knæ for en lettere version. Skift side, når det bipper.","sidePlB","sidePl",0,0,1],
+highKnees:["Høje knæ","Løb på stedet, og løft knæene højt. Brug armene aktivt.","hkA","hkB"],
+burpee:["Burpees","Ned i squat, hænderne i gulvet, hop eller træd ud i planke og tilbage, og rejs dig op.","squatB","pushA"],
+starjump:["Stjernehop","Bøj i knæene, og hop op med arme og ben spredt ud som en stjerne. Land blødt.","squatB","starB"],
 revCrunch:["Omvendt crunch","Lig på ryggen med knæene bøjet. Rul hoften op fra gulvet, og sænk langsomt.","rcA","rcB",0,45],
 flutter:["Flutter kicks","Hænderne under hoften, benene lavt over gulvet. Spark små, hurtige saks op og ned.","flA","flB",0,45],
 jackknife:["Jackknife","Stræk dig lang, og fold så arme og ben op mod hinanden i en V. Sænk roligt igen.","jkA","jkB",0,30],
@@ -1296,6 +1306,7 @@ const PROGS=[
 {id:"mave",navn:"Mave",sub:"Nedre mave og core",ex:"legs revCrunch flutter bike jackknife pullIn crunch plank cobra"},
 {id:"ben",navn:"Ben",sub:"Lår, numse, lægge",ex:"squat lungeL lungeR rdl sideLunge wallsit bridge scissor calf quadB"},
 {id:"ryg",navn:"Ryg",sub:"Stærk og smidig ryg",ex:"catcow bird superman child bridge cobra plank bird superman child"},
+{id:"fullbody",navn:"Hele kroppen",sub:"Kondi og styrke",w:40,r:10,ex:"jjack squat lungeAlt kpush plank bridge climb spB highKnees burpee tap bike rdl starjump"},
 {id:"morgen",navn:"Morgenrutine",sub:"Vågn op i kroppen",w:20,r:5,ex:"meditate child catcow dog cobra hlunge triangle fold mountain"},
 {id:"sovn",navn:"Bedre søvn",sub:"Ro før sengetid",w:20,r:5,ex:"hero child cobra camel bfold spineTw bridge kneeChest corpse"},
 {id:"mobility",navn:"Mobility",sub:"Led og bevægelighed",w:20,r:5,ex:"neck roll circles hipcirc catcow thread lungeTw deep pigeonB"}
