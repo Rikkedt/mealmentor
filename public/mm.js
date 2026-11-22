@@ -24,15 +24,30 @@ function daErr(e){const m=(e&&e.message)||'';let t;
   function emailDialog(note) {
     const d = document.createElement('dialog');
     d.className = 'mm-login';
-    d.innerHTML = `<form method="dialog"><b>Log ind med e-mail</b><p>${note ? note + ' ' : ''}Vi sender dig et link. Tryk på det, så er du logget ind.</p>
-      <input type="email" required placeholder="din@mail.dk" autocomplete="email"><div class="mm-row"><button value="cancel" formnovalidate class="ghost">Annullér</button><button class="go" value="ok">Send link</button></div><p class="mm-msg"></p></form>`;
+    d.innerHTML = `<form method="dialog"><b>Log ind med e-mail</b><p class="mm-lead">${note ? note + ' ' : ''}Vi sender dig en kode på mail.</p>
+      <input class="mm-email" type="email" required placeholder="din@mail.dk" autocomplete="email">
+      <input class="mm-code" type="text" inputmode="numeric" autocomplete="one-time-code" maxlength="10" placeholder="Kode fra mailen" hidden>
+      <div class="mm-row"><button value="cancel" formnovalidate class="ghost">Annullér</button><button class="go mm-go" value="ok">Send kode</button></div><p class="mm-msg"></p></form>`;
     document.body.append(d);
-    const f = d.querySelector('form'), inp = d.querySelector('input'), msg = d.querySelector('.mm-msg');
+    const f = d.querySelector('form'), inp = d.querySelector('.mm-email'), code = d.querySelector('.mm-code'), msg = d.querySelector('.mm-msg'), go = d.querySelector('.mm-go'), lead = d.querySelector('.mm-lead');
+    let sent = false;
     f.onsubmit = async e => {
       if (e.submitter && e.submitter.value === 'cancel') { d.close(); return; }
-      e.preventDefault(); msg.textContent = 'Sender …';
-      const { error } = await sb.auth.signInWithOtp({ email: inp.value.trim(), options: { emailRedirectTo: location.origin } });
-      msg.textContent = error ? daErr(error) : 'Tjek din mail og tryk på linket.';
+      e.preventDefault();
+      if (!sent) {
+        msg.textContent = 'Sender …';
+        const { error } = await sb.auth.signInWithOtp({ email: inp.value.trim(), options: { emailRedirectTo: location.origin } });
+        if (error) { msg.textContent = daErr(error); return; }
+        sent = true; inp.readOnly = true; code.hidden = false; code.required = true; go.textContent = 'Log ind';
+        lead.textContent = 'Skriv koden fra mailen her. Den kommer om et øjeblik.'; msg.textContent = ''; code.focus();
+      } else {
+        const t = code.value.replace(/\D/g, '');
+        if (t.length < 6) { msg.textContent = 'Koden har 6 cifre.'; return; }
+        msg.textContent = 'Logger ind …';
+        let r = await sb.auth.verifyOtp({ email: inp.value.trim(), token: t, type: 'email' });
+        if (r.error) r = await sb.auth.verifyOtp({ email: inp.value.trim(), token: t, type: 'signup' });
+        msg.textContent = r.error ? 'Koden passer ikke eller er udløbet. Tjek mailen og prøv igen.' : 'Du er logget ind.';
+      }
     };
     d.addEventListener('close', () => d.remove());
     d.showModal(); inp.focus();

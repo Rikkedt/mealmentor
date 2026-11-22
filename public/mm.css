@@ -8,3 +8,5 @@
 .mm-row{display:flex;gap:8px;justify-content:flex-end;flex-wrap:wrap;margin-top:12px}
 .mm-row button{min-height:44px;padding:0 18px;font-size:15px}
 .mm-msg{min-height:1.2em;margin:10px 0 0 !important}
+.mm-login .mm-code{margin-top:10px;font-size:22px!important;letter-spacing:.3em;text-align:center;font-weight:700}
+.mm-login .mm-code[hidden]{display:none}
