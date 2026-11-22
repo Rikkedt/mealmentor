@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,viewport-fit=cover">
-<title>Meal Mentor AI</title><meta name="mm-version" content="bdf81e8798"><link rel="manifest" href="/manifest.webmanifest"><link rel="apple-touch-icon" href="/apple-touch-icon.png"><meta name="theme-color" content="#F1F1F4"><link rel="stylesheet" href="/mm.css"><script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script><script src="/mm.js"></script>
+<title>Meal Mentor AI</title><meta name="mm-version" content="83af610c52"><link rel="manifest" href="/manifest.webmanifest"><link rel="apple-touch-icon" href="/apple-touch-icon.png"><meta name="theme-color" content="#F1F1F4"><link rel="stylesheet" href="/mm.css"><script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script><script src="/mm.js"></script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Inter+Tight:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <style>
@@ -634,6 +634,8 @@ h1.brand .brand-ai{display:inline-grid;place-items:center;height:30px;padding:0 
 .bsa-play #bsaPi{width:36px;height:36px;border-radius:50%;background:rgba(255,255,255,.2);display:grid;place-items:center;font-size:13px}
 .bsa-bar{height:6px;border-radius:99px;background:rgba(255,255,255,.12);margin:16px 0 8px;overflow:hidden}.bsa-bar i{display:block;height:100%;width:0;background:#A9B0FF}
 .bsa .small{color:#9DA0B8!important}
+
+body.kb .tabs,body.kb #botFab{display:none!important}
 </style>
 </head>
 <body>
@@ -1958,6 +1960,11 @@ setInterval(checkPush,60000);setTimeout(checkPush,1500);
 
 
 
+
+/* Skjul bundmenu og chat-knap, mens tastaturet er oppe */
+{const isTxt=e=>e&&e.matches&&e.matches('input:not([type=checkbox]):not([type=radio]):not([type=button]):not([type=submit]):not([type=range]),textarea,select,[contenteditable=true]');
+  document.addEventListener('focusin',e=>{if(isTxt(e.target))document.body.classList.add('kb');});
+  document.addEventListener('focusout',()=>setTimeout(()=>{if(!isTxt(document.activeElement))document.body.classList.remove('kb');},120));}
 /* ===== Morgenløft ===== */
 const AUDIO=location.protocol.startsWith('http')&&!/claude|anthropic/.test(location.host)?'':'https://mealmentor.rikkedt.workers.dev';
 
