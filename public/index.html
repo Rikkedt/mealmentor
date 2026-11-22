@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,viewport-fit=cover">
-<title>Meal Mentor AI</title><meta name="mm-version" content="2f7e9c8c92"><link rel="manifest" href="/manifest.webmanifest"><link rel="apple-touch-icon" href="/apple-touch-icon.png"><meta name="theme-color" content="#F1F1F4"><link rel="stylesheet" href="/mm.css"><script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script><script src="/mm.js"></script>
+<title>Meal Mentor AI</title><meta name="mm-version" content="22a1373eea"><link rel="manifest" href="/manifest.webmanifest"><link rel="apple-touch-icon" href="/apple-touch-icon.png"><meta name="theme-color" content="#F1F1F4"><link rel="stylesheet" href="/mm.css"><script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script><script src="/mm.js"></script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Inter+Tight:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <style>
@@ -1172,7 +1172,15 @@ rdlB:"76,42 71,47 58,56 72,59 72,72 73,59 73,72 61,73 60,90 62,73 61,90",
 slA:"60,17 60,28 60,56 54,40 60,41 66,40 60,41 50,74 42,90 70,74 78,90",
 slB:"67,23 66,34 68,62 61,46 67,47 72,46 67,47 52,76 40,90 80,72 82,90",
 wsA:"50,29 50,40 50,66 53,54 61,64 54,54 62,64 70,66 70,90 71,67 71,90",
-wsB:"50,30 50,41 50,66 53,55 61,65 54,55 62,65 70,66 70,90 71,67 71,90"
+wsB:"50,30 50,41 50,66 53,55 61,65 54,55 62,65 70,66 70,90 71,67 71,90",
+rcA:"16,84 26,86 58,86 36,88 48,89 37,88 49,89 58,64 76,66 59,65 77,67",
+rcB:"16,84 26,86 56,80 36,88 48,89 37,88 49,89 50,58 66,56 51,59 67,57",
+flA:"18,80 27,84 58,86 40,88 54,88 41,88 55,88 76,80 96,74 76,84 96,84",
+flB:"18,80 27,84 58,86 40,88 54,88 41,88 55,88 76,84 96,84 76,80 96,74",
+jkA:"30,84 38,86 64,86 24,86 12,86 25,86 13,86 80,86 98,86 81,86 99,86",
+jkB:"42,58 46,66 58,86 58,58 70,50 59,58 71,50 70,64 80,48 71,65 81,49",
+piA:"36,52 40,60 52,84 42,74 38,88 43,74 39,88 70,78 88,74 71,79 89,75",
+piB:"40,50 43,58 52,84 44,72 40,88 45,72 41,88 60,64 74,72 61,65 75,73"
 };
 const pose={};for(const k in P){const a=P[k].split(' ').map(s=>s.split(',').map(Number));if(!a[11])a[11]=[(a[1][0]+a[2][0])/2,(a[1][1]+a[2][1])/2];pose[k]=a;}
 const lerp=(A,B,t)=>A.map((p,i)=>[p[0]+(B[i][0]-p[0])*t,p[1]+(B[i][1]-p[1])*t]);
@@ -1247,8 +1255,12 @@ bird:["Bird dog","Stræk modsat arm og ben. Hold ryggen flad som et bord.","four
 climb:["Mountain climbers","Træk knæene skiftevis mod brystet. Find dit eget tempo.","pushA","climbB"],
 twist:["Russian twist","Læn dig lidt tilbage og drej overkroppen fra side til side.","twistA","twistB"],
 crunch:["Mavebøjninger","Løft skulderbladene fra gulvet. Hagen væk fra brystet.","crunchA","crunchB"],
-bike:["Cykelcrunch","Før albue mod modsat knæ og skift i et roligt tempo.","bikeA","bikeB"],
-legs:["Benløft","Lænden presset mod gulvet. Sænk benene så langt du kan styre det.","legUp","legDown"],
+bike:["Albue til knæ","Før albue mod modsat knæ og skift i et roligt tempo.","bikeA","bikeB",0,30],
+legs:["Liggende benløft","Lænden presset mod gulvet. Sænk benene så langt du kan styre det.","legUp","legDown",0,45],
+revCrunch:["Omvendt crunch","Lig på ryggen med knæene bøjet. Rul hoften op fra gulvet, og sænk langsomt.","rcA","rcB",0,45],
+flutter:["Flutter kicks","Hænderne under hoften, benene lavt over gulvet. Spark små, hurtige saks op og ned.","flA","flB",0,45],
+jackknife:["Jackknife","Stræk dig lang, og fold så arme og ben op mod hinanden i en V. Sænk roligt igen.","jkA","jkB",0,30],
+pullIn:["Ben-træk","Læn dig tilbage på hænderne. Træk knæene ind mod brystet, og stræk dem ud igen.","piA","piB",0,30],
 rdl:["Rumænsk dødløft","Let bøjede knæ. Skub hoften bagud, og sænk overkroppen med ret ryg. Hold evt. en vandflaske i hver hånd.","stand","rdlB"],
 sideLunge:["Sideudfald","Brede ben. Sæt dig ned i det ene ben, mens det andet er strakt. Skift side, når det bipper.","slA","slB",0,50,1],
 wallsit:["Wall sit","Ryggen mod en væg, og glid ned til 90 grader i knæene. Hold stillingen.","wsA","wsB",0,40],
@@ -1281,7 +1293,7 @@ const PROGS=[
 {id:"straek",navn:"Stræk og mobilitet",sub:"Hele kroppen",w:20,r:5,ex:"fold catcow child cobra seatTw shoulder sideB quadB ham butterfly hipB calfS dog spineTw neck chest"},
 {id:"overkrop",navn:"Overkrop",sub:"Arme, bryst, skuldre",ex:"circles kpush tap plank push superman spL spR kpush roll"},
 {id:"core",navn:"Core",sub:"Stabilitet",ex:"plank bug bird spL spR climb twist plank bug child"},
-{id:"mave",navn:"Mave",sub:"Mavemuskler",ex:"crunch twist bug legs bike climb plank crunch legs cobra"},
+{id:"mave",navn:"Mave",sub:"Nedre mave og core",ex:"legs revCrunch flutter bike jackknife pullIn crunch plank cobra"},
 {id:"ben",navn:"Ben",sub:"Lår, numse, lægge",ex:"squat lungeL lungeR rdl sideLunge wallsit bridge scissor calf quadB"},
 {id:"ryg",navn:"Ryg",sub:"Stærk og smidig ryg",ex:"catcow bird superman child bridge cobra plank bird superman child"},
 {id:"morgen",navn:"Morgenrutine",sub:"Vågn op i kroppen",w:20,r:5,ex:"meditate child catcow dog cobra hlunge triangle fold mountain"},
