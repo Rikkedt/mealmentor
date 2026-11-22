@@ -561,6 +561,16 @@ body{padding-bottom:calc(150px + env(safe-area-inset-bottom))}
 .diet button[aria-pressed=true]{background:var(--acc);color:var(--accInk);border-color:var(--acc)}
 .dislike{display:grid;gap:6px;font-weight:700;font-size:14px}
 .dislike input{font:inherit;font-weight:500;padding:12px 14px;border-radius:14px;border:1.5px solid var(--line,#E4E5EA);background:var(--card);color:var(--ink)}
+
+#todo.todo{margin:0 0 14px;padding:0;border:0;border-radius:18px;background:var(--card);box-shadow:0 4px 16px rgba(17,17,17,.06);overflow:hidden}
+#todo.todo>summary{color:var(--ink);font-size:15px;font-weight:700;min-height:56px;padding:0 16px;gap:10px}
+#todo.todo>summary::before{content:none}
+#todo .td-ic{flex:0 0 auto;width:28px;height:28px;border-radius:50%;display:grid;place-items:center;background:#FFF1D6;color:#B7791F;font-weight:900;font-size:15px}
+#todo .td-t{flex:1}
+#todo .td-n{flex:0 0 auto;min-width:26px;height:26px;padding:0 8px;border-radius:999px;display:grid;place-items:center;background:var(--acc);color:var(--accInk);font-size:13px;font-weight:800}
+#todo .td-n::after{content:"";}
+#todo>summary::after{content:"›";font-size:22px;color:var(--mute);transition:transform .15s}#todo[open]>summary::after{transform:rotate(90deg)}
+#todo ul{margin:0;padding:0 16px 10px}
 </style>
 </head>
 <body>
@@ -644,9 +654,9 @@ body{padding-bottom:calc(150px + env(safe-area-inset-bottom))}
 <div class="qfav qother"><button data-f="fSleep">😴 Søvn</button><button data-f="fWeight">⚖️ Vægt</button><button data-f="fWork">🏃 Træning</button><button data-f="fDose">💉 GLP-1 dosis</button></div>
 </div></div>
 <div class="toast" id="toast" hidden role="status"></div>
+<details class="todo" id="todo" hidden><summary id="todoSum"></summary><ul id="todoList"></ul></details>
 <section class="hero"><div class="left" id="left" aria-live="polite"></div>
 <div class="ainote" id="aiNote" hidden><div class="ainote-h"><b>Meal Mentor AI siger</b><button class="link" id="aiRefresh">Opdatér</button></div><div id="aiNoteTxt"></div></div></section>
-<details class="todo" id="todo" hidden><summary id="todoSum"></summary><ul id="todoList"></ul></details>
 <ul class="recs" id="recs" aria-live="polite"></ul>
 <details class="morerecs" id="moreRecs" hidden><summary id="moreRecsSum"></summary><ul class="recs" id="recs2"></ul></details>
 <section class="ci" id="checkin" hidden><div class="sec-h"><span class="sq">🌙</span><b>AFTENENS CHECK-IN</b><span id="ciWhen"></span></div>
@@ -1288,7 +1298,7 @@ function missing(){
 }
 function gaps(){const ds=range(7,addDays(today,-1)),miss=ds.filter(d=>!d.n),thin=ds.filter(d=>d.n===1),noSleep=D.sleep.length?ds.filter(d=>!d.sleep):[];return {miss,thin,noSleep,n:miss.length+thin.length};}
 function drawTodo(){
-  const m=missing();$('todo').hidden=!m.length;$('todoSum').textContent=`Mangler du at logge noget? (${m.length})`;
+  const m=missing();$('todo').hidden=!m.length;$('todoSum').innerHTML=`<span class="td-ic">!</span><span class="td-t">Mangler du at logge noget?</span><span class="td-n">${m.length}</span>`;
   $('todoList').innerHTML=m.map(([f,k,t],i)=>`<li><span>${esc(t)}</span><button class="ghost" data-i="${i}">Log</button></li>`).join('');
   $('todoList').querySelectorAll('[data-i]').forEach(b=>b.onclick=()=>{const [f,k]=m[+b.dataset.i];openForm(f,k,true);});
 }
