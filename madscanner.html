@@ -815,7 +815,7 @@ h1.brand .brand-ai{display:inline-grid;place-items:center;height:30px;padding:0 
 <ul class="entries" id="entries"></ul><button class="ghost" id="entMore" hidden>Vis flere</button></section>
 
 <section class="pcard"><h2>Konto og data</h2><p class="small" id="syncInfo">Kun på denne enhed.</p>
-<div class="btns"><button class="go" id="authBtn" hidden>Log ind</button><button class="ghost" id="onbAgain">Vis opstart igen</button><button class="ghost" id="delAcc" hidden>Slet min konto</button></div>
+<div class="btns"><button class="go" id="authBtn" hidden>Log ind</button><button class="ghost" id="delAcc" hidden>Slet min konto</button></div>
 <details class="adv"><summary>Avanceret</summary>
 <div class="btns"><button class="ghost" id="copyData">Kopiér data</button><button class="ghost" id="clearAll">Slet alle data</button></div>
 <textarea class="data" id="importData" placeholder="Indsæt backup her" aria-label="Indsæt backup" style="margin-top:12px"></textarea>
@@ -2008,7 +2008,7 @@ function finishOnb(){const p=onb.p,st=S();D.settings={...st,...(p.goal?{goal:p.g
 $('onbNext').onclick=()=>{const n=onbSteps().length;if(onb.s===0){if(!$('onbOk').checked&&!S().consent){$('onbConsent').classList.add('need');return;}if($('onbOk').checked){D.settings={...S(),consent:S().consent||new Date().toISOString()};save();}if(window.mmAuth&&!window.mmAuth.user()){window.mmAuth.login('email');return;}finishOnb();return;}if(onb.s>=n-1)finishOnb();else{onb.s++;drawOnb();}};
 $('onbBack').onclick=()=>{onb.s=Math.max(0,onb.s-1);drawOnb();};
 $('onbSkip').onclick=finishOnb;
-$('onbAgain').onclick=openOnb;
+
 applyTheme();
 if(window.mmAuth)window.mmAuth.ready.then(()=>{const u=window.mmAuth.user();if(!u){if($('onb').hidden)openOnb();return;}
   const resume=store.get('mm-onb',null);if(resume&&$('onb').hidden){openOnb();return;}
@@ -2034,7 +2034,7 @@ document.addEventListener('keydown',e=>{if((e.key==='Enter'||e.key===' ')&&e.tar
 
 
 /* ===== login på mealmentor.com ===== */
-function drawAuth(){const b=$('authBtn');if(!window.mmAuth){b.hidden=true;return;}const u=window.mmAuth.user();$('delAcc').hidden=!u;b.hidden=false;b.className=u?'ghost':'go';b.textContent=u?`Log ud${u.email?' ('+u.email+')':''}`:'Log ind';
+function drawAuth(){const b=$('authBtn');if(!window.mmAuth){b.hidden=true;return;}const u=window.mmAuth.user();$('delAcc').hidden=!u;b.hidden=false;b.className=u?'ghost':'go';b.textContent=u?'Log ud':'Log ind';
   b.onclick=()=>u?window.mmAuth.logout():S().consent?window.mmAuth.login():openOnb();}
 if(window.mmAuth)window.mmAuth.ready.then(()=>{drawAuth();if(window.mmAuth.user()&&!$('onb').hidden&&onb.s===0){onb.s=1;drawOnb();}});
 
