@@ -200,3 +200,4 @@ r'\n\nSvar KUN med gyldig JSON – ingen forklaring og ingen markdown.':r'\n\nRe
 'sekunder og send en ny.':'seconds and send a new one.','sekunder, og prøv så igen.':'seconds, then try again.',
 'Vent':'Wait','Annullér':'Cancel','Sender …':'Sending …','Log ind':'Log in',
 })
+X.update({'din@mail.dk':'you@email.com'})

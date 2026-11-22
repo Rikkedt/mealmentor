@@ -30,7 +30,7 @@ function daErr(e){const m=(e&&e.message)||'';let t;
     const d = document.createElement('dialog');
     d.className = 'mm-login';
     d.innerHTML = `<form method="dialog"><b>Log in with email</b><p class="mm-lead">${note ? note + ' ' : ''}We'll email you a code.</p>
-      <input class="mm-email" type="email" required placeholder="din@mail.dk" autocomplete="email">
+      <input class="mm-email" type="email" required placeholder="you@email.com" autocomplete="email">
       <input class="mm-code" type="text" inputmode="numeric" autocomplete="one-time-code" maxlength="10" placeholder="Code from the email" hidden>
       <div class="mm-row"><button value="cancel" formnovalidate class="ghost">Cancel</button><button class="go mm-go" value="ok">Send code</button></div><p class="mm-msg"></p></form>`;
     document.body.append(d);
