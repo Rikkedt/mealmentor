@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,viewport-fit=cover">
-<title>Meal Mentor AI</title><meta name="mm-version" content="8720ed4134"><link rel="manifest" href="/manifest.webmanifest"><link rel="apple-touch-icon" href="/apple-touch-icon.png"><meta name="theme-color" content="#F1F1F4"><link rel="stylesheet" href="/mm.css"><script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script><script src="/mm.js"></script>
+<title>Meal Mentor AI</title><meta name="mm-version" content="5d9fa775e1"><link rel="manifest" href="/manifest.webmanifest"><link rel="apple-touch-icon" href="/apple-touch-icon.png"><meta name="theme-color" content="#F1F1F4"><link rel="stylesheet" href="/mm.css"><script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script><script src="/mm.js"></script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Inter+Tight:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <style>
@@ -616,6 +616,10 @@ h1.brand .brand-ai{display:inline-grid;place-items:center;height:30px;padding:0 
 .lift-ok{all:unset;display:block;margin-top:10px;font-size:13px;font-weight:700;color:#C2563E;cursor:pointer}
 .lift-done{display:flex;gap:12px;align-items:center}.lift-done b{display:block;font-size:15px;color:#111}.lift-done span{display:block;font-size:13px;color:#6B6E76}
 .lift-ck{flex:0 0 auto;width:34px;height:34px;border-radius:50%;display:grid!important;place-items:center;background:#C2563E;color:#fff!important;font-weight:900;font-size:16px!important}
+
+.lift-play{all:unset;box-sizing:border-box;display:flex;gap:12px;align-items:center;width:100%;margin-top:12px;padding:12px 14px;border-radius:16px;background:#C2563E;color:#fff;cursor:pointer}
+.lift-play b{display:block;font-size:15px}.lift-play small{display:block;font-size:12px;opacity:.85;margin-top:2px}
+.lift-pi{flex:0 0 auto;width:38px;height:38px;border-radius:50%;background:rgba(255,255,255,.2);display:grid;place-items:center;font-size:14px}
 </style>
 </head>
 <body>
@@ -1934,17 +1938,23 @@ setInterval(checkPush,60000);setTimeout(checkPush,1500);
 
 
 /* ===== Morgenløft ===== */
-function drawLift(){const el=$('lift');if(!el)return;const h=new Date().getHours(),k='mm-lift-'+today,st=store.get(k,null);
+const AUDIO=location.protocol.startsWith('http')&&!/claude|anthropic/.test(location.host)?'':'https://mealmentor.rikkedt.workers.dev';
+function drawLift(){const el=$('lift');if(!el)return;{const a=$('liftAudio');if(a&&!a.paused)return;}const h=new Date().getHours(),k='mm-lift-'+today,st=store.get(k,null);
   const trained=(D.workouts||[]).some(w=>String(w.t).slice(0,10)===today);
   if(h<5||h>=11||st==='skip'){el.hidden=true;return;}
   el.hidden=false;
   if(st==='done'||trained){el.innerHTML=`<div class="lift-done"><span class="lift-ck">✓</span><div><b>Morgenløft klaret</b><span>Godt gået – sådan starter man en god dag.</span></div></div>`;return;}
   el.innerHTML=`<div class="lift-h"><div><small>MORGENLØFT · 5 MIN</small><b>Start dagen med noget for dig selv</b></div><button class="lift-x" type="button" data-lift="skip" aria-label="Ikke i dag"><svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M6 6l12 12M18 6L6 18"/></svg></button></div>
+  <button class="lift-play" type="button" data-lift="lyd"><span class="lift-pi">▶</span><span><b>Morgenlyd</b><small>5 min med ro, energi og selvtillid</small></span></button><audio id="liftAudio" preload="none" src="${AUDIO}/audio/morgenloeft.mp3"></audio>
   <div class="lift-o"><button type="button" data-lift="straek"><span class="lift-ic">🤸</span><span><b>Stræk ud</b><small>Hele kroppen vågner</small></span></button><button type="button" data-lift="mobility"><span class="lift-ic">🌿</span><span><b>Bevægelse</b><small>Løsn led og ryg</small></span></button></div>
   <button class="lift-ok" type="button" data-lift="done">Jeg har gjort noget godt for mig selv ✓</button>`;}
 $('lift').addEventListener('click',e=>{const b=e.target.closest('[data-lift]');if(!b)return;const v=b.dataset.lift,k='mm-lift-'+today;
   if(v==='skip'){store.set(k,'skip');drawLift();toast('Okay – vi ses i morgen');return;}
   if(v==='done'){store.set(k,'done');drawLift();toast('Flot! En god start på dagen 🌞');return;}
+  if(v==='lyd'){const a=$('liftAudio'),pi=b.querySelector('.lift-pi');if(a.paused){a.play().catch(()=>toast('Lyden kunne ikke afspilles'));pi.textContent='❚❚';b.classList.add('on');
+      a.onended=()=>{store.set(k,'done');drawLift();toast('Flot! En god start på dagen 🌞');};
+      a.ontimeupdate=()=>{const sm=b.querySelector('small');if(sm&&a.duration)sm.textContent=`${Math.floor(a.currentTime/60)}:${String(Math.floor(a.currentTime%60)).padStart(2,'0')} af ${Math.floor(a.duration/60)}:${String(Math.floor(a.duration%60)).padStart(2,'0')}`;};}
+    else{a.pause();pi.textContent='▶';b.classList.remove('on');}return;}
   location.hash='#traening';setTimeout(()=>{try{pick(v);}catch(x){}const pl=document.querySelector('#v-tr .player');if(pl)pl.scrollIntoView({behavior:'smooth',block:'start'});},250);});
 setTimeout(drawLift,0);setInterval(drawLift,10*60*1000);
 
