@@ -719,7 +719,7 @@ details.adv{margin-top:10px}details.adv>summary{cursor:pointer;color:var(--mute)
 <ul class="entries" id="entries"></ul><button class="ghost" id="entMore" hidden>Vis flere</button></section>
 
 <section class="pcard"><h2>Konto og data</h2><p class="small" id="syncInfo">Kun på denne enhed.</p>
-<div class="btns"><button class="go" id="authBtn" hidden>Log ind</button><button class="ghost" id="onbAgain">Vis opstart igen</button><button class="ghost" id="demo">Indlæs eksempeldata</button></div>
+<div class="btns"><button class="go" id="authBtn" hidden>Log ind</button><button class="ghost" id="onbAgain">Vis opstart igen</button></div>
 <details class="adv"><summary>Avanceret</summary>
 <div class="btns"><button class="ghost" id="copyData">Kopiér data</button><button class="ghost" id="clearAll">Slet alle data</button></div>
 <textarea class="data" id="importData" placeholder="Indsæt backup her" aria-label="Indsæt backup" style="margin-top:12px"></textarea>
@@ -759,6 +759,7 @@ const store={get(k,d){try{return JSON.parse(localStorage.getItem(k))??d}catch(e)
 const blank=()=>({meals:[],weights:[],doses:[],workouts:[],sleep:[],checkins:[],settings:{late:20}});
 let D=store.get('mob-data',null);
 if(!D){D=blank();const old=store.get('madscanner-'+today,[]);old.forEach(e=>D.meals.push({id:uid(),t:today+'T'+(e.tid||'12:00').replace('.',':'),titel:e.titel,kcal:e.kcal,protein:e.protein,fedt:e.fedt,kulhydrat:e.kulhydrat}));}
+if(D.demo){D={...blank(),settings:{...(D.settings||{late:20})}};store.set('mob-data',D);}
 if(!D.sleep)D.sleep=[];if(!D.checkins)D.checkins=[];
 const save=()=>{store.set('mob-data',D);cloudSchedule();if(typeof refreshVej==='function')refreshVej();};
 /* ---------- login og synkronisering ---------- */
@@ -800,7 +801,7 @@ async function cloudInit(){
     if(hasRemote){
       if(first){for(const k in KINDS){const ids=new Set(remote[k].map(x=>x.id));D[k].forEach(x=>{if(!ids.has(x.id))remote[k].push(x);});}
         if(!snap.docs.some(d=>d.id==='meta'))remote.settings=D.settings;}
-      D=remote;}
+      D=remote;if(D.demo)D={...blank(),settings:{...(D.settings||{late:20})}};}
     cloud.db=db;cloud.col=col;cloud.uid=id;store.set('mob-synced',id);store.set('mob-data',D);
     drawLog();fillSettings();if(typeof refreshVej==='function')refreshVej();
     await cloudPush();
@@ -1281,7 +1282,6 @@ function drawRecs(){drawTodo();drawLeft();drawCheckin();drawAnl();
 /* chips */
 function drawChips(){
   const d=doseOn(today),c=[`<span class="chip${cloud.state==='ok'||cloud.state==='saving'?' sync':''}" id="syncChip">${cloud.state==='ok'||cloud.state==='saving'?'Gemt på konto':cloud.state==='loading'?'Henter …':'Kun på enheden'}</span>`];
-  if(D.demo)c.push('<span class="chip">Eksempeldata</span>');
   if(d){const s=Math.round((new Date(today+'T12:00')-new Date(d.d+'T12:00'))/864e5);
     c.push(`<span class="chip ph ${d.phase}">${PH[d.phase]}</span>`,`<span class="chip">${esc(d.med||'GLP-1')} ${mgTxt(d.mg)} mg · dag ${s}</span>`);}
   $('vchips').innerHTML=c.join('');
@@ -1680,23 +1680,7 @@ $('copyData').onclick=async()=>{try{await navigator.clipboard.writeText(JSON.str
 $('doImport').onclick=()=>{try{const x=JSON.parse($('importData').value);if(!['meals','weights','doses','workouts'].every(k=>Array.isArray(x[k])))throw 0;D={...blank(),...x};if(!D.sleep)D.sleep=[];save();drawLog();fillSettings();$('dataMsg').textContent='Gendannet.';$('importData').value='';}catch(e){$('dataMsg').textContent='Ikke en gyldig backup.';}};
 let clearArm=false;$('clearAll').onclick=()=>{if(!clearArm){clearArm=true;$('clearAll').textContent='Tryk igen for at slette';setTimeout(()=>{clearArm=false;$('clearAll').textContent='Slet alle data';},4000);return;}
   D=blank();noteTried=false;noteKeyTried='';save();drawLog();fillSettings();clearArm=false;$('clearAll').textContent='Slet alle data';$('dataMsg').textContent='Alle data er slettet.';};
-$('demo').onclick=()=>{
-  let seed=7;const rnd=()=>(seed=(seed*9301+49297)%233280)/233280,jit=(v,p)=>v*(1+(rnd()-0.5)*p);
-  const X=blank();X.demo=true;X.settings={goal:'ned',kcal:null,protein:100,late:20};let kg=81.2;
-  for(let i=27;i>=0;i--){const k=addDays(today,-i),taper=i<14,dd=(27-i)%7;
-    if(dd===0)X.doses.push({id:uid(),d:k,med:'Wegovy',mg:taper?1.7:2.4,phase:taper?'ned':'stabil'});
-    const bed=22.5+rnd()*(taper?2.2:1.2),up=6.4+rnd()*0.9,sh=24-bed+up;
-    X.sleep.push({id:uid(),d:k,from:fmtH(bed),to:fmtH(up),q:sh<6.3?2:sh<7?3:4});
-    let app=taper?1+(dd>=4?0.2:0.08):1+(dd>=5?0.06:0);if(sh<6.5)app*=1.12;
-    const m=(tm,titel,kc,pr,fe)=>X.meals.push({id:uid(),t:`${k}T${tm}`,titel,kcal:r0(jit(kc*app,0.2)),protein:r1(jit(pr,0.2)),fedt:r1(jit(fe*app,0.25)),kulhydrat:r1(jit(kc*app*0.45/4,0.2))});
-    if(rnd()>0.15)m(`0${7+Math.floor(rnd()*2)}:${pad(Math.floor(rnd()*6)*10)}`,'Skyr med bær og müsli',330,24,8);
-    m(`12:${pad(Math.floor(rnd()*5)*10)}`,['Rugbrød med æg og kylling','Salat med laks','Suppe og rugbrød'][i%3],480,30,18);
-    if(taper&&rnd()>0.4)m(`15:${pad(Math.floor(rnd()*5)*10)}`,'Kaffe og kage',260,4,13);
-    m(`18:${pad(20+Math.floor(rnd()*4)*10)}`,['Kylling med ris og grønt','Frikadeller med kartofler','Pasta med kødsauce','Torsk med kartofler'][i%4],620,38,22);
-    if(taper&&dd>=3&&rnd()>0.3)m(`21:${pad(Math.floor(rnd()*5)*10)}`,['Chips og dip','Ostemadder','Is'][i%3],330,7,19);
-    if(rnd()>0.5)X.workouts.push({id:uid(),t:`${k}T17:${pad(Math.floor(rnd()*5)*10)}`,navn:['Gåtur','Styrketræning','10 min core'][i%3],min:[35,40,10][i%3]});
-    kg+=taper?0.055+(rnd()-0.5)*0.35:-0.04+(rnd()-0.5)*0.35;if(rnd()>0.15)X.weights.push({id:uid(),d:k,kg:r1(kg)});}
-  D=X;noteTried=false;noteKeyTried='';save();drawLog();fillSettings();$('dataMsg').textContent='Eksempeldata indlæst.';window.scrollTo({top:0,behavior:reduce?'auto':'smooth'});};
+
 
 /* ---------- vejleder-bot ---------- */
 const bot={msgs:[],busy:false,ctl:null};
