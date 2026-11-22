@@ -792,7 +792,7 @@ h1.brand .brand-ai{display:inline-grid;place-items:center;height:30px;padding:0 
 
 <section class="pcard"><h2>Det spiser jeg ikke</h2>
 <div class="diet" id="diet"></div>
-<label class="dislike">Andet, du ikke kan lide<input id="dislike" type="text" placeholder="Fx rosenkål, laks, hytteost" autocomplete="off"></label>
+<label class="dislike">Andet, du ikke spiser<input id="dislike" type="text" placeholder="Fx rosenkål, nødder, hytteost" autocomplete="off"></label>
 <p class="small" id="dietMsg"></p></section>
 <section class="pcard"><h2>Påmindelser</h2>
 <div class="rem" id="rem">
@@ -854,7 +854,7 @@ const today=dayKey(new Date());
 const addDays=(k,n)=>{const d=new Date(k+'T12:00');d.setDate(d.getDate()+n);return dayKey(d);};
 const uid=()=>Date.now().toString(36)+Math.random().toString(36).slice(2,6);
 const store={get(k,d){try{return JSON.parse(localStorage.getItem(k))??d}catch(e){return d}},set(k,v){try{localStorage.setItem(k,JSON.stringify(v))}catch(e){}}};
-var DIETS=[['veg','Vegetar'],['pesc','Ingen kød'],['fisk','Ingen fisk'],['aeg','Ingen æg'],['maelk','Ingen mælk'],['gluten','Glutenfri'],['svin','Ingen svin']];
+var DIETS=[['veg','Vegetar'],['pesc','Kød'],['fisk','Fisk'],['aeg','Æg'],['maelk','Mælk'],['gluten','Gluten'],['svin','Svinekød']];
 /* tags: k=kød, s=svin, f=fisk, a=æg, m=mælk, g=gluten */
 var FOODS={Morgenmad:[[180,15,'skyr med bær og lidt müsli','mg'],[250,16,'skyr med bær og hørfrø','m'],[300,20,'2 kogte æg og en gulerod','a'],[330,22,'havregrød med skyr og bær','mg'],[360,22,'omelet med spinat og tomat','a'],[380,24,'2 æg på rugbrød med tomat','ag'],[400,25,'rugbrød med hytteost og laks','mfg'],[420,20,'chiagrød med kokosyoghurt og bær',''],[450,28,'græsk yoghurt med nødder og æble','m'],[480,24,'tofu-scramble med rugbrød','g'],[500,26,'proteinshake med banan og havregryn','mg']],
  Frokost:[[300,30,'stor salat med kylling','k'],[350,25,'salat med tun og bønner','f'],[380,22,'linsesuppe med rugbrød','g'],[420,28,'rugbrød med æg og laks','afg'],[450,30,'kyllingewrap med grønt','kg'],[480,24,'quinoasalat med kikærter og feta','m'],[500,30,'rugbrød med kalkun og hummus','kg'],[520,26,'falafel med salat og hummus',''],[550,32,'pastasalat med kylling og pesto','kmg'],[580,35,'tun-pitabrød med grønt','fg'],[600,28,'tofu-bowl med ris og edamame','']],
@@ -1605,8 +1605,8 @@ Regler:
 - Sig det, hvis der er for få data til at konkludere.
 - Mangler der logning nogle dage (se 'Manglende logning'), så nævn kort at vurderingen derfor er usikker, og at brugeren kan efterregistrere, hvis hun har glemt det. Dage med 0 måltider betyder sandsynligvis manglende logning, ikke faste.`;
 function context(){
-  const t=target(),dn=(S().diet||[]).map(d=>(DIETS.find(x=>x[0]===d)||[])[1]).filter(Boolean),dk=S().dislike;
-  return `${dn.length||dk?`Madpræferencer – foreslå ALDRIG mad, der bryder dem: ${[dn.join(', '),dk?'kan ikke lide: '+dk:''].filter(Boolean).join('; ')}. `:''}Mål: ${S().goal?GOAL[S().goal]:'ikke angivet'}.${isOA()?` Brugeren er ${OAT[S().oa]}: læg vægt på protein fordelt over dagen (mindst 25–30 g pr. måltid), styrketræning 2–3 gange om ugen, fibre og kalk; skeln mellem vægtøgning fra overgangsalderen og fra nedtrapning af GLP-1. Nævn kun overgangsalderen, når det er relevant.`:''} Kalorimål: ${t?nf(t.v)+' kcal ('+t.src+')':'ikke angivet'}. Proteinmål: ${protTarget()?protTarget()+' g':'ikke angivet'}. Spisepausen om aftenen starter kl. ${lateH()}; kald det altid "spisepausen om aftenen", ikke "efter kl. X".
+  const t=target(),dg=S().diet||[],veg=dg.includes('veg'),dn=dg.filter(d=>d!=='veg').map(d=>(DIETS.find(x=>x[0]===d)||[])[1]).filter(Boolean).map(x=>x.toLowerCase()),dk=S().dislike;
+  return `${veg||dn.length||dk?`Kost – foreslå ALDRIG mad, der bryder dette (det kan være allergi eller intolerance): ${[veg?'er vegetar':'',dn.length?'spiser ikke '+dn.join(', '):'',dk?'spiser heller ikke: '+dk:''].filter(Boolean).join('; ')}. `:''}Mål: ${S().goal?GOAL[S().goal]:'ikke angivet'}.${isOA()?` Brugeren er ${OAT[S().oa]}: læg vægt på protein fordelt over dagen (mindst 25–30 g pr. måltid), styrketræning 2–3 gange om ugen, fibre og kalk; skeln mellem vægtøgning fra overgangsalderen og fra nedtrapning af GLP-1. Nævn kun overgangsalderen, når det er relevant.`:''} Kalorimål: ${t?nf(t.v)+' kcal ('+t.src+')':'ikke angivet'}. Proteinmål: ${protTarget()?protTarget()+' g':'ikke angivet'}. Spisepausen om aftenen starter kl. ${lateH()}; kald det altid "spisepausen om aftenen", ikke "efter kl. X".
 Appens egne anbefalinger lige nu: ${recs().map(r=>r[1]+': '+r[2]).join(' | ')}.
 Sammenhænge: ${correlations().map(c=>c.t+': '+c.v+'. '+c.s).join(' | ')||'ingen endnu'}.
 Manglende logning de seneste 7 dage: ${(()=>{const g=gaps();return [g.miss.length?'ingen mad: '+g.miss.map(d=>d.k).join(', '):'',g.thin.length?'kun ét måltid: '+g.thin.map(d=>d.k).join(', '):'',g.noSleep.length?'ingen søvn: '+g.noSleep.map(d=>d.k).join(', '):''].filter(Boolean).join('; ')||'ingen'})()}.`;
