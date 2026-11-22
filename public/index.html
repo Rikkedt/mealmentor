@@ -590,12 +590,16 @@ label.hot input{flex:0 0 auto;margin:0}
 .bot .bm:not(.u){border-left:3px solid var(--wine)}
 #botForm .go{background:var(--wine)!important;color:#fff!important}
 #botQ:focus{border-color:var(--wine)!important;outline-color:var(--wine)}
+
+h1.brand{display:flex;align-items:center;gap:12px}
+h1.brand .brand-ic{width:44px;height:44px;flex:0 0 auto;border-radius:12px}
+h1.brand .brand-ai{display:inline-grid;place-items:center;height:30px;padding:0 11px;border-radius:999px;background:#E8735A;color:#fff;font-size:17px;font-weight:800;letter-spacing:0;align-self:center}
 </style>
 </head>
 <body>
 <header class="band top"><div class="wrap">
 <button class="backbtn" id="backBtn" hidden>‹ <span id="backLbl">Tilbage</span></button>
-<h1>Meal Mentor AI</h1>
+<h1 class="brand" aria-label="Meal Mentor AI"><svg class="brand-ic" viewBox="0 0 1024 1024" aria-hidden="true"><defs><linearGradient id="mmg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#5E6168"/><stop offset=".55" stop-color="#34363C"/><stop offset="1" stop-color="#1C1D21"/></linearGradient></defs><rect width="1024" height="1024" rx="286.72" fill="url(#mmg)"/><g transform="translate(194.56 194.56) scale(6.3488)"><path d="M14 80 V34 a16 16 0 0 1 32 0 V62 M46 34 a16 16 0 0 1 32 0 V80" fill="none" stroke="#FFFFFF" stroke-width="13.7" stroke-linecap="round" stroke-linejoin="round"/><circle cx="80" cy="20" r="9" fill="#E8735A"/></g></svg><span class="brand-t">Meal Mentor</span><span class="brand-ai">AI</span></h1>
 <p id="lead">Tag et billede af din mad, så får du et estimat af kalorier, protein, fedt og kulhydrat. Ret portionerne, hvis AI'en har gættet forkert.</p>
 <nav class="tabs" aria-label="Menu"><a href="#vejleder" id="t-vej"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 10.5 12 3l9 7.5V20a1 1 0 0 1-1 1h-5v-6H9v6H4a1 1 0 0 1-1-1z"/></svg><span>Mentor</span></a><a href="#mad" id="t-mad"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 8h3l2-3h6l2 3h3a1 1 0 0 1 1 1v10a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V9a1 1 0 0 1 1-1z"/><circle cx="12" cy="13.5" r="3.5"/></svg><span>Scan</span></a><a href="#traening" id="t-tr"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="14" cy="4.5" r="1.8"/><path d="M8 21l3-6 3 2v5M6 12l3-4h5l2 4 3 1"/></svg><span>Træning</span></a><a href="#profil" id="t-prof"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="8" r="4"/><path d="M4 21c1.5-4 4.5-6 8-6s6.5 2 8 6"/></svg><span>Profil</span></a></nav>
 </div></header>
