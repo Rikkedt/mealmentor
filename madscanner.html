@@ -1167,7 +1167,12 @@ medB:"60,38 60,48 60,80 55,64 51,80 65,64 69,80 44,84 62,88 76,84 58,88",
 hlA:"60,16 60,27 60,54 61,15 62,5 59,15 60,5 74,70 76,90 48,72 36,88",
 hlB:"60,20 60,31 60,58 61,19 62,9 59,19 60,9 76,72 78,90 47,74 34,88",
 triA:"60,17 60,28 60,56 72,28 84,28 48,28 36,28 72,74 82,90 48,74 38,90",
-triB:"82,40 74,44 60,56 78,58 80,72 70,30 68,16 72,74 82,90 48,74 38,90"
+triB:"82,40 74,44 60,56 78,58 80,72 70,30 68,16 72,74 82,90 48,74 38,90",
+rdlB:"76,42 71,47 58,56 72,59 72,72 73,59 73,72 61,73 60,90 62,73 61,90",
+slA:"60,17 60,28 60,56 54,40 60,41 66,40 60,41 50,74 42,90 70,74 78,90",
+slB:"67,23 66,34 68,62 61,46 67,47 72,46 67,47 52,76 40,90 80,72 82,90",
+wsA:"50,29 50,40 50,66 53,54 61,64 54,54 62,64 70,66 70,90 71,67 71,90",
+wsB:"50,30 50,41 50,66 53,55 61,65 54,55 62,65 70,66 70,90 71,67 71,90"
 };
 const pose={};for(const k in P){const a=P[k].split(' ').map(s=>s.split(',').map(Number));if(!a[11])a[11]=[(a[1][0]+a[2][0])/2,(a[1][1]+a[2][1])/2];pose[k]=a;}
 const lerp=(A,B,t)=>A.map((p,i)=>[p[0]+(B[i][0]-p[0])*t,p[1]+(B[i][1]-p[1])*t]);
@@ -1244,6 +1249,10 @@ twist:["Russian twist","Læn dig lidt tilbage og drej overkroppen fra side til s
 crunch:["Mavebøjninger","Løft skulderbladene fra gulvet. Hagen væk fra brystet.","crunchA","crunchB"],
 bike:["Cykelcrunch","Før albue mod modsat knæ og skift i et roligt tempo.","bikeA","bikeB"],
 legs:["Benløft","Lænden presset mod gulvet. Sænk benene så langt du kan styre det.","legUp","legDown"],
+rdl:["Rumænsk dødløft","Let bøjede knæ. Skub hoften bagud, og sænk overkroppen med ret ryg. Hold evt. en vandflaske i hver hånd.","stand","rdlB"],
+sideLunge:["Sideudfald","Brede ben. Sæt dig ned i det ene ben, mens det andet er strakt. Skift side, når det bipper.","slA","slB",0,50,1],
+wallsit:["Wall sit","Ryggen mod en væg, og glid ned til 90 grader i knæene. Hold stillingen.","wsA","wsB",0,40],
+scissor:["Saksehop","Skift hurtigt mellem udfald på højre og venstre ben. Uden hop: træd i stedet for at hoppe.","lungeB","lungeA"],
 squat:["Squat","Fødderne i hoftebredde, sæt dig bagud som på en stol. Knæene følger tæerne.","squatA","squatB"],
 deep:["Dyb squat, hold","Sid dybt med vægten på hælene og brystet løftet.","squatB"],
 lungeL:["Udfald, venstre","Langt skridt frem, sænk det bagerste knæ mod gulvet.","lungeA","lungeB"],
@@ -1273,7 +1282,7 @@ const PROGS=[
 {id:"overkrop",navn:"Overkrop",sub:"Arme, bryst, skuldre",ex:"circles kpush tap plank push superman spL spR kpush roll"},
 {id:"core",navn:"Core",sub:"Stabilitet",ex:"plank bug bird spL spR climb twist plank bug child"},
 {id:"mave",navn:"Mave",sub:"Mavemuskler",ex:"crunch twist bug legs bike climb plank crunch legs cobra"},
-{id:"ben",navn:"Ben",sub:"Lår, numse, lægge",ex:"squat lungeL lungeR bridge squat calf deep bridge quadL quadR"},
+{id:"ben",navn:"Ben",sub:"Lår, numse, lægge",ex:"squat lungeL lungeR rdl sideLunge wallsit bridge scissor calf quadB"},
 {id:"ryg",navn:"Ryg",sub:"Stærk og smidig ryg",ex:"catcow bird superman child bridge cobra plank bird superman child"},
 {id:"morgen",navn:"Morgenrutine",sub:"Vågn op i kroppen",w:20,r:5,ex:"meditate child catcow dog cobra hlunge triangle fold mountain"},
 {id:"sovn",navn:"Bedre søvn",sub:"Ro før sengetid",w:20,r:5,ex:"hero child cobra camel bfold spineTw bridge kneeChest corpse"},
