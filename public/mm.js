@@ -41,10 +41,10 @@ function daErr(e){const m=(e&&e.message)||'';let t;
           const w = ((error.message || '').match(/after (\d+) seconds?/i) || [])[1];
           if (w) {
             let n = +w; go.disabled = true;
-            const tick = () => { if (n <= 0) { clearInterval(t); go.disabled = false; go.textContent = 'Send kode'; msg.textContent = 'Du kan sende en ny kode nu.'; return; }
+            const tick = () => { if (code.value) { clearInterval(t); go.disabled = false; go.textContent = 'Log ind'; msg.textContent = ''; return; } if (n <= 0) { clearInterval(t); go.disabled = false; go.textContent = 'Send kode'; msg.textContent = 'Du kan sende en ny kode nu.'; return; }
               go.textContent = `Vent ${n} s`; msg.textContent = `Der er lige sendt en kode. Tjek din mail – eller vent ${n} sekunder og send en ny.`; n--; };
             const t = setInterval(tick, 1000); tick();
-            code.hidden = false; code.placeholder = 'Kode fra mailen';
+            code.hidden = false; code.placeholder = 'Kode fra mailen'; code.oninput = () => { if (code.value) { go.disabled = false; go.textContent = 'Log ind'; } };
             return;
           }
           msg.textContent = daErr(error); return;
