@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,viewport-fit=cover">
-<title>Meal Mentor AI</title><meta name="mm-version" content="8c7b1f729f"><link rel="manifest" href="/manifest.webmanifest"><link rel="apple-touch-icon" href="/apple-touch-icon.png"><meta name="theme-color" content="#F1F1F4"><link rel="stylesheet" href="/mm.css"><script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script><script src="/mm.js"></script>
+<title>Meal Mentor AI</title><meta name="mm-version" content="b5f166744c"><link rel="manifest" href="/manifest.webmanifest"><link rel="apple-touch-icon" href="/apple-touch-icon.png"><meta name="theme-color" content="#F1F1F4"><link rel="stylesheet" href="/mm.css"><script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script><script src="/mm.js"></script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Inter+Tight:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <style>
@@ -625,6 +625,15 @@ h1.brand .brand-ai{display:inline-grid;place-items:center;height:30px;padding:0 
 .lift.ro .lift-h small{color:#A9B0FF}.lift.ro .lift-h b,.lift.ro .lift-done b{color:#fff}
 .lift.ro .lift-x{color:#9DA0B8}.lift.ro .lift-play{background:#4A4FB0}
 .lift.ro .lift-ok{color:#C6CAFF}.lift.ro .lift-ck{background:#4A4FB0}.lift.ro .lift-done span{color:#B9BCD0}
+
+.bsa{display:flex;gap:18px;align-items:flex-start;padding:22px;border-radius:24px;background:linear-gradient(135deg,#23243A,#14151F);color:#fff;width:100%}
+.bsa-ic{font-size:34px;width:60px;height:60px;border-radius:18px;background:rgba(255,255,255,.08);display:grid;place-items:center;flex:0 0 auto}
+.bsa-b{flex:1;min-width:0}.bsa small{font-size:11px;letter-spacing:.12em;font-weight:800;color:#A9B0FF}
+.bsa h2{margin:4px 0 6px;color:#fff;font-size:24px}.bsa p{margin:0 0 14px;color:#C6C9DA;font-size:14px;line-height:1.45}
+.bsa-play{all:unset;box-sizing:border-box;display:inline-flex;align-items:center;gap:12px;padding:12px 20px 12px 12px;border-radius:999px;background:#4A4FB0;color:#fff;font-weight:700;cursor:pointer}
+.bsa-play #bsaPi{width:36px;height:36px;border-radius:50%;background:rgba(255,255,255,.2);display:grid;place-items:center;font-size:13px}
+.bsa-bar{height:6px;border-radius:99px;background:rgba(255,255,255,.12);margin:16px 0 8px;overflow:hidden}.bsa-bar i{display:block;height:100%;width:0;background:#A9B0FF}
+.bsa .small{color:#9DA0B8!important}
 </style>
 </head>
 <body>
@@ -670,6 +679,9 @@ h1.brand .brand-ai{display:inline-grid;place-items:center;height:30px;padding:0 
 <div class="cards" id="cards"></div>
 </div></section>
 <main class="band" style="padding-top:0"><div class="wrap player">
+<div class="bsa" id="bsa" hidden><div class="bsa-ic">🌙</div><div class="bsa-b"><small>BODYSCAN · 5 MIN</small><h2>Ro og afspænding</h2><p>Læg eller sæt dig godt til rette, luk øjnene og lyt. Stemmen guider dig gennem hele kroppen.</p>
+<button class="bsa-play" id="bsaPlay" type="button"><span id="bsaPi">▶</span><span id="bsaT">Start bodyscan</span></button><div class="bsa-bar"><i id="bsaBar"></i></div><div class="small" id="bsaTime">0:00 af 4:52</div></div>
+<audio id="bsaAudio" preload="none"></audio></div>
 <div class="mat"><svg id="fig" viewBox="0 0 120 100" aria-hidden="true"></svg><span class="tag" id="tag">Klar</span></div>
 <div class="ctrl">
 <div class="small" id="pname"></div>
@@ -1194,6 +1206,10 @@ function pick(id){
 }
 function curEx(){return X[run.prog.ex[run.i]];}
 function drawPlayer(){
+  {const isB=run.prog&&run.prog.id==='bodyscan',pl=document.querySelector('#v-tr .player');
+   $('bsa').hidden=!isB;pl.querySelector('.mat').hidden=isB;pl.querySelector('.ctrl').hidden=isB;const sd=document.querySelector('.stepsd');if(sd)sd.hidden=isB;
+   if(!isB){const a=$('bsaAudio');if(!a.paused)a.pause();}
+   if(isB){$('pname').textContent='';return;}}
   const p=run.prog,ex=curEx(),resting=run.phase==='rest';
   const shown=resting?X[p.ex[run.i+1]]:ex;
   $('pname').textContent=`${p.navn} · ${p.sub}`;
@@ -1944,6 +1960,15 @@ setInterval(checkPush,60000);setTimeout(checkPush,1500);
 
 /* ===== Morgenløft ===== */
 const AUDIO=location.protocol.startsWith('http')&&!/claude|anthropic/.test(location.host)?'':'https://mealmentor.rikkedt.workers.dev';
+
+/* Bodyscan fra Soft Motel (lyd) */
+{const a=$('bsaAudio'),fm=x=>Math.floor(x/60)+':'+String(Math.floor(x%60)).padStart(2,'0');
+  $('bsaPlay').onclick=()=>{if(!a.src)a.src=(typeof AUDIO!=='undefined'?AUDIO:'')+'/audio/bodyscan.mp3';
+    if(a.paused){a.play().catch(()=>toast('Lyden kunne ikke afspilles'));}else a.pause();};
+  a.onplay=()=>{$('bsaPi').textContent='❚❚';$('bsaT').textContent='Pause';};
+  a.onpause=()=>{$('bsaPi').textContent='▶';$('bsaT').textContent=a.currentTime>1?'Fortsæt':'Start bodyscan';};
+  a.ontimeupdate=()=>{if(a.duration){$('bsaBar').style.width=(a.currentTime/a.duration*100)+'%';$('bsaTime').textContent=fm(a.currentTime)+' af '+fm(a.duration);}};
+  a.onended=()=>{D.workouts.push({id:uid(),t:nowT(),navn:'Bodyscan',min:5});save();toast('Godt gået – bodyscan klaret 🌙');a.currentTime=0;};}
 function drawLift(){const el=$('lift');if(!el)return;{const a=$('liftAudio');if(a&&!a.paused)return;}const h=new Date().getHours(),k='mm-lift-'+today,st=store.get(k,null);
   if(h>=20||h<2){const rk='mm-ro-'+(h<2?addDays(today,-1):today),rs=store.get(rk,null);if(rs==='skip'){el.hidden=true;return;}el.hidden=false;el.className='lift ro';
     if(rs==='done'){el.innerHTML=`<div class="lift-done"><span class="lift-ck">✓</span><div><b>Aftenro klaret</b><span>Sov godt – vi ses i morgen.</span></div></div>`;return;}
@@ -1991,7 +2016,7 @@ function ciReply(sel,t){const on=x=>sel.includes(x),r=remaining();
   if(on('Kvalm'))return 'Kvalme er almindeligt på GLP-1. Spis små portioner, drik lidt ad gangen og undgå fed mad. Bliver det ved, så tal med din læge.';
   if(on('Sulten')&&(on('Træt')||on('Energiforladt')))return 'Træthed gør os sultne. Spisepausen er startet – drik en kop te og gå tidligt i seng. I morgen starter vi med protein til morgenmad.';
   if(on('Træt')||on('Energiforladt'))return `Det har været en tung dag. Prioritér søvnen i nat${D.sleep.length?' – efter gode nætter spiser du mindre om aftenen':''}.`;
-  if(on('Stresset')||on('Sur'))return 'Tak fordi du siger det. Stress kan give lyst til mad om aftenen. Prøv 10 minutters bodyscan under Træning før sengetid.';
+  if(on('Stresset')||on('Sur'))return 'Tak fordi du siger det. Stress kan give lyst til mad om aftenen. Prøv bodyscan under Træning før sengetid – den tager 5 minutter.';
   if(on('Sulten'))return r.kLeft!=null&&r.kLeft>200?`Du har ca. ${nf(Math.round(r.kLeft/10)*10)} kcal tilbage – spis noget let med protein, fx skyr eller hytteost, og så er det spisepause.`:'Spisepausen er startet. Er det rigtig sult, så tag vand eller te – i morgen lægger vi mere protein i frokosten.';
   if(on('Stolt')||on('Glad')||on('Energisk')||on('Frisk'))return t.n>=2?`Dejligt! ${t.n} måltider logget i dag – det giver Mentoren et godt billede. Godt gået.`:'Dejligt! Husk at logge dagens måltider, så kan Mentoren følge med.';
   return 'En helt almindelig dag – og det er godt nok. Hold fast i rytmen i morgen.';}
