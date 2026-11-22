@@ -17,6 +17,7 @@ function daErr(e){const m=(e&&e.message)||'';let t;
     const c = await fetch('/api/config').then(r => r.json()); sbUrl = c.url; sbAnon = c.anon;
     sb = supabase.createClient(c.url, c.anon, { auth: { persistSession: true, autoRefreshToken: true, detectSessionInUrl: true, flowType: 'implicit' } });
     session = (await sb.auth.getSession()).data.session;
+    try { const L = document.documentElement.lang === 'en' ? 'en' : 'da'; if (session && (session.user.user_metadata || {}).lang !== L) sb.auth.updateUser({ data: { lang: L } }); } catch (e) {}
     if (/[?&](code|error)=/.test(location.search) || /access_token=|error_description=/.test(location.hash)) history.replaceState(null, '', location.pathname + '#vejleder');
     sb.auth.onAuthStateChange((ev, s) => {
       const had = !!session; session = s;
@@ -41,7 +42,7 @@ function daErr(e){const m=(e&&e.message)||'';let t;
       e.preventDefault();
       if (!sent && !(code.value && !code.hidden)) {
         msg.textContent = 'Sender …';
-        const { error } = await sb.auth.signInWithOtp({ email: inp.value.trim(), options: { emailRedirectTo: location.origin } });
+        const { error } = await sb.auth.signInWithOtp({ email: inp.value.trim(), options: { emailRedirectTo: location.origin + (document.documentElement.lang === 'en' ? '/en/' : '/'), data: { lang: document.documentElement.lang === 'en' ? 'en' : 'da' } } });
         if (error) {
           const w = ((error.message || '').match(/after (\d+) seconds?/i) || [])[1];
           if (w) {
