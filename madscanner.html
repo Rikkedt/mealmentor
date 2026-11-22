@@ -667,6 +667,14 @@ body.kb .tabs,body.kb #botFab{display:none!important}
 .progs.folded .prog-chev{transform:rotate(0)}
 .progs.folded .prog-sub,.progs.folded #cards{display:none}
 .progs.folded{padding-bottom:6px!important}
+
+.hungerbtn{min-height:44px;padding:0 14px;border-radius:999px;border:1.5px solid var(--line);background:var(--card);color:var(--ink);font-weight:700;font-size:14px;margin-right:8px}
+.regwrap{display:flex;align-items:center}
+.hgrid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+.hgrid button{display:grid;gap:4px;justify-items:center;padding:12px 6px;border-radius:16px;border:1.5px solid var(--line);background:var(--card);font-weight:700;font-size:13px;color:var(--ink)}
+.hgrid button span{font-size:26px}
+.hgrid button[aria-pressed=true],#hWhy button[aria-pressed=true]{background:var(--acc);color:var(--accInk);border-color:var(--acc)}
+.dtl .hu .dtl-dot{background:#FFF1D6}
 </style>
 </head>
 <body>
@@ -746,7 +754,7 @@ body.kb .tabs,body.kb #botFab{display:none!important}
 <main class="band"><div class="wrap">
 <section class="coach">
 <div class="vtop"><h2 class="hello" id="hello"></h2>
-<div class="regwrap"><button class="go" id="regBtn" aria-haspopup="dialog" aria-expanded="false">+ Log</button>
+<div class="regwrap"><button class="hungerbtn" id="hungerBtn" type="button" aria-label="Jeg er sulten">😋 Sulten?</button><button class="go" id="regBtn" aria-haspopup="dialog" aria-expanded="false">+ Log</button>
 <div class="regmenu" id="regMenu" role="menu" hidden><button role="menuitem" data-f="fMeal">Måltid</button><button role="menuitem" data-scan="1">Scan mad med kamera</button><button role="menuitem" data-f="fSleep">Søvn</button><button role="menuitem" data-f="fWeight">Vægt</button><button role="menuitem" data-f="fWork">Træning</button><button role="menuitem" data-f="fDose">GLP-1 dosis</button></div></div></div>
 <div class="chips" id="vchips" hidden></div>
 <div class="sheet" id="qSheet" hidden><div class="sheet-bg" data-close></div><div class="sheet-c" role="dialog" aria-modal="true" aria-labelledby="qH">
@@ -755,7 +763,15 @@ body.kb .tabs,body.kb #botFab{display:none!important}
 <div class="qtiles"><button class="qt dark" data-scan="photo"><span class="qi">📷</span>AI-scan</button><button class="qt" data-scan="label"><span class="qi">▥</span>Stregkode</button><button class="qt" data-f="fMeal"><span class="qi">🔍</span>Søg / skriv</button></div>
 <small class="qsub">Favoritter · ét tryk</small><div class="qfav" id="qFav"></div>
 <div class="sec-h"><span class="sq">＋</span><b>ANDET</b></div>
-<div class="qfav qother"><button data-f="fSleep">😴 Søvn</button><button data-f="fWeight">⚖️ Vægt</button><button data-f="fWork">🏃 Træning</button><button data-f="fDose">💉 GLP-1 dosis</button></div>
+<div class="qfav qother"><button data-hunger="1">😋 Sult</button><button data-f="fSleep">😴 Søvn</button><button data-f="fWeight">⚖️ Vægt</button><button data-f="fWork">🏃 Træning</button><button data-f="fDose">💉 GLP-1 dosis</button></div>
+</div></div>
+<div class="sheet" id="hSheet" hidden><div class="sheet-bg" data-hclose></div><div class="sheet-c" role="dialog" aria-modal="true" aria-labelledby="hH">
+<div class="sheet-h"><b id="hH">Er du sulten?</b><span class="small" id="hTime"></span><button class="close" data-hclose aria-label="Luk">×</button></div>
+<p class="small" style="margin:0 0 10px">Log det – så kan din mentor se, hvornår sulten kommer, og hjælpe dig bedre.</p>
+<div class="hgrid" id="hLvl"><button data-l="1"><span>🙂</span>Lidt sulten</button><button data-l="2"><span>😋</span>Sulten</button><button data-l="3"><span>😫</span>Meget sulten</button></div>
+<small class="qsub">Hvad tror du, det skyldes? (valgfrit)</small>
+<div class="qfav" id="hWhy"><button data-w="Rigtig sult">Rigtig sult</button><button data-w="Træt">Træt</button><button data-w="Stress">Stress</button><button data-w="Kedsomhed">Kedsomhed</button><button data-w="Trøst">Trøst</button><button data-w="Tørst">Tørst</button></div>
+<div class="btns" style="margin-top:14px"><button class="go" id="hAsk" type="button" disabled>Spørg mentoren, hvad jeg kan gøre</button><button class="ghost" id="hSave" type="button" disabled>Bare gem</button></div>
 </div></div>
 <div class="toast" id="toast" hidden role="status"></div>
 <div class="lift" id="lift" hidden></div>
@@ -942,14 +958,14 @@ function foodOpts(n,k){const ban=(S().diet||[]).map(d=>DIETX[d]||'').join(''),dl
   if(!L.length)L=FOODS[n]||FOODS.Eftermiddag;
   const kk=k??300;return [...L].sort((a,b)=>Math.abs(a[0]-kk)-Math.abs(b[0]-kk));}
 var swapN=store.get('mm-swap',{});
-const blank=()=>({meals:[],weights:[],doses:[],workouts:[],sleep:[],checkins:[],settings:{late:20}});
+const blank=()=>({meals:[],weights:[],doses:[],workouts:[],sleep:[],checkins:[],hunger:[],settings:{late:20}});
 let D=store.get('mob-data',null);
 if(!D){D=blank();const old=store.get('madscanner-'+today,[]);old.forEach(e=>D.meals.push({id:uid(),t:today+'T'+(e.tid||'12:00').replace('.',':'),titel:e.titel,kcal:e.kcal,protein:e.protein,fedt:e.fedt,kulhydrat:e.kulhydrat}));}
 if(D.demo){D={...blank(),settings:{...(D.settings||{late:20})}};store.set('mob-data',D);}
-if(!D.sleep)D.sleep=[];if(!D.checkins)D.checkins=[];
+if(!D.sleep)D.sleep=[];if(!D.checkins)D.checkins=[];if(!D.hunger)D.hunger=[];
 const save=()=>{store.set('mob-data',D);cloudSchedule();if(typeof refreshVej==='function')refreshVej();if(typeof pushSync==='function')pushSync();if(typeof drawLift==='function')drawLift();};
 /* ---------- login og synkronisering ---------- */
-const KINDS={meals:x=>x.t,sleep:x=>x.d,weights:x=>x.d,doses:x=>x.d,workouts:x=>x.t,checkins:x=>x.d};
+const KINDS={meals:x=>x.t,sleep:x=>x.d,weights:x=>x.d,doses:x=>x.d,workouts:x=>x.t,checkins:x=>x.d,hunger:x=>x.t};
 const cloud={db:null,col:null,uid:null,name:'',state:'local',sent:{},timer:0,busy:false,again:false};
 function toDocs(X){const out={meta:JSON.stringify({settings:X.settings||{},demo:!!X.demo})};
   for(const k in KINDS){const g={};(X[k]||[]).forEach(it=>{const m=String(KINDS[k](it)||'').slice(0,7)||'0000-00';(g[m]=g[m]||[]).push(it);});
@@ -1624,6 +1640,7 @@ function drawStrip(){
   const add=(h,cls,ic,time,title,sub)=>rows.push({h,cls,ic,time,title,sub});
   if(d.sleep)add(-1,'sl','😴',`${d.sleep.from}–${d.sleep.to}`,`Søvn · ${nf(d.sleepH,1)} timer`,(q=>q?q[0].toUpperCase()+q.slice(1):'')(QUAL[d.sleep.q]||''));
   [...d.meals].sort((p,q)=>p.t.localeCompare(q.t)).forEach(m=>add(hr(m.t),'ml','🍽️',m.t.slice(11,16),esc(m.titel||'Måltid'),[m.kcal!=null?nf(r0(m.kcal))+' kcal':'',m.protein!=null?nf(r0(m.protein))+' g protein':''].filter(Boolean).join(' · ')));
+  (D.hunger||[]).filter(x=>x.t.startsWith(vKey)).forEach(x=>add(hr(x.t),'hu','😋',x.t.slice(11,16),['Lidt sulten','Sulten','Meget sulten'][x.lvl-1]||'Sulten',(x.why||[]).join(', ')));
   d.wo.forEach(w=>add(hr(w.t),'wo','🏃',w.t.slice(11,16),esc(w.navn),/min/.test(w.navn)?'Træning':w.min+' min træning'));
   const lateDone=!isT||nowH>=L;add(L,'lt'+(isT&&nowH<L?' up':''),'🌙',pad(Math.floor(L))+':'+pad(Math.round((L%1)*60)),'Spisepause',isT&&nowH<L?'starter – derefter kun vand og te':'kun vand og te');
   rows.sort((a,b)=>a.h-b.h);
@@ -1761,7 +1778,8 @@ function aiData(n){
   return range(n).map(d=>({dato:d.k,maaltider:d.n,kcal:r0(d.kcal),protein_g:r0(d.protein),fedt_g:r0(d.fedt),
     foerste:d.first!=null?fmtH(d.first):null,sidste:d.last!=null?fmtH(d.last):null,kcal_i_spisepausen:r0(d.lateKcal),traening_min:d.woMin,
     soevn:d.sleep?`${d.sleep.from}-${d.sleep.to} (${nf(d.sleepH,1)} t, ${QUAL[d.sleep.q]}${d.sleep.hot?', hedeture':''})`:null,
-    vaegt_kg:d.weight,glp1:d.dose?`${d.dose.med||'GLP-1'} ${d.dose.mg} mg`:null,fase:d.dose?PH[d.dose.phase]:null,dage_efter_dosis:d.sinceDose}));
+    vaegt_kg:d.weight,glp1:d.dose?`${d.dose.med||'GLP-1'} ${d.dose.mg} mg`:null,fase:d.dose?PH[d.dose.phase]:null,dage_efter_dosis:d.sinceDose,
+    sult:(D.hunger||[]).filter(x=>x.t.startsWith(d.k)).map(x=>`${x.t.slice(11,16)} ${['lidt sulten','sulten','meget sulten'][x.lvl-1]}${x.why&&x.why.length?' ('+x.why.join(', ')+')':''}`)}));
 }
 const rules=`Du er Meal Mentor AI, en varm, konkret dansk kost-mentor i en app for personer, der bruger GLP-1-medicin (fx Wegovy, Ozempic, Mounjaro) eller trapper ud af den.
 Regler:
@@ -1770,6 +1788,7 @@ Regler:
 - Stiger vægten over ca. 1 kg om ugen under nedtrapning, eller er der tegn på bivirkninger, så anbefal at kontakte lægen.
 - Brug brugerens egne tal og tidspunkter. Vær venlig og ikke moraliserende. Skriv kort, enkelt dansk.
 - Er målet at blive stærkere og mere markeret og holde vægten, så fokusér på protein fordelt over dagen, styrketræning 2–4 gange om ugen og stabil vægt.
+- SULT: Når brugeren er sulten (står i SULT I DAG eller i spørgsmålet), så find den sandsynlige årsag ud fra data, før du giver råd: hvor længe siden sidste måltid, om der var protein og fibre nok, søvn i nat, dag efter dosis (dag 4–6 stiger appetitten ofte), tidspunkt (sen eftermiddag/aften), og brugerens eget bud (træt, stress, kedsomhed, trøst, tørst). Sig kort, hvad du tror årsagen er, og giv 1–2 konkrete råd: ved rigtig sult et konkret måltid/mellemmåltid med protein, der passer til de kalorier, der er tilbage og spisepausen; ved træthed, stress, kedsomhed eller trøst noget andet end mad (vand/te, en kort gåtur, vejrtrækning, ringe til en ven) – uden at moralisere. Ser du et mønster over flere dage (fx sult hver dag kl. 15), så sig det og foreslå at flytte eller styrke et måltid.
 - Sig det, hvis der er for få data til at konkludere.
 - Mangler der logning nogle dage (se 'Manglende logning'), så nævn kort at vurderingen derfor er usikker, og at brugeren kan efterregistrere, hvis hun har glemt det. Dage med 0 måltider betyder sandsynligvis manglende logning, ikke faste.`;
 function context(){
@@ -1789,14 +1808,14 @@ function md(t){
 }
 const aiErr=e=>e&&e.code==='login'?'Log ind for at bruge AI – det gør du under Profil.':e&&e.code==='daily_limit'?'Du har brugt dagens AI-hjælp. Den er klar igen i morgen.':e&&e.code==='photo_limit'?'Du har brugt dagens fotoscanninger. Skriv maden i stedet, eller scan igen i morgen.':e&&e.code==='rate_limited'?'For mange forespørgsler lige nu. Prøv igen om lidt.':e&&e.code==='not_granted'?'AI-adgang blev ikke givet.':'Mentoren kunne ikke svare. Prøv igen.';
 let noteBusy=false,noteTried=false,noteKeyTried='';
-function todayFacts(){const r=remaining(),d=r.d;
+function todayFacts(){const r=remaining(),d=r.d,hu=(D.hunger||[]).filter(x=>x.t.startsWith(today)),huTxt=hu.length?` SULT I DAG: ${hu.map(x=>`kl. ${x.t.slice(11,16)} ${['lidt sulten','sulten','meget sulten'][x.lvl-1]}${x.why&&x.why.length?' – brugeren tror: '+x.why.join(', '):''}`).join('; ')}. Sidste måltid før seneste sult: ${(()=>{const last=hu.at(-1);const m=D.meals.filter(z=>z.t<last.t&&z.t.startsWith(today)).sort((a,b)=>b.t.localeCompare(a.t))[0];return m?`kl. ${m.t.slice(11,16)} (${m.titel}, ${r0(m.kcal)} kcal, ${r0(m.protein)} g protein)`:'intet logget i dag';})()}.`:'';
   const k=r.t?(r.kLeft<0?`${nf(-r.kLeft)} kcal OVER målet (spist ${nf(d.kcal)} af ${nf(r.t.v)} kcal)`:`${nf(r.kLeft)} kcal tilbage (spist ${nf(d.kcal)} af ${nf(r.t.v)} kcal)`):`spist ${nf(d.kcal)} kcal, intet kalorimål`;
   const pr=r.pt?(r.pLeft<=0?`proteinmålet er nået (${nf(d.protein)} af ${nf(r.pt)} g)`:`${nf(r.pLeft)} g protein mangler (spist ${nf(d.protein)} af ${nf(r.pt)} g)`):`${nf(d.protein)} g protein`;
-  return `FAKTA FOR I DAG (kl. ${fmtH(r.nowH)}) – brug disse tal præcist, regn ikke selv: ${k}; ${pr}; ${d.n} måltider (${d.meals.map(m=>m.t.slice(11)+' '+m.titel+' '+r0(m.kcal)+' kcal').join('; ')||'ingen'}); træning ${d.woMin} min; søvn i nat ${d.sleepH!=null?nf(d.sleepH,1)+' t':'ikke logget'}.`;}
+  return `FAKTA FOR I DAG (kl. ${fmtH(r.nowH)}) – brug disse tal præcist, regn ikke selv: ${k}; ${pr}; ${d.n} måltider (${d.meals.map(m=>m.t.slice(11)+' '+m.titel+' '+r0(m.kcal)+' kcal').join('; ')||'ingen'}); træning ${d.woMin} min; søvn i nat ${d.sleepH!=null?nf(d.sleepH,1)+' t':'ikke logget'}.${huTxt}`;}
 async function autoNote(force){
   const box=$('aiNote'),txt=$('aiNoteTxt');
   if(!sample||logged(range(7)).length<3){box.hidden=true;return;}
-  const td=day(today),key='ai-note3-'+today+(D.demo?'-demo':'')+'-'+[(target()||{}).v,gaps().n,td.n,Math.round(td.kcal/50),Math.round(td.protein/10),td.woMin,td.sleep?1:0].join('.'),c=store.get(key,null);
+  const td=day(today),key='ai-note3-'+today+(D.demo?'-demo':'')+'-'+[(target()||{}).v,gaps().n,td.n,Math.round(td.kcal/50),Math.round(td.protein/10),td.woMin,td.sleep?1:0,(D.hunger||[]).filter(x=>x.t.startsWith(today)).length].join('.'),c=store.get(key,null);
   box.hidden=false;
   const show=(t,at)=>{txt.innerHTML=md(t)+(at?`<p class="small" style="margin-top:6px">Ud fra det, du havde logget kl. ${at}</p>`:'');};
   if(c&&!force){show(c.text||c,c.at);return;}
@@ -2088,6 +2107,19 @@ setInterval(checkPush,60000);setTimeout(checkPush,1500);
 
 
 
+
+/* ===== Sult ===== */
+{let lvl=0,why=[];const LV={1:'lidt sulten',2:'sulten',3:'meget sulten'};
+  const open=()=>{lvl=0;why=[];$('hTime').textContent='kl. '+nowT().slice(11,16);document.querySelectorAll('#hLvl [data-l],#hWhy [data-w]').forEach(b=>b.setAttribute('aria-pressed','false'));$('hSave').disabled=true;$('hAsk').disabled=true;$('hSheet').hidden=false;};
+  const close=()=>{$('hSheet').hidden=true;};
+  window.openHunger=open;
+  $('hungerBtn').onclick=open;
+  $('hSheet').addEventListener('click',e=>{if(e.target.closest('[data-hclose]')){close();return;}
+    const l=e.target.closest('[data-l]');if(l){lvl=+l.dataset.l;document.querySelectorAll('#hLvl [data-l]').forEach(b=>b.setAttribute('aria-pressed',b===l));$('hSave').disabled=false;$('hAsk').disabled=false;return;}
+    const w=e.target.closest('[data-w]');if(w){const v=w.dataset.w;why=why.includes(v)?why.filter(x=>x!==v):[...why,v];w.setAttribute('aria-pressed',why.includes(v));}});
+  const store1=()=>{D.hunger.push({id:uid(),t:nowT(),lvl,why});save();close();try{drawStrip();}catch(x){}};
+  $('hSave').onclick=()=>{store1();toast('Sult logget – din mentor tager højde for det');};
+  $('hAsk').onclick=()=>{store1();try{$('botFab').click();setTimeout(()=>{const q=$('botQ');q.value=`Jeg er ${LV[lvl]} nu${why.length?' – jeg tror, det er '+why.join(', ').toLowerCase():''}. Hvorfor tror du, jeg er sulten, og hvad kan jeg gøre?`;$('botForm').requestSubmit();},350);}catch(x){}};}
 /* Skjul bundmenu og chat-knap, mens tastaturet er oppe */
 {const isTxt=e=>e&&e.matches&&e.matches('input:not([type=checkbox]):not([type=radio]):not([type=button]):not([type=submit]):not([type=range]),textarea,select,[contenteditable=true]');
   document.addEventListener('focusin',e=>{if(isTxt(e.target))document.body.classList.add('kb');});
@@ -2152,7 +2184,7 @@ function openSheet(){const sh=$('qSheet');$('qDate').textContent=new Date().toLo
     D.meals.push({id:uid(),t:`${today}T${hh}:${mm}`,titel:x.titel,kcal:x.kcal,protein:x.protein||0,fedt:x.fedt||0,kulhydrat:x.kulhydrat||0});save();b.classList.add('on');b.disabled=true;toast(`${x.titel} tilføjet · ${nf(x.kcal)} kcal`);});
   sh.hidden=false;$('regBtn').setAttribute('aria-expanded','true');setTimeout(()=>sh.querySelector('.qt').focus(),30);}
 function closeSheet(){$('qSheet').hidden=true;$('regBtn').setAttribute('aria-expanded','false');}
-$('qSheet').addEventListener('click',e=>{const t=e.target.closest('[data-close],[data-scan],[data-f]');if(!t)return;closeSheet();
+$('qSheet').addEventListener('click',e=>{if(e.target.closest('[data-hunger]')){closeSheet();setTimeout(()=>window.openHunger&&window.openHunger(),200);return;}const t=e.target.closest('[data-close],[data-scan],[data-f]');if(!t)return;closeSheet();
   if(t.dataset.close){backFrom=null;return;}
   backFrom={hash:location.hash||'#vejleder',sheet:true};
   if(t.dataset.scan){location.hash='#mad';setTimeout(()=>{const b=document.querySelector(`#scanMode [data-m="${t.dataset.scan==='label'?'label':'meal'}"]`);if(b)b.click();if(t.dataset.scan==='label')toast('Tag et billede af stregkoden eller deklarationen');},300);return;}
