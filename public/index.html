@@ -551,6 +551,15 @@ body{padding-bottom:calc(150px + env(safe-area-inset-bottom))}
 .onb-body{display:grid;gap:12px}.onb-body label{display:grid;gap:6px;font-weight:700;font-size:14px}
 .onb-body input{font:inherit;font-size:18px!important;padding:14px 16px;border-radius:16px;border:1.5px solid var(--line,#E4E5EA);background:var(--card);color:var(--ink);width:100%;box-sizing:border-box}
 .onb-body .seg{display:grid;grid-template-columns:1fr 1fr;gap:8px}.onb-body .seg button{min-height:48px;border-radius:14px;font-weight:700}
+
+.lfood{display:flex;align-items:flex-start;gap:10px;justify-content:space-between}
+.lswap{all:unset;box-sizing:border-box;flex:0 0 auto;display:inline-flex;align-items:center;gap:6px;margin-top:4px;padding:8px 12px;border-radius:999px;background:rgba(255,255,255,.14);color:#fff;font:700 13px 'Inter Tight',sans-serif;cursor:pointer}
+.lswap:active{background:rgba(255,255,255,.28)}
+.diet{display:flex;flex-wrap:wrap;gap:8px;margin:4px 0 14px}
+.diet button{min-height:40px;padding:0 14px;border-radius:999px;border:1.5px solid var(--line,#E4E5EA);background:var(--card);color:var(--ink);font-weight:700;font-size:14px}
+.diet button[aria-pressed=true]{background:var(--acc);color:var(--accInk);border-color:var(--acc)}
+.dislike{display:grid;gap:6px;font-weight:700;font-size:14px}
+.dislike input{font:inherit;font-weight:500;padding:12px 14px;border-radius:14px;border:1.5px solid var(--line,#E4E5EA);background:var(--card);color:var(--ink)}
 </style>
 </head>
 <body>
@@ -738,6 +747,10 @@ body{padding-bottom:calc(150px + env(safe-area-inset-bottom))}
 
 <div id="pDose" hidden></div>
 
+<section class="pcard"><h2>Det spiser jeg ikke</h2>
+<div class="diet" id="diet"></div>
+<label class="dislike">Andet, du ikke kan lide<input id="dislike" type="text" placeholder="Fx rosenkål, laks, hytteost" autocomplete="off"></label>
+<p class="small" id="dietMsg"></p></section>
 <section class="pcard"><h2>Påmindelser</h2>
 <div class="rem" id="rem">
 <label><input type="checkbox" data-r="sleep"><span><b>Søvn</b><small>Om morgenen fra kl. 6</small></span></label>
@@ -798,6 +811,21 @@ const today=dayKey(new Date());
 const addDays=(k,n)=>{const d=new Date(k+'T12:00');d.setDate(d.getDate()+n);return dayKey(d);};
 const uid=()=>Date.now().toString(36)+Math.random().toString(36).slice(2,6);
 const store={get(k,d){try{return JSON.parse(localStorage.getItem(k))??d}catch(e){return d}},set(k,v){try{localStorage.setItem(k,JSON.stringify(v))}catch(e){}}};
+var DIETS=[['veg','Vegetar'],['pesc','Ingen kød'],['fisk','Ingen fisk'],['aeg','Ingen æg'],['maelk','Ingen mælk'],['gluten','Glutenfri'],['svin','Ingen svin']];
+/* tags: k=kød, s=svin, f=fisk, a=æg, m=mælk, g=gluten */
+var FOODS={Morgenmad:[[180,15,'skyr med bær og lidt müsli','mg'],[250,16,'skyr med bær og hørfrø','m'],[300,20,'2 kogte æg og en gulerod','a'],[330,22,'havregrød med skyr og bær','mg'],[360,22,'omelet med spinat og tomat','a'],[380,24,'2 æg på rugbrød med tomat','ag'],[400,25,'rugbrød med hytteost og laks','mfg'],[420,20,'chiagrød med kokosyoghurt og bær',''],[450,28,'græsk yoghurt med nødder og æble','m'],[480,24,'tofu-scramble med rugbrød','g'],[500,26,'proteinshake med banan og havregryn','mg']],
+ Frokost:[[300,30,'stor salat med kylling','k'],[350,25,'salat med tun og bønner','f'],[380,22,'linsesuppe med rugbrød','g'],[420,28,'rugbrød med æg og laks','afg'],[450,30,'kyllingewrap med grønt','kg'],[480,24,'quinoasalat med kikærter og feta','m'],[500,30,'rugbrød med kalkun og hummus','kg'],[520,26,'falafel med salat og hummus',''],[550,32,'pastasalat med kylling og pesto','kmg'],[580,35,'tun-pitabrød med grønt','fg'],[600,28,'tofu-bowl med ris og edamame','']],
+ Eftermiddag:[[120,12,'skyr naturel med bær','m'],[150,10,'et kogt æg og en gulerod','a'],[180,14,'hytteost og agurk','m'],[200,8,'en håndfuld nødder og et æble',''],[220,15,'proteinbar',''],[250,12,'hummus med grøntsagsstænger',''],[260,16,'rugbrød med hytteost','mg'],[300,20,'proteinshake','m']],
+ Aftensmad:[[380,32,'laks med broccoli','f'],[420,30,'torsk med kartofler og grønt','f'],[450,35,'kyllingebryst med salat og bulgur','kg'],[500,30,'chili sin carne med ris',''],[520,34,'kylling i karry med ris og grønt','k'],[550,30,'mørbradgryde med grønt','ks'],[560,28,'grøntsagslasagne','mg'],[600,38,'oksekød, kartofler og salat','k'],[620,26,'tofu-wok med nudler','g'],[650,36,'kylling, ris og grønt','k'],[700,34,'laksepasta med spinat','fg']],
+ Aftensnack:[[100,8,'en kop te og lidt skyr','m'],[120,0,'en kop te og et stykke frugt',''],[160,12,'skyr med bær','m'],[180,6,'en lille håndfuld mandler','']]};
+var DIETX={veg:'kfs',pesc:'ks',fisk:'f',aeg:'a',maelk:'m',gluten:'g',svin:'s'};
+function dislikes(){return String(S().dislike||'').toLowerCase().split(/[,;\n]+/).map(x=>x.trim().replace(/^(ingen|ikke)\s+/,'')).filter(x=>x.length>1);}
+function foodOpts(n,k){const ban=(S().diet||[]).map(d=>DIETX[d]||'').join(''),dl=dislikes();
+  let L=(FOODS[n]||FOODS.Eftermiddag).filter(([,,t,g])=>![...g].some(c=>ban.includes(c))&&!dl.some(w=>t.includes(w)));
+  if(!L.length)L=(FOODS[n]||FOODS.Eftermiddag).filter(([,,t,g])=>![...g].some(c=>ban.includes(c)));
+  if(!L.length)L=FOODS[n]||FOODS.Eftermiddag;
+  const kk=k??300;return [...L].sort((a,b)=>Math.abs(a[0]-kk)-Math.abs(b[0]-kk));}
+var swapN=store.get('mm-swap',{});
 const blank=()=>({meals:[],weights:[],doses:[],workouts:[],sleep:[],checkins:[],settings:{late:20}});
 let D=store.get('mob-data',null);
 if(!D){D=blank();const old=store.get('madscanner-'+today,[]);old.forEach(e=>D.meals.push({id:uid(),t:today+'T'+(e.tid||'12:00').replace('.',':'),titel:e.titel,kcal:e.kcal,protein:e.protein,fedt:e.fedt,kulhydrat:e.kulhydrat}));}
@@ -1314,8 +1342,9 @@ function drawLeft(){
   const pTxt=x=>x.prot!=null?` · ${isOA()?'mindst ':''}${nf(isOA()?Math.max(25,x.prot):x.prot)} g protein`:'';
   el.innerHTML=(D.meals.length?'':startCard(true))+`<div class="lgrid">${big('Kalorier tilbage',r.kLeft,'',kp,r.d.kcal,r.t.v)}${r.pt?big('Protein tilbage',r.pLeft,' g',pp,r.d.protein,r.pt):''}</div>
   <p class="lstatus">${parts.map(esc).join(' · ')}</p>
-  ${next?`<div class="sec-h spis-h"><span class="sq">🍽</span><b>SPIS</b><span>${r.d.n} af ${r.pat.typ}</span></div><div class="lnext"><small>Næste måltid · ${next.late?'snarest':`ca. kl. ${kl(next.h)}`}</small><b>${next.name}: ${foodFor(next.name,next.kcal)}</b><div class="lbar"><i style="width:${kp}%"></i></div><div class="lrow"><span><b>${nf(Math.round(next.kcal/10)*10)} kcal</b>${pTxt(next)}</span><button class="lcheck" id="lCheck" aria-label="Log ${next.name.toLowerCase()}">✓</button></div>${r.slots.length>1?`<span class="lthen">Derefter: ${r.slots.slice(1).map(x=>`${x.name.toLowerCase()} ca. kl. ${kl(x.h)}, ${nf(Math.round(x.kcal/10)*10)} kcal`).join(' · ')}</span>`:''}</div>`:''}
+  ${next?`<div class="sec-h spis-h"><span class="sq">🍽</span><b>SPIS</b><span>${r.d.n} af ${r.pat.typ}</span></div><div class="lnext"><small>Næste måltid · ${next.late?'snarest':`ca. kl. ${kl(next.h)}`}</small><div class="lfood"><b>${next.name}: ${foodFor(next.name,next.kcal)}</b><button class="lswap" id="lSwap" type="button" aria-label="Byt forslag"><svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 3l4 4-4 4"/><path d="M3 11V9a2 2 0 0 1 2-2h16"/><path d="M7 21l-4-4 4-4"/><path d="M21 13v2a2 2 0 0 1-2 2H3"/></svg>Byt</button></div><div class="lbar"><i style="width:${kp}%"></i></div><div class="lrow"><span><b>${nf(Math.round(next.kcal/10)*10)} kcal</b>${pTxt(next)}</span><button class="lcheck" id="lCheck" aria-label="Log ${next.name.toLowerCase()}">✓</button></div>${r.slots.length>1?`<span class="lthen">Derefter: ${r.slots.slice(1).map(x=>`${x.name.toLowerCase()} ca. kl. ${kl(x.h)}, ${nf(Math.round(x.kcal/10)*10)} kcal`).join(' · ')}</span>`:''}</div>`:''}
 `;
+  if(next&&$('lSwap'))$('lSwap').onclick=()=>{if(swapN.d!==today)swapN={d:today};swapN[next.name]=(swapN[next.name]||0)+1;store.set('mm-swap',swapN);drawLeft();};
   if(next&&$('lCheck'))$('lCheck').onclick=()=>{openForm('fMeal',null,true);const f=$('fMeal');f.elements.titel.value=foodFor(next.name,next.kcal);if(next.kcal)f.elements.kcal.value=Math.round(next.kcal/10)*10;if(next.prot!=null)f.elements.protein.value=Math.round(next.prot);};
 }
 function drawRecs(){drawTodo();drawLeft();drawCheckin();drawAnl();
@@ -1530,8 +1559,8 @@ Regler:
 - Sig det, hvis der er for få data til at konkludere.
 - Mangler der logning nogle dage (se 'Manglende logning'), så nævn kort at vurderingen derfor er usikker, og at brugeren kan efterregistrere, hvis hun har glemt det. Dage med 0 måltider betyder sandsynligvis manglende logning, ikke faste.`;
 function context(){
-  const t=target();
-  return `Mål: ${S().goal?GOAL[S().goal]:'ikke angivet'}.${isOA()?` Brugeren er ${OAT[S().oa]}: læg vægt på protein fordelt over dagen (mindst 25–30 g pr. måltid), styrketræning 2–3 gange om ugen, fibre og kalk; skeln mellem vægtøgning fra overgangsalderen og fra nedtrapning af GLP-1. Nævn kun overgangsalderen, når det er relevant.`:''} Kalorimål: ${t?nf(t.v)+' kcal ('+t.src+')':'ikke angivet'}. Proteinmål: ${protTarget()?protTarget()+' g':'ikke angivet'}. Spisepausen om aftenen starter kl. ${lateH()}; kald det altid "spisepausen om aftenen", ikke "efter kl. X".
+  const t=target(),dn=(S().diet||[]).map(d=>(DIETS.find(x=>x[0]===d)||[])[1]).filter(Boolean),dk=S().dislike;
+  return `${dn.length||dk?`Madpræferencer – foreslå ALDRIG mad, der bryder dem: ${[dn.join(', '),dk?'kan ikke lide: '+dk:''].filter(Boolean).join('; ')}. `:''}Mål: ${S().goal?GOAL[S().goal]:'ikke angivet'}.${isOA()?` Brugeren er ${OAT[S().oa]}: læg vægt på protein fordelt over dagen (mindst 25–30 g pr. måltid), styrketræning 2–3 gange om ugen, fibre og kalk; skeln mellem vægtøgning fra overgangsalderen og fra nedtrapning af GLP-1. Nævn kun overgangsalderen, når det er relevant.`:''} Kalorimål: ${t?nf(t.v)+' kcal ('+t.src+')':'ikke angivet'}. Proteinmål: ${protTarget()?protTarget()+' g':'ikke angivet'}. Spisepausen om aftenen starter kl. ${lateH()}; kald det altid "spisepausen om aftenen", ikke "efter kl. X".
 Appens egne anbefalinger lige nu: ${recs().map(r=>r[1]+': '+r[2]).join(' | ')}.
 Sammenhænge: ${correlations().map(c=>c.t+': '+c.v+'. '+c.s).join(' | ')||'ingen endnu'}.
 Manglende logning de seneste 7 dage: ${(()=>{const g=gaps();return [g.miss.length?'ingen mad: '+g.miss.map(d=>d.k).join(', '):'',g.thin.length?'kun ét måltid: '+g.thin.map(d=>d.k).join(', '):'',g.noSleep.length?'ingen søvn: '+g.noSleep.map(d=>d.k).join(', '):''].filter(Boolean).join('; ')||'ingen'})()}.`;
@@ -1683,8 +1712,11 @@ $('fSet').onsubmit=e=>{e.preventDefault();const f=e.target;
   if(!+val(f,'kcal')&&+val(f,'age')&&+val(f,'cm')&&+val(f,'wkg'))$('calcBtn').click();
   {const kg=+val(f,'wkg');if(kg>=30&&kg<=300&&kg!==lastWeightBefore(today)){D.weights=D.weights.filter(w=>w.d!==today);D.weights.push({id:uid(),d:today,kg});}}
   D.settings={...S(),oa:val(f,'oa'),goal:val(f,'goal'),kcal:+val(f,'kcal')||null,protein:+val(f,'protein')||null,late:Math.min(24,Math.max(17,+val(f,'late')||20)),sex:val(f,'sex'),age:+val(f,'age')||null,cm:+val(f,'cm')||null,act:val(f,'act')};save();flash(f,'Gemt');};
-function fillSettings(){const f=$('fSet'),s=S();f.elements.oa.value=s.oa||'nej';document.querySelectorAll('.oaonly').forEach(e=>e.hidden=!isOA());f.elements.goal.value=s.goal||'stabil';f.elements.kcal.value=s.kcal||'';f.elements.protein.value=s.protein||'';f.elements.late.value=s.late||20;
+function drawDiet(){const on=S().diet||[];$('diet').innerHTML=DIETS.map(([v,t])=>`<button type="button" data-diet="${v}" aria-pressed="${on.includes(v)}">${t}</button>`).join('');$('dislike').value=S().dislike||'';}
+function fillSettings(){try{drawDiet();}catch(e){}const f=$('fSet'),s=S();f.elements.oa.value=s.oa||'nej';document.querySelectorAll('.oaonly').forEach(e=>e.hidden=!isOA());f.elements.goal.value=s.goal||'stabil';f.elements.kcal.value=s.kcal||'';f.elements.protein.value=s.protein||'';f.elements.late.value=s.late||20;
   f.elements.sex.value=s.sex||'k';f.elements.age.value=s.age||'';f.elements.cm.value=s.cm||'';f.elements.act.value=s.act||'1.375';f.elements.wkg.value=lastWeightBefore(today)??'';$('calcOut').textContent='';}
+$('diet').onclick=e=>{const b=e.target.closest('[data-diet]');if(!b)return;let on=[...(S().diet||[])];const v=b.dataset.diet;on=on.includes(v)?on.filter(x=>x!==v):[...on,v];D.settings={...S(),diet:on};save();drawDiet();$('dietMsg').textContent='Gemt – forslagene tager højde for det.';};
+$('dislike').onchange=()=>{D.settings={...S(),dislike:$('dislike').value.trim().slice(0,200)};save();$('dietMsg').textContent='Gemt – forslagene tager højde for det.';};
 $('calcBtn').onclick=()=>{
   const f=$('fSet'),v=n=>val(f,n),out=$('calcOut'),sex=v('sex'),age=+v('age'),cm=+v('cm'),kg=+v('wkg'),act=+v('act'),goal=v('goal');
   if(!age||!cm||!kg){out.innerHTML='<span class="err">Udfyld alder, højde og vægt.</span>';return;}
@@ -1777,12 +1809,7 @@ pick(store.get('tr-prog',suggest));
 route();
 
 /* ===== push-beskeder ===== */
-function foodFor(n,k){const FOOD={Morgenmad:[[250,'skyr med bær og lidt müsli'],[420,'2 æg på rugbrød med tomat'],[1e9,'havregrød med skyr og bær']],
- Frokost:[[350,'en stor salat med kylling'],[560,'rugbrød med æg og laks'],[1e9,'kyllingewrap med masser af grønt']],
- Eftermiddag:[[150,'skyr naturel med bær'],[260,'hytteost og gulerødder'],[1e9,'rugbrød med hytteost og agurk']],
- Aftensmad:[[420,'fisk med masser af grønt'],[650,'kylling, ris og grønt'],[1e9,'kylling, kartofler og salat']],
- Aftensnack:[[160,'en kop te og lidt skyr'],[1e9,'skyr med bær']]};
-return (FOOD[n]||FOOD.Eftermiddag).find(([lim])=>(k??300)<=lim)[1];}
+function foodFor(n,k,shift){const L=foodOpts(n,k);const sw=shift??((swapN.d===today&&swapN[n])||0);return L[sw%L.length][2];}
 function pushPlan(){
   const R=reminders(),out=[],r=remaining(),t=day(today),y=day(addDays(today,-1)),h=new Date().getHours(),dow=new Date().getDay();
   const add=(hh,key,title,body,form)=>out.push({h:hh,key,title,body,form});
