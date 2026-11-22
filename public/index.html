@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,viewport-fit=cover">
-<title>Meal Mentor AI</title><meta name="mm-version" content="846b0ee9bd"><link rel="manifest" href="/manifest.webmanifest"><link rel="apple-touch-icon" href="/apple-touch-icon.png"><meta name="theme-color" content="#F1F1F4"><link rel="stylesheet" href="/mm.css"><script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script><script src="/mm.js"></script>
+<title>Meal Mentor AI</title><meta name="mm-version" content="65374b1f4e"><link rel="manifest" href="/manifest.webmanifest"><link rel="apple-touch-icon" href="/apple-touch-icon.png"><meta name="theme-color" content="#F1F1F4"><link rel="stylesheet" href="/mm.css"><script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script><script src="/mm.js"></script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Inter+Tight:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <style>
@@ -724,7 +724,7 @@ body.kb .tabs,body.kb #botFab{display:none!important}
 </div>
 </div></main>
 <section class="band" style="padding-top:0"><div class="wrap">
-<details class="more stepsd"><summary id="stepsH">Se alle øvelser i programmet</summary><ol class="steps" id="steps"></ol></details>
+<details class="more stepsd"><summary id="stepsH">Øvelserne i programmet</summary><ol class="steps" id="steps"></ol></details>
 <section class="lg" id="lg"><div class="sec-h"><b>LYDGUIDES</b><span>5 min · sæt høretelefonerne i</span></div>
 <div class="lg-row lg-m" data-g="morgenloeft"><button class="lg-play" type="button" aria-label="Afspil Morgenløft">▶</button><div class="lg-t"><b>Morgenløft</b><small>Energi og selvtillid til dagen</small><div class="lg-bar"><i></i></div></div><span class="lg-time">5:17</span></div>
 <div class="lg-row lg-a" data-g="aftenro"><button class="lg-play" type="button" aria-label="Afspil Aftenro">▶</button><div class="lg-t"><b>Aftenro</b><small>Slip dagen og sov godt</small><div class="lg-bar"><i></i></div></div><span class="lg-time">5:00</span></div>
@@ -1260,7 +1260,7 @@ function drawPlayer(){
   $('steps').innerHTML=p.ex.map((k,i)=>{const e=X[k],A=pose[e[2]],B=pose[e[3]]||A,both=[...A,...B],xs=both.map(q=>e[4]?120-q[0]:q[0]),ys=both.map(q=>q[1]);
     let x0=Math.min(...xs)-9,x1=Math.max(...xs)+9,y0=Math.min(...ys)-9,y1=94;const w=Math.max(x1-x0,(y1-y0)*1.2),h=w/1.2;x0=(x0+x1)/2-w/2;y0=y1-h;
     return `<li class="${i===run.i&&!resting?'on':i<run.i||(i===run.i&&resting)?'done':''}"><button type="button" data-j="${i}" aria-label="Gå til ${esc(e[0])}"><span class="no">${i+1}</span><svg viewBox="${x0} ${y0} ${w} ${h}" aria-hidden="true">${figAnim(A,B,e[4],i*0.4)}</svg><span class="tx"><b>${esc(e[0])}</b><small>${esc(e[1])}</small></span></button></li>`;}).join('');
-  $('stepsH').textContent=`Se alle ${p.ex.length} ${p.scan?'trin':'øvelser'} i programmet`;
+  $('stepsH').textContent=`Øvelserne i ${p.navn} (${p.ex.length}) – se dem alle på én gang`;
   $('steps').querySelectorAll('[data-j]').forEach(b=>b.onclick=()=>{run.restart=false;run.i=+b.dataset.j;run.phase='work';run.left=dur();drawPlayer();document.querySelector('#v-tr .player').scrollIntoView({behavior:reduce?'auto':'smooth',block:'start'});});
   if(!run.on)drawFig(0);
 }
