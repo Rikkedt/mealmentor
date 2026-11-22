@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Meal Mentor</title><link rel="manifest" href="/manifest.webmanifest"><link rel="apple-touch-icon" href="/apple-touch-icon.png"><meta name="theme-color" content="#F1F1F4"><link rel="stylesheet" href="/mm.css"><script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script><script src="/mm.js"></script>
+<title>Meal Mentor AI</title><link rel="manifest" href="/manifest.webmanifest"><link rel="apple-touch-icon" href="/apple-touch-icon.png"><meta name="theme-color" content="#F1F1F4"><link rel="stylesheet" href="/mm.css"><script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script><script src="/mm.js"></script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Inter+Tight:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <style>
@@ -521,7 +521,7 @@ details.adv{margin-top:10px}details.adv>summary{cursor:pointer;color:var(--mute)
 <body>
 <header class="band top"><div class="wrap">
 <button class="backbtn" id="backBtn" hidden>‹ <span id="backLbl">Tilbage</span></button>
-<h1>Meal Mentor</h1>
+<h1>Meal Mentor AI</h1>
 <p id="lead">Tag et billede af din mad, så får du et estimat af kalorier, protein, fedt og kulhydrat. Ret portionerne, hvis AI'en har gættet forkert.</p>
 <nav class="tabs" aria-label="Menu"><a href="#vejleder" id="t-vej"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 10.5 12 3l9 7.5V20a1 1 0 0 1-1 1h-5v-6H9v6H4a1 1 0 0 1-1-1z"/></svg><span>Mentor</span></a><a href="#mad" id="t-mad"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 8h3l2-3h6l2 3h3a1 1 0 0 1 1 1v10a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V9a1 1 0 0 1 1-1z"/><circle cx="12" cy="13.5" r="3.5"/></svg><span>Scan</span></a><a href="#traening" id="t-tr"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="14" cy="4.5" r="1.8"/><path d="M8 21l3-6 3 2v5M6 12l3-4h5l2 4 3 1"/></svg><span>Træning</span></a><a href="#profil" id="t-prof"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="8" r="4"/><path d="M4 21c1.5-4 4.5-6 8-6s6.5 2 8 6"/></svg><span>Profil</span></a></nav>
 </div></header>
@@ -600,7 +600,7 @@ details.adv{margin-top:10px}details.adv>summary{cursor:pointer;color:var(--mute)
 </div></div>
 <div class="toast" id="toast" hidden role="status"></div>
 <section class="hero"><div class="left" id="left" aria-live="polite"></div>
-<div class="ainote" id="aiNote" hidden><div class="ainote-h"><b>Meal Mentor siger</b><button class="link" id="aiRefresh">Opdatér</button></div><div id="aiNoteTxt"></div></div></section>
+<div class="ainote" id="aiNote" hidden><div class="ainote-h"><b>Meal Mentor AI siger</b><button class="link" id="aiRefresh">Opdatér</button></div><div id="aiNoteTxt"></div></div></section>
 <details class="todo" id="todo" hidden><summary id="todoSum"></summary><ul id="todoList"></ul></details>
 <ul class="recs" id="recs" aria-live="polite"></ul>
 <details class="morerecs" id="moreRecs" hidden><summary id="moreRecsSum"></summary><ul class="recs" id="recs2"></ul></details>
@@ -715,10 +715,10 @@ details.adv{margin-top:10px}details.adv>summary{cursor:pointer;color:var(--mute)
 </div>
 <h3 class="pushh">Dagens beskeder</h3><ul class="pushlist" id="pushList"></ul>
 <div class="btns"><button class="ghost" id="pushTest">Vis næste besked nu</button><button class="ghost" id="pushAllow">Tillad beskeder i browseren</button></div></section>
-<div class="pushbanner" id="pushBanner" hidden role="status"><span class="pb-ic">M</span><div><div class="pb-h"><b>Meal Mentor</b><small id="pbTime">nu</small></div><b id="pbTitle"></b><span id="pbBody"></span></div></div>
+<div class="pushbanner" id="pushBanner" hidden role="status"><span class="pb-ic">M</span><div><div class="pb-h"><b>Meal Mentor AI</b><small id="pbTime">nu</small></div><b id="pbTitle"></b><span id="pbBody"></span></div></div>
 
 <section class="pcard"><h2>Abonnement</h2>
-<div class="plans"><div class="plan cur"><b>Meal Mentor</b><span class="price">49 kr./md</span><span class="trial">Prøv gratis i 7 dage</span><ul><li>Ubegrænset AI-scanning af mad</li><li>Mentor med madforslag, push og analyser</li><li>Hjælp til nedtrapning af GLP-1</li><li>Alle træningsprogrammer</li></ul><span class="small">Opsig når som helst. Du betaler først efter 7 dage.</span><button class="go" disabled>Kommer i appen</button></div></div></section>
+<div class="plans"><div class="plan cur"><b>Meal Mentor AI</b><span class="price">49 kr./md</span><span class="trial">Prøv gratis i 7 dage</span><ul><li>Ubegrænset AI-scanning af mad</li><li>Mentor med madforslag, push og analyser</li><li>Hjælp til nedtrapning af GLP-1</li><li>Alle træningsprogrammer</li></ul><span class="small">Opsig når som helst. Du betaler først efter 7 dage.</span><button class="go" disabled>Kommer i appen</button></div></div></section>
 
 <section class="pcard"><h2>Mine registreringer</h2>
 <div class="fchips" id="entFilter" role="group" aria-label="Filtrér"><button data-t="" aria-pressed="true">Alt</button><button data-t="meals" aria-pressed="false">Mad</button><button data-t="sleep" aria-pressed="false">Søvn</button><button data-t="weights" aria-pressed="false">Vægt</button><button data-t="workouts" aria-pressed="false">Træning</button><button data-t="doses" aria-pressed="false">Dosis</button></div>
@@ -737,9 +737,9 @@ details.adv{margin-top:10px}details.adv>summary{cursor:pointer;color:var(--mute)
 </div></main>
 </div>
 
-<button class="botfab" id="botFab" aria-expanded="false" aria-controls="bot"><span class="botdot"></span>Spørg Meal Mentor</button>
+<button class="botfab" id="botFab" aria-expanded="false" aria-controls="bot"><span class="botdot"></span>Spørg Meal Mentor AI</button>
 <section class="bot" id="bot" hidden aria-label="Mentor-chat">
-<header class="bot-h"><div><b>Meal Mentor</b><small id="botSub">Spørg om mad, tider og resten af dagen</small></div><button class="ghost" id="botClose" aria-label="Luk">×</button></header>
+<header class="bot-h"><div><b>Meal Mentor AI</b><small id="botSub">Spørg om mad, tider og resten af dagen</small></div><button class="ghost" id="botClose" aria-label="Luk">×</button></header>
 <div class="bot-log" id="botLog" aria-live="polite"></div>
 <div class="bot-chips" id="botChips"><button data-q="Hvad kan jeg spise nu?">Hvad kan jeg spise nu?</button><button data-q="Giv mig forslag til aftensmad, der passer til det, jeg har tilbage.">Forslag til aftensmad</button><button data-q="Hvornår skal jeg spise næste gang, og hvor meget?">Hvornår skal jeg spise?</button><button data-q="Jeg er sulten om aftenen. Hvad gør jeg?">Sulten om aftenen</button><button data-q="Vurdér min dag kort: hvad gik godt, og hvad kan jeg gøre i morgen?">Vurdér min dag</button><button data-q="Lav en kort ugestatus: måltider pr. dag, kcal, protein, søvn, træning og vægt, og de vigtigste mønstre.">Vurdér min uge</button><button data-q="Er det bedst for mig at spise flere små eller få store måltider ud fra mine data?">Små eller store måltider?</button></div>
 <form class="bot-in" id="botForm"><input class="t" id="botQ" placeholder="Skriv et spørgsmål …" autocomplete="off" aria-label="Spørgsmål til mentoren"><button class="go" aria-label="Send">Send</button></form>
@@ -749,7 +749,7 @@ details.adv{margin-top:10px}details.adv>summary{cursor:pointer;color:var(--mute)
 <div class="onb-top"><button class="onb-back" id="onbBack" aria-label="Tilbage">‹</button><div class="onb-prog"><i id="onbBar"></i></div><span class="small" id="onbStep"></span></div>
 <span class="onb-k" id="onbK"></span><h2 id="onbH"></h2><p class="onb-s" id="onbS"></p>
 <div class="onb-opts" id="onbOpts"></div>
-<label class="onb-consent" id="onbConsent" hidden><input type="checkbox" id="onbOk"><span>Jeg er over 18 år, accepterer <a id="lnkTerms" target="_blank" rel="noopener">vilkårene</a> og giver samtykke til, at Meal Mentor behandler mine helbredsoplysninger (fx vægt, søvn, måltider og medicin) for at give mig råd. Læs <a id="lnkPriv" target="_blank" rel="noopener">privatlivspolitikken</a>.</span></label>
+<label class="onb-consent" id="onbConsent" hidden><input type="checkbox" id="onbOk"><span>Jeg er over 18 år, accepterer <a id="lnkTerms" target="_blank" rel="noopener">vilkårene</a> og giver samtykke til, at Meal Mentor AI behandler mine helbredsoplysninger (fx vægt, søvn, måltider og medicin) for at give mig råd. Læs <a id="lnkPriv" target="_blank" rel="noopener">privatlivspolitikken</a>.</span></label>
 <div class="onb-foot"><button class="go onb-next" id="onbNext"></button><button class="link" id="onbSkip">Spring over</button><span class="small">Ikke medicinsk rådgivning. Tal med din læge om din medicin.</span></div></div></div>
 <script>
 {
@@ -1482,7 +1482,7 @@ function aiData(n){
     soevn:d.sleep?`${d.sleep.from}-${d.sleep.to} (${nf(d.sleepH,1)} t, ${QUAL[d.sleep.q]}${d.sleep.hot?', hedeture':''})`:null,
     vaegt_kg:d.weight,glp1:d.dose?`${d.dose.med||'GLP-1'} ${d.dose.mg} mg`:null,fase:d.dose?PH[d.dose.phase]:null,dage_efter_dosis:d.sinceDose}));
 }
-const rules=`Du er Meal Mentor, en varm, konkret dansk kost-mentor i en app for personer, der bruger GLP-1-medicin (fx Wegovy, Ozempic, Mounjaro) eller trapper ud af den.
+const rules=`Du er Meal Mentor AI, en varm, konkret dansk kost-mentor i en app for personer, der bruger GLP-1-medicin (fx Wegovy, Ozempic, Mounjaro) eller trapper ud af den.
 Regler:
 - Giv aldrig råd om at ændre, springe over, øge, sænke eller stoppe medicin eller doser. Det aftales med lægen. Du hjælper med mad, tidspunkter, mæthed, protein, søvn, bevægelse og vaner.
 - Ingen ekstreme diæter. Er indtaget meget lavt, så opfordr til at spise nok og få protein nok.
@@ -1698,7 +1698,7 @@ function statusNow(){const r=remaining();
   `Plejer at spise ${r.pat.typ} gange (ca. kl. ${r.pat.slots.map(kl).join(', ')})${r.pat.known?'':' (antaget)'}. Planlagte resterende måltider: ${r.slots.map(x=>`${x.name} ${x.late?'snarest':'ca. kl. '+kl(x.h)} ca. ${r0(x.kcal)} kcal/${r0(x.prot)} g protein`).join('; ')||'ingen'}. `+
   `${r.bed?`Går typisk i seng ca. ${fmtH(r.bed%24)}. `:''}Træning i dag: ${r.d.woMin} min. Søvn i nat: ${r.d.sleepH!=null?nf(r.d.sleepH,1)+' t':'ikke logget'}.]`;}
 const botRules=`${rules}
-Du er appens chat-mentor, Meal Mentor. Svar kort (højst 120 ord), venligt og konkret på dansk. Foreslå gerne konkrete danske måltider med omtrentlige kcal og protein, der passer til det, brugeren har tilbage, og til tidspunktet. Brug punktopstilling ved forslag. Spørg kort tilbage, hvis noget er uklart. Hvis spørgsmålet handler om medicindosis, så henvis til lægen. Respektér spisepausen om aftenen: foreslå ikke mad i spisepausen, medmindre brugeren selv spørger, og nævn så at det er i spisepausen. Ros ikke træning, medmindre brugeren spørger.`;
+Du er appens chat-mentor, Meal Mentor AI. Svar kort (højst 120 ord), venligt og konkret på dansk. Foreslå gerne konkrete danske måltider med omtrentlige kcal og protein, der passer til det, brugeren har tilbage, og til tidspunktet. Brug punktopstilling ved forslag. Spørg kort tilbage, hvis noget er uklart. Hvis spørgsmålet handler om medicindosis, så henvis til lægen. Respektér spisepausen om aftenen: foreslå ikke mad i spisepausen, medmindre brugeren selv spørger, og nævn så at det er i spisepausen. Ros ikke træning, medmindre brugeren spørger.`;
 function botRender(){
   const log=$('botLog');
   if(!bot.msgs.length){log.innerHTML=`<div class="bm a"><p>Hej! Jeg kan se, hvad du har spist i dag, og hvad du har tilbage. Spørg fx, hvad du kan spise, eller hvornår du skal spise næste gang.</p></div>`;return;}
@@ -1830,7 +1830,7 @@ function drawAnl(){const L=logged(range(56)),cards=[];const open=drawAnl.open||{
 function applyTheme(){const t=S().theme;if(t==='light'||t==='dark')document.documentElement.dataset.theme=t;else delete document.documentElement.dataset.theme;}
 const onb={s:0,p:{}};
 function onbSteps(){const st=S(),R=reminders();return [
- {k:'OPRET KONTO',h:'Velkommen til Meal Mentor',s:'Din AI-mentor til hvornår, hvor tit og hvor meget du skal spise.',o:[['','Fortsæt med Apple','Hurtigst på iPhone','acc'],['G','Fortsæt med Google','Brug din Google-konto'],['✉️','Fortsæt med e-mail','Få et login-link på mail']],acct:1},
+ {k:'OPRET KONTO',h:'Velkommen til Meal Mentor AI',s:'Din AI-mentor til hvornår, hvor tit og hvor meget du skal spise.',o:[['','Fortsæt med Apple','Hurtigst på iPhone','acc'],['G','Fortsæt med Google','Brug din Google-konto'],['✉️','Fortsæt med e-mail','Få et login-link på mail']],acct:1},
  {k:'DIT MÅL',h:'Hvad vil du helst?',s:'Vi bruger det til at sætte dit daglige mål for kalorier og protein.',key:'goal',def:st.goal||'stabil',o:[['⬇️','Tabe mig','Roligt og sundt tempo','tab'],['⚖️','Holde vægten stabil på GLP-1','Spis nok – og det rigtige','stabil'],['📉','Trappe ud af GLP-1','Uden at tage på igen','ned'],['💪','Stærkere og mere markeret','Mere protein og træning','styrke']]},
  {k:'AKTIVITET',h:'Hvor aktiv er du?',s:'Tænk på en almindelig uge.',key:'act',def:String(st.act||'1.375'),o:[['🪑','Mest stillesiddende','Kontor og lidt gåture','1.2'],['🚶','Let aktiv','Gåture eller træning 1–2 gange','1.375'],['🏃','Moderat aktiv','Træning 3–4 gange om ugen','1.55'],['🔥','Meget aktiv','Hård træning næsten hver dag','1.725']]},
  {k:'PÅMINDELSER',h:'Hvornår må vi minde dig om noget?',s:'Mentoren sender dem, når det passer bedst for dig. Du kan altid ændre det under Profil.',multi:1,def:R,o:[['🍽️','Måltider','Med forslag til hvad du kan spise','meal'],['💉','Dosisdag','Morgenen på din dosisdag','dose'],['⏰','Spisepause','30 min før den starter','pause'],['🌙','Aftenens check-in','Hvordan er dagen gået?','checkin']]},
