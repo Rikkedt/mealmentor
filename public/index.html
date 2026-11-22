@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,viewport-fit=cover">
-<title>Meal Mentor AI</title><meta name="mm-version" content="ba5fa79c26"><link rel="manifest" href="/manifest.webmanifest"><link rel="apple-touch-icon" href="/apple-touch-icon.png"><meta name="theme-color" content="#F1F1F4"><link rel="stylesheet" href="/mm.css"><script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script><script src="/mm.js"></script>
+<title>Meal Mentor AI</title><meta name="mm-version" content="fe3055bafa"><link rel="manifest" href="/manifest.webmanifest"><link rel="apple-touch-icon" href="/apple-touch-icon.png"><meta name="theme-color" content="#F1F1F4"><link rel="stylesheet" href="/mm.css"><script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script><script src="/mm.js"></script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Inter+Tight:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <style>
@@ -1139,7 +1139,21 @@ superB:"14,76 24,80 62,86 12,74 2,70 12,74 2,70 82,84 102,78 82,84 102,78",
 ham:"70,66 62,72 40,86 70,80 84,86 70,80 84,86 64,88 88,88 64,88 88,88",
 pigeon:"60,44 60,54 60,80 62,66 64,80 58,66 56,80 76,88 64,90 40,88 16,90",
 threadA:"28,62 36,66 66,66 36,78 36,90 34,54 30,42 66,90 86,90 66,90 86,90",
-threadB:"38,84 42,79 66,66 50,84 50,90 30,87 12,89 66,90 86,90 66,90 86,90"
+threadB:"38,84 42,79 66,66 50,84 50,90 30,87 12,89 66,90 86,90 66,90 86,90",
+dogA:"40,70 44,63 64,38 39,75 34,88 40,75 35,88 73,62 82,88 74,62 83,88",
+dogB:"40,72 44,65 64,40 39,77 34,88 40,77 35,88 70,64 79,86 74,62 83,88",
+flyA:"60,40 60,50 60,80 54,64 54,82 66,64 66,82 44,78 57,88 76,78 63,88",
+flyB:"60,41 60,51 60,80 54,65 54,83 66,65 66,83 42,84 57,88 78,84 63,88",
+stwA:"40,44 40,54 40,82 49,62 56,72 31,64 24,82 58,74 66,89 62,86 84,88",
+stwB:"37,44 39,54 40,82 49,60 58,68 30,66 22,84 58,74 66,89 62,86 84,88",
+shA:"60,16 60,27 60,55 67,38 52,37 63,43 66,37 57,72 56,90 63,72 64,90",
+shB:"60,16 60,27 60,55 66,37 48,36 62,42 64,36 57,72 56,90 63,72 64,90",
+cstA:"70,22 68,32 58,58 77,32 85,27 78,33 86,28 68,72 70,90 50,74 42,90",
+cstB:"72,24 70,34 60,60 79,34 87,29 80,35 88,30 70,74 72,90 50,75 40,90",
+ltwA:"16,84 26,86 58,86 30,78 22,72 30,90 22,90 70,76 82,88 72,78 84,90",
+ltwB:"16,84 26,86 58,86 30,78 22,72 30,90 22,90 66,72 82,84 68,74 84,86",
+chA:"61,15 60,26 60,55 55,39 54,52 56,39 55,52 57,72 56,90 63,72 64,90",
+chB:"62,14 60,26 60,55 53,38 49,48 54,38 50,48 57,72 56,90 63,72 64,90"
 };
 const pose={};for(const k in P){const a=P[k].split(' ').map(s=>s.split(',').map(Number));if(!a[11])a[11]=[(a[1][0]+a[2][0])/2,(a[1][1]+a[2][1])/2];pose[k]=a;}
 const lerp=(A,B,t)=>A.map((p,i)=>[p[0]+(B[i][0]-p[0])*t,p[1]+(B[i][1]-p[1])*t]);
@@ -1166,6 +1180,13 @@ function figure(pt,mirror){
 
 /* ---------- øvelser ---------- */
 const X={
+dog:["Nedadgående hund","Hænder og fødder i gulvet, hofterne højt. Pres hælene mod gulvet, og træd skiftevis.","dogA","dogB"],
+butterfly:["Sommerfuglen","Sid med fodsålerne samlet, og lad knæene synke roligt ned mod gulvet.","flyA","flyB"],
+seatTw:["Siddende rotation","Sid med strakte ben, og drej overkroppen med hånden bag dig. Skift side, når det bipper.","stwA","stwB",0,40,1],
+shoulder:["Skulderstræk","Træk armen ind over brystet med den anden hånd. Skift arm, når det bipper.","shA","shB",0,40,1],
+calfS:["Lægstræk mod væg","Hænderne mod væggen, bagerste ben strakt og hælen i gulvet. Skift ben, når det bipper.","cstA","cstB",0,40,1],
+spineTw:["Liggende rotation","Lig på ryggen med armene ud til siden, og lad knæene falde til den ene side. Skift side, når det bipper.","ltwA","ltwB",0,40,1],
+chest:["Bryståbner","Fold hænderne bag ryggen, løft brystet, og træk skulderbladene sammen.","chA","chB"],
 sideB:["Sidebøjning, begge sider","Armen over hovedet. Bøj roligt til siden og mærk strækket langs flanken. Skift side, når det bipper.","stand","sideBend",0,40,1],
 quadB:["Lårstræk, begge ben","Træk hælen mod numsen, knæene samlet. Stå tæt på en væg, hvis du vakler. Skift ben, når det bipper.","quad",null,0,40,1],
 hipB:["Hoftebøjer, begge sider","Knæet i gulvet, skub hoften frem og stræk armene op. Skift side, når det bipper.","hipFlex",null,0,40,1],
@@ -1225,7 +1246,7 @@ const scanSteps=[["Find ro","Lig på ryggen med armene ned langs siden. Luk øjn
 scanSteps.forEach((s,i)=>X['scan'+i]=[s[0],s[1],'rest']);
 
 const PROGS=[
-{id:"straek",navn:"Udstrækning",sub:"Hele kroppen",w:20,r:5,ex:"reach sideB neck fold quadB ham hipB thread child"},
+{id:"straek",navn:"Stræk og mobilitet",sub:"Hele kroppen",w:20,r:5,ex:"fold catcow child cobra seatTw shoulder sideB quadB ham butterfly hipB calfS dog spineTw neck chest"},
 {id:"overkrop",navn:"Overkrop",sub:"Arme, bryst, skuldre",ex:"circles kpush tap plank push superman spL spR kpush roll"},
 {id:"core",navn:"Core",sub:"Stabilitet",ex:"plank bug bird spL spR climb twist plank bug child"},
 {id:"mave",navn:"Mave",sub:"Mavemuskler",ex:"crunch twist bug legs bike climb plank crunch legs cobra"},
