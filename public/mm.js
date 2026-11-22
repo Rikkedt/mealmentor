@@ -65,6 +65,50 @@ function daErr(e){const m=(e&&e.message)||'';let t;
     const { error } = await sb.auth.signInWithOAuth({ provider, options: { redirectTo: location.origin } });
     if (error) emailDialog('Det virkede ikke. Log ind med din e-mail i stedet.');
   }
+
+  /* ---------- push ---------- */
+  const isIOS = /iP(hone|ad|od)/.test(navigator.userAgent) || (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
+  const standalone = matchMedia('(display-mode: standalone)').matches || navigator.standalone === true;
+  const pushOK = () => 'serviceWorker' in navigator && 'PushManager' in window && 'Notification' in window;
+  const swReg = () => navigator.serviceWorker.register('/sw.js').then(() => navigator.serviceWorker.ready);
+  const authH = async () => { const s = await fresh(); if (!s) throw Object.assign(new Error('login'), { code: 'login' }); return { authorization: 'Bearer ' + s.access_token, 'content-type': 'application/json' }; };
+  let lastPlan = '';
+  const mmPush = {
+    async state() {
+      if (!pushOK()) return isIOS && !standalone ? 'ios-browser' : 'unsupported';
+      if (Notification.permission === 'denied') return 'denied';
+      const r = await navigator.serviceWorker.getRegistration('/'); const sub = r && await r.pushManager.getSubscription();
+      return sub ? 'on' : 'off';
+    },
+    async enable(plan) {
+      if (!pushOK()) throw Object.assign(new Error('unsupported'), { code: isIOS && !standalone ? 'ios-browser' : 'unsupported' });
+      const p = await Notification.requestPermission(); if (p !== 'granted') throw Object.assign(new Error('denied'), { code: 'denied' });
+      const reg = await swReg();
+      const { key } = await fetch('/api/push/key').then(r => r.json());
+      const raw = Uint8Array.from(atob(key.replace(/-/g, '+').replace(/_/g, '/') + '==='.slice((key.length + 3) % 4)), c => c.charCodeAt(0));
+      const sub = (await reg.pushManager.getSubscription()) || await reg.pushManager.subscribe({ userVisibleOnly: true, applicationServerKey: raw });
+      lastPlan = '';
+      await mmPush.sync(plan, sub, true);
+    },
+    async disable() {
+      const r = await navigator.serviceWorker.getRegistration('/'); const sub = r && await r.pushManager.getSubscription();
+      if (sub) { try { await fetch('/api/push/off', { method: 'POST', headers: await authH(), body: JSON.stringify({ endpoint: sub.endpoint }) }); } catch (e) {} await sub.unsubscribe(); }
+    },
+    async sync(plan, sub, force) {
+      if (!pushOK()) return;
+      if (!sub) { const r = await navigator.serviceWorker.getRegistration('/'); sub = r && await r.pushManager.getSubscription(); }
+      if (!sub) return;
+      const date = new Date().toLocaleDateString('sv-SE');
+      const body = JSON.stringify({ sub: sub.toJSON(), plan, date, tz: Intl.DateTimeFormat().resolvedOptions().timeZone });
+      const sig = JSON.stringify([plan, date]);
+      if (!force && sig === lastPlan) return; lastPlan = sig;
+      const r = await fetch('/api/push/sync', { method: 'POST', headers: await authH(), body });
+      if (!r.ok) { lastPlan = ''; throw new Error('sync'); }
+    },
+    async test() { const r = await fetch('/api/push/test', { method: 'POST', headers: await authH() }); return r.ok; }
+  };
+  window.mmPush = mmPush;
+  if ('serviceWorker' in navigator) navigator.serviceWorker.getRegistration('/').then(r => { if (r) r.update(); }).catch(() => {});
   window.mmAuth = { ready, login, logout: async () => { await ready; await sb.auth.signOut(); },
     deleteAccount: async () => { await ready; const { error } = await sb.rpc('delete_my_account'); if (error) throw error; try { await sb.auth.signOut({ scope: 'local' }); } catch (e) {} }, user: () => session && session.user };
 

@@ -392,6 +392,7 @@ button.link{color:var(--ink);text-decoration:underline;text-underline-offset:3px
 
 /* push */
 .pushh{font:700 15px 'Inter Tight',sans-serif;margin:18px 0 8px}
+.pushnote{font-size:13px;color:var(--mute);margin:10px 0 0;line-height:1.45}.pushnote:empty{display:none}
 .pushlist{list-style:none;margin:0;padding:0;display:grid;gap:8px}
 .pushlist li{display:grid;grid-template-columns:52px minmax(0,1fr);gap:10px;align-items:start;padding:10px 12px;border-radius:16px;background:var(--soft)}
 .pushlist li.past{opacity:.5}
@@ -537,6 +538,10 @@ html{-webkit-text-size-adjust:100%;text-size-adjust:100%}
 .sc-t{flex:1;min-width:0;display:grid;gap:2px}.sc-t b{font-size:15px}.sc-t span{font-size:13px;color:var(--mute);line-height:1.4}
 .sc-go{min-height:40px;padding:0 14px;font-size:14px;flex:none}
 @media(max-width:360px){.sc-step{flex-wrap:wrap}.sc-go{width:100%}}
+
+#botClose.bot-x{all:unset;box-sizing:border-box;flex:0 0 auto;width:42px;height:42px;border-radius:50%;display:grid;place-items:center;background:rgba(255,255,255,.16);color:#fff;cursor:pointer;-webkit-tap-highlight-color:transparent}
+#botClose.bot-x:active{background:rgba(255,255,255,.3)}
+#botClose.bot-x svg{display:block}
 </style>
 </head>
 <body>
@@ -734,8 +739,7 @@ html{-webkit-text-size-adjust:100%;text-size-adjust:100%}
 <label><input type="checkbox" data-r="weight"><span><b>Vægt</b><small>Mandag morgen</small></span></label>
 <label><input type="checkbox" data-r="dose"><span><b>GLP-1 dosis</b><small>På din doseringsdag</small></span></label>
 </div>
-<h3 class="pushh">Dagens beskeder</h3><ul class="pushlist" id="pushList"></ul>
-<div class="btns"><button class="ghost" id="pushTest">Vis næste besked nu</button><button class="ghost" id="pushAllow">Tillad beskeder i browseren</button></div></section>
+<div class="btns"><button class="go" id="pushAllow">Få beskeder på telefonen</button><button class="ghost" id="pushTest" hidden>Send testbesked</button></div><p class="pushnote" id="pushNote"></p></section>
 <div class="pushbanner" id="pushBanner" hidden role="status"><span class="pb-ic">M</span><div><div class="pb-h"><b>Meal Mentor AI</b><small id="pbTime">nu</small></div><b id="pbTitle"></b><span id="pbBody"></span></div></div>
 
 <section class="pcard"><h2>Abonnement</h2>
@@ -760,7 +764,7 @@ html{-webkit-text-size-adjust:100%;text-size-adjust:100%}
 
 <button class="botfab" id="botFab" aria-expanded="false" aria-controls="bot"><span class="botdot"></span>Spørg Meal Mentor AI</button>
 <section class="bot" id="bot" hidden aria-label="Mentor-chat">
-<header class="bot-h"><div><b>Meal Mentor AI</b><small id="botSub">Spørg om mad, tider og resten af dagen</small></div><button class="ghost" id="botClose" aria-label="Luk">×</button></header>
+<header class="bot-h"><div><b>Meal Mentor AI</b><small id="botSub">Spørg om mad, tider og resten af dagen</small></div><button id="botClose" class="bot-x" type="button" aria-label="Luk chat"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round"><path d="M6 6l12 12M18 6L6 18"/></svg></button></header>
 <div class="bot-log" id="botLog" aria-live="polite"></div>
 <div class="bot-chips" id="botChips"><button data-q="Hvad kan jeg spise nu?">Hvad kan jeg spise nu?</button><button data-q="Giv mig forslag til aftensmad, der passer til det, jeg har tilbage.">Forslag til aftensmad</button><button data-q="Hvornår skal jeg spise næste gang, og hvor meget?">Hvornår skal jeg spise?</button><button data-q="Jeg er sulten om aftenen. Hvad gør jeg?">Sulten om aftenen</button><button data-q="Vurdér min dag kort: hvad gik godt, og hvad kan jeg gøre i morgen?">Vurdér min dag</button><button data-q="Lav en kort ugestatus: måltider pr. dag, kcal, protein, søvn, træning og vægt, og de vigtigste mønstre.">Vurdér min uge</button><button data-q="Er det bedst for mig at spise flere små eller få store måltider ud fra mine data?">Små eller store måltider?</button></div>
 <form class="bot-in" id="botForm"><input class="t" id="botQ" placeholder="Skriv et spørgsmål …" autocomplete="off" aria-label="Spørgsmål til mentoren"><button class="go" aria-label="Send">Send</button></form>
@@ -790,7 +794,7 @@ let D=store.get('mob-data',null);
 if(!D){D=blank();const old=store.get('madscanner-'+today,[]);old.forEach(e=>D.meals.push({id:uid(),t:today+'T'+(e.tid||'12:00').replace('.',':'),titel:e.titel,kcal:e.kcal,protein:e.protein,fedt:e.fedt,kulhydrat:e.kulhydrat}));}
 if(D.demo){D={...blank(),settings:{...(D.settings||{late:20})}};store.set('mob-data',D);}
 if(!D.sleep)D.sleep=[];if(!D.checkins)D.checkins=[];
-const save=()=>{store.set('mob-data',D);cloudSchedule();if(typeof refreshVej==='function')refreshVej();};
+const save=()=>{store.set('mob-data',D);cloudSchedule();if(typeof refreshVej==='function')refreshVej();if(typeof pushSync==='function')pushSync();};
 /* ---------- login og synkronisering ---------- */
 const KINDS={meals:x=>x.t,sleep:x=>x.d,weights:x=>x.d,doses:x=>x.d,workouts:x=>x.t,checkins:x=>x.d};
 const cloud={db:null,col:null,uid:null,name:'',state:'local',sent:{},timer:0,busy:false,again:false};
@@ -1794,13 +1798,31 @@ function showPush(p){
   clearTimeout(showPush.t);showPush.t=setTimeout(()=>b.hidden=true,9000);
   try{if(window.Notification&&Notification.permission==='granted'&&document.hidden)new Notification(p.title,{body:p.body});}catch(e){}
 }
-function checkPush(){if(!D.meals.length&&!D.sleep.length)return;const now=new Date().getHours()+new Date().getMinutes()/60;
+function checkPush(){if(pushOn)return;if(!D.meals.length&&!D.sleep.length)return;const now=new Date().getHours()+new Date().getMinutes()/60;
   const due=pushPlan().filter(p=>p.h<=now&&p.h>now-0.5&&!localStorage.getItem(pushKey(p)));
   if(due.length){const p=due.at(-1);try{localStorage.setItem(pushKey(p),'1');}catch(e){}showPush(p);}}
-function drawPush(){const now=new Date().getHours()+new Date().getMinutes()/60,P=pushPlan();
-  $('pushList').innerHTML=P.length?P.map(p=>`<li class="${p.h<now?'past':''}"><time>${kl(p.h)}</time><div><b>${esc(p.title)}</b><span>${esc(p.body)}</span></div></li>`).join(''):'<li><time>–</time><div><span>Ingen beskeder i dag. Slå påmindelser til ovenfor.</span></div></li>';}
-$('pushTest').onclick=()=>{const now=new Date().getHours()+new Date().getMinutes()/60,P=pushPlan();const p=P.find(x=>x.h>=now)||P.at(-1);if(p)showPush(p);};
-$('pushAllow').onclick=async()=>{try{const r=await Notification.requestPermission();$('pushAllow').textContent=r==='granted'?'Beskeder er tilladt ✓':'Browseren tillod det ikke';}catch(e){$('pushAllow').textContent='Ikke muligt her – virker i appen';}};
+var pushOn=false;
+function pushSync(){if(!pushOn||!window.mmPush)return;clearTimeout(pushSync.t);pushSync.t=setTimeout(()=>{try{window.mmPush.sync(pushPlan().map(({h,key,title,body})=>({h,key,title,body}))).catch(()=>{});}catch(e){}},1500);}
+async function drawPush(){const a=$('pushAllow'),t=$('pushTest'),n=$('pushNote');
+  if(!window.mmPush){a.textContent='Få beskeder på telefonen';n.textContent='Beskeder virker i den rigtige app.';return;}
+  let st='off';try{st=await window.mmPush.state();}catch(e){}
+  pushOn=st==='on';t.hidden=!pushOn;a.className=pushOn?'ghost':'go';
+  a.textContent=pushOn?'Slå beskeder fra':'Få beskeder på telefonen';
+  n.textContent=st==='ios-browser'?'På iPhone: tryk på Del → Føj til hjemmeskærm, og åbn appen derfra. Så kan den sende beskeder.'
+    :st==='unsupported'?'Denne browser kan ikke modtage beskeder.'
+    :st==='denied'?'Beskeder er blokeret. Slå dem til under Indstillinger → Meal Mentor → Notifikationer.'
+    :pushOn?'Du får beskederne til tiden – også når appen er lukket.':'';
+  if(pushOn)pushSync();}
+$('pushAllow').onclick=async()=>{const a=$('pushAllow');if(!window.mmPush)return;a.disabled=true;
+  try{if(pushOn){await window.mmPush.disable();}else{a.textContent='Slår til …';await window.mmPush.enable(pushPlan().map(({h,key,title,body})=>({h,key,title,body})));toast('Beskeder er slået til');}}
+  catch(e){$('pushNote').textContent=e.code==='login'?'Log ind først, så kan du få beskeder.':e.code==='denied'?'Du sagde nej til beskeder. Slå dem til under Indstillinger → Meal Mentor → Notifikationer.':e.code==='ios-browser'?'På iPhone: tryk på Del → Føj til hjemmeskærm, og åbn appen derfra.':'Det virkede ikke. Prøv igen om lidt.';}
+  a.disabled=false;drawPush();};
+$('pushTest').onclick=async()=>{const t=$('pushTest');t.disabled=true;t.textContent='Sender …';
+  try{await window.mmPush.test();t.textContent='Sendt – tjek telefonen';}catch(e){t.textContent='Kunne ikke sende';}
+  setTimeout(()=>{t.disabled=false;t.textContent='Send testbesked';},4000);};
+if(navigator.serviceWorker)navigator.serviceWorker.addEventListener('message',e=>{const k=e.data&&e.data.push;if(k)openPushKey(k);});
+function openPushKey(k){const p=pushPlan().find(x=>x.key===k);if(p&&p.form)openForm(p.form,today,true);else if(k==='work')location.hash='#traening';else if(k==='checkin'){location.hash='#vejleder';setTimeout(()=>{drawCheckin();$('checkin').hidden=false;$('checkin').scrollIntoView({behavior:'smooth',block:'center'});},300);}}
+{const q=new URLSearchParams(location.search).get('push');if(q){history.replaceState(null,'',location.pathname+location.hash);setTimeout(()=>openPushKey(q),800);}}
 setInterval(checkPush,60000);setTimeout(checkPush,1500);
 
 
