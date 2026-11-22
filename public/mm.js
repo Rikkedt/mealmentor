@@ -182,3 +182,20 @@ function daErr(e){const m=(e&&e.message)||'';let t;
 
   window.claude = { use: async name => { await ready.catch(() => {}); return name === 'sample' ? sample : name === 'db' ? db : name === 'user' ? user : null; } };
 })();
+
+/* Auto-opdatering: tjek om der er en ny version, når appen kommer frem igen */
+(function () {
+  const mine = () => (document.querySelector('meta[name="mm-version"]') || {}).content;
+  let busy = false;
+  async function check() {
+    if (busy || document.hidden || !mine()) return; busy = true;
+    try {
+      const v = (await fetch('/version.txt?t=' + Date.now(), { cache: 'no-store' }).then(r => r.ok ? r.text() : '')).trim();
+      const open = document.querySelector('dialog[open], .sheet:not([hidden])');
+      if (v && v !== mine() && !open) location.reload();
+    } catch (e) {} busy = false;
+  }
+  document.addEventListener('visibilitychange', check);
+  window.addEventListener('focus', check);
+  setTimeout(check, 3000); setInterval(check, 5 * 60 * 1000);
+})();
