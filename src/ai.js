@@ -13,11 +13,16 @@ export async function handleAI(request, env) {
   if (raw.length > 8_000_000) return new Response('too large', { status: 413 });
   const b = JSON.parse(raw);
 
+  // Dagligt loft pr. bruger (nulstilles ved midnat dansk tid)
   if (env.LIMITS) {
-    const key = `${user.id}:${new Date().toISOString().slice(0, 10)}`;
-    const n = +(await env.LIMITS.get(key)) || 0;
-    if (n >= (+env.DAILY_LIMIT || 150)) return new Response('limit', { status: 429 });
-    await env.LIMITS.put(key, String(n + 1), { expirationTtl: 172800 });
+    const day = new Date().toLocaleDateString('sv-SE', { timeZone: 'Europe/Copenhagen' });
+    const photo = Array.isArray(b.images) && b.images.length > 0;
+    const kAll = `${user.id}:${day}`, kPhoto = `${user.id}:${day}:foto`;
+    const [nAll, nPhoto] = await Promise.all([env.LIMITS.get(kAll), photo ? env.LIMITS.get(kPhoto) : null]).then(a => a.map(x => +x || 0));
+    if (nAll >= (+env.DAILY_LIMIT || 40)) return new Response('limit', { status: 429 });
+    if (photo && nPhoto >= (+env.PHOTO_LIMIT || 15)) return new Response('photo_limit', { status: 429 });
+    const ttl = { expirationTtl: 172800 };
+    await Promise.all([env.LIMITS.put(kAll, String(nAll + 1), ttl), photo ? env.LIMITS.put(kPhoto, String(nPhoto + 1), ttl) : null]);
   }
 
   const model = b.tier === 'default' ? (env.MODEL_PHOTO || 'claude-sonnet-5-5') : (env.MODEL_TEXT || 'claude-haiku-5-5');

@@ -510,6 +510,12 @@ body{padding-bottom:calc(92px + env(safe-area-inset-bottom))}
 #syncInfo2{display:none}
 details.adv{margin-top:10px}details.adv>summary{cursor:pointer;color:var(--mute);font-size:14px;font-weight:600;min-height:40px;display:flex;align-items:center}
 .trial{justify-self:start;font-size:13px;font-weight:700;background:var(--acc);color:var(--accInk);border-radius:999px;padding:4px 12px}
+
+.onb-consent{display:flex;gap:12px;align-items:flex-start;margin-top:16px;padding:14px 16px;border-radius:16px;background:light-dark(rgba(255,255,255,.7),rgba(34,37,43,.8));font-size:13px;line-height:1.45;color:var(--mute);border:2px solid transparent;cursor:pointer}
+.onb-consent input{width:22px;height:22px;flex:none;accent-color:var(--acc);margin:0}
+.onb-consent a{color:var(--ink)}
+.onb-consent.need{border-color:var(--tomato)}
+.legal{font-size:13px;color:var(--mute);margin:12px 0 0}.legal a{color:var(--ink)}
 </style>
 </head>
 <body>
@@ -725,6 +731,7 @@ details.adv{margin-top:10px}details.adv>summary{cursor:pointer;color:var(--mute)
 <textarea class="data" id="importData" placeholder="Indsæt backup her" aria-label="Indsæt backup" style="margin-top:12px"></textarea>
 <div class="btns"><button class="ghost" id="doImport">Gendan</button></div></details>
 <span class="ok-msg" id="dataMsg"></span>
+<p class="legal" id="legalLinks"></p>
 </section>
 <p class="foot">Ikke medicinsk rådgivning. Tal med din læge, før du ændrer eller stopper GLP-1.</p>
 </div></main>
@@ -742,6 +749,7 @@ details.adv{margin-top:10px}details.adv>summary{cursor:pointer;color:var(--mute)
 <div class="onb-top"><button class="onb-back" id="onbBack" aria-label="Tilbage">‹</button><div class="onb-prog"><i id="onbBar"></i></div><span class="small" id="onbStep"></span></div>
 <span class="onb-k" id="onbK"></span><h2 id="onbH"></h2><p class="onb-s" id="onbS"></p>
 <div class="onb-opts" id="onbOpts"></div>
+<label class="onb-consent" id="onbConsent" hidden><input type="checkbox" id="onbOk"><span>Jeg er over 18 år, accepterer <a id="lnkTerms" target="_blank" rel="noopener">vilkårene</a> og giver samtykke til, at Meal Mentor behandler mine helbredsoplysninger (fx vægt, søvn, måltider og medicin) for at give mig råd. Læs <a id="lnkPriv" target="_blank" rel="noopener">privatlivspolitikken</a>.</span></label>
 <div class="onb-foot"><button class="go onb-next" id="onbNext"></button><button class="link" id="onbSkip">Spring over</button><span class="small">Ikke medicinsk rådgivning. Tal med din læge om din medicin.</span></div></div></div>
 <script>
 {
@@ -866,7 +874,7 @@ go.onclick=async()=>{
     current={titel:data.titel||'Måltid',sikkerhed:data.sikkerhed||'middel',note:data.note||'',
       emner:(data.emner||[]).map(e=>({navn:e.navn,gram:+e.gram||0,base:+e.gram||1,kcal:+e.kcal||0,protein:+e.protein||0,fedt:+e.fedt||0,kulhydrat:+e.kulhydrat||0}))};
     render();
-  }catch(e){res.innerHTML=`<div class="empty"><div><p class="err">Det gik ikke.</p><p>${e&&e.code==='rate_limited'?'For mange forsøg lige nu. Vent lidt og prøv igen.':e&&e.code==='not_granted'?'AI-adgang blev ikke givet.':'Prøv igen med et tydeligere billede.'}</p></div></div>`;}
+  }catch(e){res.innerHTML=`<div class="empty"><div><p class="err">Det gik ikke.</p><p>${e&&['login','daily_limit','photo_limit','rate_limited'].includes(e.code)?aiErr(e):e&&e.code==='not_granted'?'AI-adgang blev ikke givet.':'Prøv igen med et tydeligere billede.'}</p></div></div>`;}
   finally{go.disabled=!blob;}
 };
 function sums(list){return list.reduce((a,e)=>{const f=e.base?e.gram/e.base:0;a.kcal+=e.kcal*f;a.protein+=e.protein*f;a.fedt+=e.fedt*f;a.kulhydrat+=e.kulhydrat*f;a.gram+=e.gram;return a;},{kcal:0,protein:0,fedt:0,kulhydrat:0,gram:0});}
@@ -1498,7 +1506,7 @@ function md(t){
     if(/^#{1,4} /.test(line))h+=`<h3>${line.replace(/^#+ /,'')}</h3>`;else if(line.trim())h+=`<p>${line}</p>`;}
   return h+(ul?'</ul>':'');
 }
-const aiErr=e=>e&&e.code==='login'?'Log ind for at bruge AI – det gør du under Profil.':e&&e.code==='rate_limited'?'For mange forespørgsler lige nu. Prøv igen om lidt.':e&&e.code==='not_granted'?'AI-adgang blev ikke givet.':'Mentoren kunne ikke svare. Prøv igen.';
+const aiErr=e=>e&&e.code==='login'?'Log ind for at bruge AI – det gør du under Profil.':e&&e.code==='daily_limit'?'Du har brugt dagens AI-hjælp. Den er klar igen i morgen.':e&&e.code==='photo_limit'?'Du har brugt dagens fotoscanninger. Skriv maden i stedet, eller scan igen i morgen.':e&&e.code==='rate_limited'?'For mange forespørgsler lige nu. Prøv igen om lidt.':e&&e.code==='not_granted'?'AI-adgang blev ikke givet.':'Mentoren kunne ikke svare. Prøv igen.';
 let noteBusy=false,noteTried=false,noteKeyTried='';
 function todayFacts(){const r=remaining(),d=r.d;
   const k=r.t?(r.kLeft<0?`${nf(-r.kLeft)} kcal OVER målet (spist ${nf(d.kcal)} af ${nf(r.t.v)} kcal)`:`${nf(r.kLeft)} kcal tilbage (spist ${nf(d.kcal)} af ${nf(r.t.v)} kcal)`):`spist ${nf(d.kcal)} kcal, intet kalorimål`;
@@ -1832,15 +1840,16 @@ function drawOnb(){const S_=onbSteps(),i=onb.s,c=S_[i];
   $('onbK').textContent=c.k;$('onbH').textContent=c.h;$('onbS').textContent=c.acct&&cloud.state==='ok'?`Du er logget ind${cloud.name?' som '+cloud.name:''} – dine data gemmes på din konto.`:c.s;
   const val=c.multi?(onb.p.rem||c.def):(onb.p[c.key]??c.def);
   $('onbOpts').innerHTML=c.o.map(([ic,t,d,v],oi)=>{const on=c.multi?!!val[v]:c.acct?false:String(val)===v;return `<button data-v="${v||''}" data-i="${oi}" class="${c.acct&&v==='acc'?'acc':''}" ${c.acct?'':`aria-pressed="${on}"`}><span class="oi">${ic}</span><span><b>${t}</b><small>${d}</small></span><span class="om">${c.multi?(on?'●':'○'):on?'✓':''}</span></button>`;}).join('');
-  $('onbOpts').querySelectorAll('button').forEach(b=>b.onclick=()=>{if(c.acct){if(window.mmAuth&&!window.mmAuth.user()){store.set('mm-onb',{s:1});return window.mmAuth.login(['apple','google','email'][+b.dataset.i]);}onb.s=1;return drawOnb();}
+  $('onbOpts').querySelectorAll('button').forEach(b=>b.onclick=()=>{if(c.acct&&!$('onbOk').checked){$('onbConsent').classList.add('need');$('onbConsent').scrollIntoView({block:'center',behavior:'smooth'});return;}if(c.acct){D.settings={...S(),consent:new Date().toISOString()};save();if(window.mmAuth&&!window.mmAuth.user()){store.set('mm-onb',{s:1});return window.mmAuth.login(['apple','google','email'][+b.dataset.i]);}onb.s=1;return drawOnb();}
     if(c.multi)onb.p.rem={...val,[b.dataset.v]:!val[b.dataset.v]};else{onb.p[c.key]=b.dataset.v;if(c.key==='theme'){D.settings={...S(),theme:b.dataset.v};applyTheme();}}drawOnb();});
+  $('onbConsent').hidden=!c.acct;$('onbConsent').classList.remove('need');
   $('onbNext').textContent=c.acct?'Jeg har allerede en konto':i===S_.length-1?'Kom i gang':'Næste';
 }
 function openOnb(){onb.s=window.mmAuth&&window.mmAuth.user()?1:0;onb.p={};$('onb').hidden=false;drawOnb();}
 function finishOnb(){const p=onb.p,st=S();D.settings={...st,...(p.goal?{goal:p.goal}:{}),...(p.act?{act:p.act}:{}),...(p.theme?{theme:p.theme}:{}),reminders:{...reminders(),...(p.rem||{})},onboarded:true};
   applyTheme();save();try{fillSettings();}catch(e){}$('onb').hidden=true;location.hash='#vejleder';
   if(!st.kcal)setTimeout(()=>toast('Sæt din højde, alder og vægt under Profil, så beregner vi dit mål'),400);}
-$('onbNext').onclick=()=>{const n=onbSteps().length;if(onb.s===0){finishOnb();return;}if(onb.s>=n-1)finishOnb();else{onb.s++;drawOnb();}};
+$('onbNext').onclick=()=>{const n=onbSteps().length;if(onb.s===0){if(!$('onbOk').checked&&!S().consent){$('onbConsent').classList.add('need');return;}if($('onbOk').checked)D.settings={...S(),consent:S().consent||new Date().toISOString()};finishOnb();return;}if(onb.s>=n-1)finishOnb();else{onb.s++;drawOnb();}};
 $('onbBack').onclick=()=>{onb.s=Math.max(0,onb.s-1);drawOnb();};
 $('onbSkip').onclick=finishOnb;
 $('onbAgain').onclick=openOnb;
@@ -1867,8 +1876,14 @@ document.addEventListener('keydown',e=>{if((e.key==='Enter'||e.key===' ')&&e.tar
 
 /* ===== login på mealmentor.com ===== */
 function drawAuth(){const b=$('authBtn');if(!window.mmAuth){b.hidden=true;return;}const u=window.mmAuth.user();b.hidden=false;b.className=u?'ghost':'go';b.textContent=u?`Log ud${u.email?' ('+u.email+')':''}`:'Log ind';
-  b.onclick=()=>u?window.mmAuth.logout():window.mmAuth.login();}
+  b.onclick=()=>u?window.mmAuth.logout():S().consent?window.mmAuth.login():openOnb();}
 if(window.mmAuth)window.mmAuth.ready.then(()=>{drawAuth();if(window.mmAuth.user()&&!$('onb').hidden&&onb.s===0){onb.s=1;drawOnb();}});
+
+
+/* ===== privatliv og vilkår ===== */
+const LEGAL=/claude|usercontent|^$/.test(location.hostname)||location.protocol==='file:'?'https://mealmentor.rikkedt.workers.dev':'';
+$('lnkTerms').href=LEGAL+'/vilkaar/';$('lnkPriv').href=LEGAL+'/privatliv/';
+$('legalLinks').innerHTML=`<a href="${LEGAL}/privatliv/" target="_blank" rel="noopener">Privatlivspolitik</a> · <a href="${LEGAL}/vilkaar/" target="_blank" rel="noopener">Vilkår</a> · Slet konto: skriv til <a href="mailto:info@mealmentorai.com">info@mealmentorai.com</a>`;
 
 }
 </script>
