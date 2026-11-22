@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,viewport-fit=cover">
-<title>Meal Mentor AI</title><meta name="mm-version" content="83af610c52"><link rel="manifest" href="/manifest.webmanifest"><link rel="apple-touch-icon" href="/apple-touch-icon.png"><meta name="theme-color" content="#F1F1F4"><link rel="stylesheet" href="/mm.css"><script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script><script src="/mm.js"></script>
+<title>Meal Mentor AI</title><meta name="mm-version" content="a68f134602"><link rel="manifest" href="/manifest.webmanifest"><link rel="apple-touch-icon" href="/apple-touch-icon.png"><meta name="theme-color" content="#F1F1F4"><link rel="stylesheet" href="/mm.css"><script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script><script src="/mm.js"></script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Inter+Tight:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <style>
@@ -636,6 +636,8 @@ h1.brand .brand-ai{display:inline-grid;place-items:center;height:30px;padding:0 
 .bsa .small{color:#9DA0B8!important}
 
 body.kb .tabs,body.kb #botFab{display:none!important}
+
+#sound.on{background:var(--ink)!important;color:var(--bg)!important;border-color:var(--ink)!important}
 </style>
 </head>
 <body>
@@ -1101,7 +1103,9 @@ cobraA:"26,74 34,79 64,86 42,82 38,89 44,82 40,89 82,89 102,89 82,89 102,89",
 superA:"16,84 26,86 62,86 14,86 4,86 14,86 4,86 82,87 102,87 82,87 102,87",
 superB:"14,76 24,80 62,86 12,74 2,70 12,74 2,70 82,84 102,78 82,84 102,78",
 ham:"70,66 62,72 40,86 70,80 84,86 70,80 84,86 64,88 88,88 64,88 88,88",
-pigeon:"60,44 60,54 60,80 62,66 64,80 58,66 56,80 76,88 64,90 40,88 16,90"
+pigeon:"60,44 60,54 60,80 62,66 64,80 58,66 56,80 76,88 64,90 40,88 16,90",
+threadA:"28,62 36,66 66,66 36,78 36,90 34,54 30,42 66,90 86,90 66,90 86,90",
+threadB:"38,84 42,79 66,66 50,84 50,90 30,87 12,89 66,90 86,90 66,90 86,90"
 };
 const pose={};for(const k in P){const a=P[k].split(' ').map(s=>s.split(',').map(Number));if(!a[11])a[11]=[(a[1][0]+a[2][0])/2,(a[1][1]+a[2][1])/2];pose[k]=a;}
 const lerp=(A,B,t)=>A.map((p,i)=>[p[0]+(B[i][0]-p[0])*t,p[1]+(B[i][1]-p[1])*t]);
@@ -1128,6 +1132,11 @@ function figure(pt,mirror){
 
 /* ---------- øvelser ---------- */
 const X={
+sideB:["Sidebøjning, begge sider","Armen over hovedet. Bøj roligt til siden og mærk strækket langs flanken. Skift side, når det bipper.","stand","sideBend",0,40,1],
+quadB:["Lårstræk, begge ben","Træk hælen mod numsen, knæene samlet. Stå tæt på en væg, hvis du vakler. Skift ben, når det bipper.","quad",null,0,40,1],
+hipB:["Hoftebøjer, begge sider","Knæet i gulvet, skub hoften frem og stræk armene op. Skift side, når det bipper.","hipFlex",null,0,40,1],
+pigeonB:["Duen, begge sider","Forreste ben bøjet foran dig, bagerste ben strakt. Fold frem, hvis det føles godt. Skift side, når det bipper.","pigeon",null,0,40,1],
+thread:["Thread the needle","På alle fire: før den ene arm ind under kroppen, og læg skulderen ned mod gulvet. Skift side, når det bipper.","threadA","threadB",0,40,1],
 reach:["Stræk mod loftet","Rejs dig høj, stræk armene op og træk vejret dybt. Sænk skuldrene væk fra ørerne.","stand","armsUp"],
 sideL:["Sidebøjning, venstre","Armen over hovedet. Bøj roligt til siden og mærk strækket langs flanken.","stand","sideBend"],
 sideR:["Sidebøjning, højre","Skift side. Hold hofterne stille og lad armen trække dig over.","stand","sideBend",1],
@@ -1182,13 +1191,13 @@ const scanSteps=[["Find ro","Lig på ryggen med armene ned langs siden. Luk øjn
 scanSteps.forEach((s,i)=>X['scan'+i]=[s[0],s[1],'rest']);
 
 const PROGS=[
-{id:"straek",navn:"Udstrækning",sub:"Hele kroppen",ex:"reach sideL sideR neck fold quadL quadR ham hipL hipR"},
+{id:"straek",navn:"Udstrækning",sub:"Hele kroppen",w:20,r:5,ex:"reach sideB neck fold quadB ham hipB thread child"},
 {id:"overkrop",navn:"Overkrop",sub:"Arme, bryst, skuldre",ex:"circles kpush tap plank push superman spL spR kpush roll"},
 {id:"core",navn:"Core",sub:"Stabilitet",ex:"plank bug bird spL spR climb twist plank bug child"},
 {id:"mave",navn:"Mave",sub:"Mavemuskler",ex:"crunch twist bug legs bike climb plank crunch legs cobra"},
 {id:"ben",navn:"Ben",sub:"Lår, numse, lægge",ex:"squat lungeL lungeR bridge squat calf deep bridge quadL quadR"},
 {id:"ryg",navn:"Ryg",sub:"Stærk og smidig ryg",ex:"catcow bird superman child bridge cobra plank bird superman child"},
-{id:"mobility",navn:"Mobility",sub:"Led og bevægelighed",ex:"neck roll circles hipcirc catcow lungeTw deep rollup pigeonL pigeonR"},
+{id:"mobility",navn:"Mobility",sub:"Led og bevægelighed",w:20,r:5,ex:"neck roll circles hipcirc catcow thread lungeTw deep pigeonB"},
 {id:"bodyscan",navn:"Bodyscan",sub:"Ro og afspænding",ex:"scan0 scan1 scan2 scan3 scan4 scan5 scan6 scan7 scan8 scan9",scan:1}
 ].map(p=>({...p,ex:p.ex.split(' ')}));
 
@@ -1196,7 +1205,7 @@ const PROGS=[
 const WORK=50,REST=10,SCAN=60;
 const run={prog:null,i:0,phase:'work',left:WORK,on:false,last:0,sound:store.get('tr-sound',true)};
 let done=store.get('tr-done-'+today,[]),timer=null,raf=0,ac=null;
-const dur=()=>run.prog.scan?SCAN:run.phase==='rest'?REST:WORK;
+const dur=()=>{const p=run.prog;if(p.scan)return SCAN;if(run.phase==='rest')return p.r||REST;const e=X[p.ex[run.i]];return (e&&e[5])||p.w||WORK;};
 const fmt=s=>`${Math.floor(s/60)}:${String(Math.ceil(s)%60===0&&s>0&&Math.ceil(s)>=60?0:Math.ceil(s)%60).padStart(2,'0')}`.replace(/^(\d+):/,(m,a)=>Math.floor(Math.ceil(s)/60)+':');
 const clockTxt=s=>{const c=Math.ceil(s);return Math.floor(c/60)+':'+String(c%60).padStart(2,'0');};
 
@@ -1234,12 +1243,13 @@ function drawFig(t){
   const resting=run.phase==='rest',ex=resting?X[run.prog.ex[run.i+1]]:curEx();
   const A=pose[ex[2]],B=pose[ex[3]]||A;
   const k=(!run.on||resting||reduce||B===A)?0:(1-Math.cos(t/3200*2*Math.PI))/2;
-  $('fig').innerHTML=figure(lerp(A,B,k),ex[4]);
+  $('fig').innerHTML=figure(lerp(A,B,k),(ex[4]?1:0)^(run.sw&&!resting?1:0));
 }
 function loop(t){drawFig(t);if(run.on)raf=requestAnimationFrame(loop);}
 function tick(){
   const now=performance.now();run.left-=(now-run.last)/1000;run.last=now;
   if(run.left<=3.05&&run.left>0&&Math.ceil(run.left)!==run.beeped){run.beeped=Math.ceil(run.left);beep(660,.08);}
+  {const e=X[run.prog.ex[run.i]];if(run.phase==='work'&&e&&e[6]&&!run.sw&&run.left<=dur()/2){run.sw=true;beep(880,.18);setTimeout(()=>beep(880,.18),260);$('tag').textContent='Skift side';drawFig(0);}}
   if(run.left<=0)advance();else{$('clock').textContent=clockTxt(run.left);const p=run.prog,doneSteps=run.i+(run.phase==='rest'?1:(1-run.left/dur()));$('bar').style.width=(doneSteps/p.ex.length*100)+'%';}
 }
 function advance(){
@@ -1247,7 +1257,7 @@ function advance(){
   if(run.phase==='work'&&last){finish();return;}
   if(run.phase==='work'&&!p.scan){run.phase='rest';}
   else{run.phase='work';run.i++;}
-  run.left=dur();run.beeped=null;beep(run.phase==='work'?990:520,.25);drawPlayer();
+  run.left=dur();run.beeped=null;run.sw=false;beep(run.phase==='work'?990:520,.25);drawPlayer();
 }
 function finish(){
   pause();beep(990,.2);setTimeout(()=>beep(1320,.35),220);
@@ -1260,13 +1270,14 @@ function finish(){
 }
 function start(){
   if(run.restart){run.restart=false;drawPlayer();}
+  try{ac=ac||new (window.AudioContext||window.webkitAudioContext)();if(ac.state==='suspended')ac.resume();}catch(e){}
   run.on=true;run.last=performance.now();beep(990,.15);timer=setInterval(tick,200);cancelAnimationFrame(raf);raf=requestAnimationFrame(loop);drawPlayer();
 }
 function pause(){run.on=false;clearInterval(timer);cancelAnimationFrame(raf);if(run.prog&&!run.restart)drawPlayer();}
 $('play').onclick=()=>run.on?pause():start();
-$('next').onclick=()=>{run.restart=false;if(run.phase==='rest'||run.i<run.prog.ex.length-1){if(run.phase==='work')run.i++;run.phase='work';run.left=dur();drawPlayer();}};
-$('prev').onclick=()=>{run.restart=false;if(run.phase==='rest'){run.phase='work';}else if(run.i>0)run.i--;run.left=dur();drawPlayer();};
-const snd=$('sound');const drawSnd=()=>{snd.textContent=run.sound?'Lyd til':'Lyd fra';snd.setAttribute('aria-pressed',run.sound);};
+$('next').onclick=()=>{run.restart=false;if(run.i<run.prog.ex.length-1){run.i++;run.phase='work';run.left=dur();run.sw=false;run.beeped=null;drawPlayer();}};
+$('prev').onclick=()=>{run.restart=false;if(run.phase==='rest'){run.phase='work';}else if(run.i>0)run.i--;run.left=dur();run.sw=false;run.beeped=null;drawPlayer();};
+const snd=$('sound');const drawSnd=()=>{snd.textContent=run.sound?'🔔 Bip ved skift: til':'🔕 Bip ved skift: fra';snd.setAttribute('aria-pressed',run.sound);snd.classList.toggle('on',run.sound);};
 snd.onclick=()=>{run.sound=!run.sound;store.set('tr-sound',run.sound);drawSnd();};drawSnd();
 
 const suggest=PROGS[[6,0,1,2,3,4,5][new Date().getDay()]].id;
