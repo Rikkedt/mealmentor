@@ -86,6 +86,7 @@ function daErr(e){const m=(e&&e.message)||'';let t;
   let lastPlan = '';
   const mmPush = {
     async state() {
+      if (window.Capacitor && window.Capacitor.isNativePlatform && window.Capacitor.isNativePlatform()) return 'native-soon';
       if (!pushOK()) return isIOS && !standalone ? 'ios-browser' : 'unsupported';
       if (Notification.permission === 'denied') return 'denied';
       const r = await navigator.serviceWorker.getRegistration('/'); const sub = r && await r.pushManager.getSubscription();

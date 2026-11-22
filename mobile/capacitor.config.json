@@ -1,0 +1,17 @@
+{
+  "appId": "dk.sableandmons.mealmentor",
+  "appName": "Meal Mentor AI",
+  "webDir": "www",
+  "server": {
+    "url": "https://mealmentor.rikkedt.workers.dev",
+    "allowNavigation": ["mealmentor.rikkedt.workers.dev", "mealmentorai.com", "*.supabase.co"]
+  },
+  "ios": {
+    "contentInset": "never",
+    "backgroundColor": "#F1F1F4",
+    "limitsNavigationsToAppBoundDomains": false
+  },
+  "android": {
+    "backgroundColor": "#F1F1F4"
+  }
+}

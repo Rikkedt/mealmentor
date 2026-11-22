@@ -1,0 +1,21 @@
+{
+  "name": "meal-mentor-ai-mobile",
+  "private": true,
+  "version": "1.0.0",
+  "description": "Meal Mentor AI som iOS- og Android-app (Capacitor). Appen viser web-appen fra serveren.",
+  "scripts": {
+    "sync": "cap sync",
+    "ios": "cap sync ios && cap open ios",
+    "android": "cap sync android && cap open android",
+    "icons": "capacitor-assets generate --iconBackgroundColor '#2A2B30' --splashBackgroundColor '#F1F1F4'"
+  },
+  "dependencies": {
+    "@capacitor/android": "^8.6.2",
+    "@capacitor/core": "^8.6.2",
+    "@capacitor/ios": "^8.6.2"
+  },
+  "devDependencies": {
+    "@capacitor/assets": "^4.0.0",
+    "@capacitor/cli": "^8.6.2"
+  }
+}

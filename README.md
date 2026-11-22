@@ -37,3 +37,13 @@ Valgfrit dagligt AI-loft pr. bruger: se kommentaren i `wrangler.jsonc` og sæt v
 
 ## Modeller
 Tekst: `claude-haiku-5-5` · Foto: `claude-sonnet-5-5`. Kan ændres med variablerne `MODEL_TEXT` og `MODEL_PHOTO`.
+
+## iOS-app (TestFlight) og Android
+
+Mappen `mobile/` er en Capacitor-app, der viser web-appen fra serveren (`server.url` i `mobile/capacitor.config.json`). Rettelser i web-appen kommer derfor ud med det samme – en ny build er kun nødvendig ved ændringer i selve app-skallen (ikon, navn, tilladelser).
+
+- Bundle ID: `dk.sableandmons.mealmentor`
+- Navn: Meal Mentor AI
+- Ikon og splash: `mobile/assets/` → `npm run icons`
+
+Byg på Mac: `cd mobile && npm install && npx cap sync ios && npx cap open ios` → Xcode: vælg dit Team under Signing & Capabilities → Product → Archive → Distribute App → App Store Connect → Upload.

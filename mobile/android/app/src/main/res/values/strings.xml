@@ -1,0 +1,7 @@
+<?xml version='1.0' encoding='utf-8'?>
+<resources>
+    <string name="app_name">Meal Mentor AI</string>
+    <string name="title_activity_main">Meal Mentor AI</string>
+    <string name="package_name">dk.sableandmons.mealmentor</string>
+    <string name="custom_url_scheme">dk.sableandmons.mealmentor</string>
+</resources>

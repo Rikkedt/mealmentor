@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,viewport-fit=cover">
-<title>Meal Mentor AI</title><meta name="mm-version" content="b5f166744c"><link rel="manifest" href="/manifest.webmanifest"><link rel="apple-touch-icon" href="/apple-touch-icon.png"><meta name="theme-color" content="#F1F1F4"><link rel="stylesheet" href="/mm.css"><script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script><script src="/mm.js"></script>
+<title>Meal Mentor AI</title><meta name="mm-version" content="bdf81e8798"><link rel="manifest" href="/manifest.webmanifest"><link rel="apple-touch-icon" href="/apple-touch-icon.png"><meta name="theme-color" content="#F1F1F4"><link rel="stylesheet" href="/mm.css"><script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script><script src="/mm.js"></script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Inter+Tight:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <style>
@@ -1937,9 +1937,9 @@ function pushSync(){if(!pushOn||!window.mmPush)return;clearTimeout(pushSync.t);p
 async function drawPush(){const a=$('pushAllow'),t=$('pushTest'),n=$('pushNote');
   if(!window.mmPush){a.textContent='Få beskeder på telefonen';n.textContent='Beskeder virker i den rigtige app.';return;}
   let st='off';try{st=await window.mmPush.state();}catch(e){}
-  pushOn=st==='on';t.hidden=!pushOn;a.className=pushOn?'ghost':'go';
+  pushOn=st==='on';t.hidden=!pushOn;a.hidden=st==='native-soon';a.className=pushOn?'ghost':'go';
   a.textContent=pushOn?'Slå beskeder fra':'Få beskeder på telefonen';
-  n.textContent=st==='ios-browser'?'På iPhone: tryk på Del → Føj til hjemmeskærm, og åbn appen derfra. Så kan den sende beskeder.'
+  n.textContent=st==='native-soon'?'Beskeder på telefonen kommer i næste opdatering af appen.':st==='ios-browser'?'På iPhone: tryk på Del → Føj til hjemmeskærm, og åbn appen derfra. Så kan den sende beskeder.'
     :st==='unsupported'?'Denne browser kan ikke modtage beskeder.'
     :st==='denied'?'Beskeder er blokeret. Slå dem til under Indstillinger → Meal Mentor → Notifikationer.'
     :pushOn?'Du får beskederne til tiden – også når appen er lukket.':'';
