@@ -603,6 +603,19 @@ h1.brand .brand-ai{display:inline-grid;place-items:center;height:30px;padding:0 
 
 #todo .td-n{display:inline-flex!important;align-items:center;justify-content:center;line-height:1!important;height:26px;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",system-ui,sans-serif!important;font-variant-numeric:tabular-nums;letter-spacing:0!important}
 #botFab svg{display:block;margin:0 auto}
+
+.lift{margin:0 0 14px;padding:16px;border-radius:20px;background:linear-gradient(135deg,#FFF6EC,#FDEBE4);border:1px solid #F6D8CC}
+.lift-h{display:flex;justify-content:space-between;gap:10px;align-items:flex-start}
+.lift-h small{display:block;font-size:11px;letter-spacing:.12em;font-weight:800;color:#C2563E}
+.lift-h b{display:block;font:800 18px 'Inter Tight',sans-serif;letter-spacing:-.3px;margin-top:4px;color:#111}
+.lift-x{all:unset;width:34px;height:34px;border-radius:50%;display:grid;place-items:center;color:#8A6A60;cursor:pointer;flex:0 0 auto}
+.lift-o{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:12px}
+.lift-o button{all:unset;box-sizing:border-box;display:flex;gap:10px;align-items:center;padding:12px;border-radius:16px;background:#fff;cursor:pointer;box-shadow:0 2px 8px rgba(194,86,62,.08)}
+.lift-o b{display:block;font-size:14px;color:#111}.lift-o small{display:block;font-size:12px;color:#6B6E76;margin-top:2px}
+.lift-ic{font-size:22px}
+.lift-ok{all:unset;display:block;margin-top:10px;font-size:13px;font-weight:700;color:#C2563E;cursor:pointer}
+.lift-done{display:flex;gap:12px;align-items:center}.lift-done b{display:block;font-size:15px;color:#111}.lift-done span{display:block;font-size:13px;color:#6B6E76}
+.lift-ck{flex:0 0 auto;width:34px;height:34px;border-radius:50%;display:grid!important;place-items:center;background:#C2563E;color:#fff!important;font-weight:900;font-size:16px!important}
 </style>
 </head>
 <body>
@@ -686,6 +699,7 @@ h1.brand .brand-ai{display:inline-grid;place-items:center;height:30px;padding:0 
 <div class="qfav qother"><button data-f="fSleep">😴 Søvn</button><button data-f="fWeight">⚖️ Vægt</button><button data-f="fWork">🏃 Træning</button><button data-f="fDose">💉 GLP-1 dosis</button></div>
 </div></div>
 <div class="toast" id="toast" hidden role="status"></div>
+<div class="lift" id="lift" hidden></div>
 <details class="todo" id="todo" hidden><summary id="todoSum"></summary><ul id="todoList"></ul></details>
 <section class="hero"><div class="left" id="left" aria-live="polite"></div>
 <div class="ainote" id="aiNote" hidden><div class="ainote-h"><b>Meal Mentor AI siger</b><button class="link" id="aiRefresh">Opdatér</button></div><div id="aiNoteTxt"></div></div></section>
@@ -874,7 +888,7 @@ let D=store.get('mob-data',null);
 if(!D){D=blank();const old=store.get('madscanner-'+today,[]);old.forEach(e=>D.meals.push({id:uid(),t:today+'T'+(e.tid||'12:00').replace('.',':'),titel:e.titel,kcal:e.kcal,protein:e.protein,fedt:e.fedt,kulhydrat:e.kulhydrat}));}
 if(D.demo){D={...blank(),settings:{...(D.settings||{late:20})}};store.set('mob-data',D);}
 if(!D.sleep)D.sleep=[];if(!D.checkins)D.checkins=[];
-const save=()=>{store.set('mob-data',D);cloudSchedule();if(typeof refreshVej==='function')refreshVej();if(typeof pushSync==='function')pushSync();};
+const save=()=>{store.set('mob-data',D);cloudSchedule();if(typeof refreshVej==='function')refreshVej();if(typeof pushSync==='function')pushSync();if(typeof drawLift==='function')drawLift();};
 /* ---------- login og synkronisering ---------- */
 const KINDS={meals:x=>x.t,sleep:x=>x.d,weights:x=>x.d,doses:x=>x.d,workouts:x=>x.t,checkins:x=>x.d};
 const cloud={db:null,col:null,uid:null,name:'',state:'local',sent:{},timer:0,busy:false,again:false};
@@ -1917,6 +1931,22 @@ function openPushKey(k){const p=pushPlan().find(x=>x.key===k);if(p&&p.form)openF
 {const q=new URLSearchParams(location.search).get('push');if(q){history.replaceState(null,'',location.pathname+location.hash);setTimeout(()=>openPushKey(q),800);}}
 setInterval(checkPush,60000);setTimeout(checkPush,1500);
 
+
+
+/* ===== Morgenløft ===== */
+function drawLift(){const el=$('lift');if(!el)return;const h=new Date().getHours(),k='mm-lift-'+today,st=store.get(k,null);
+  const trained=(D.workouts||[]).some(w=>String(w.t).slice(0,10)===today);
+  if(h<5||h>=11||st==='skip'){el.hidden=true;return;}
+  el.hidden=false;
+  if(st==='done'||trained){el.innerHTML=`<div class="lift-done"><span class="lift-ck">✓</span><div><b>Morgenløft klaret</b><span>Godt gået – sådan starter man en god dag.</span></div></div>`;return;}
+  el.innerHTML=`<div class="lift-h"><div><small>MORGENLØFT · 5 MIN</small><b>Start dagen med noget for dig selv</b></div><button class="lift-x" type="button" data-lift="skip" aria-label="Ikke i dag"><svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M6 6l12 12M18 6L6 18"/></svg></button></div>
+  <div class="lift-o"><button type="button" data-lift="straek"><span class="lift-ic">🤸</span><span><b>Stræk ud</b><small>Hele kroppen vågner</small></span></button><button type="button" data-lift="mobility"><span class="lift-ic">🌿</span><span><b>Bevægelse</b><small>Løsn led og ryg</small></span></button></div>
+  <button class="lift-ok" type="button" data-lift="done">Jeg har gjort noget godt for mig selv ✓</button>`;}
+$('lift').addEventListener('click',e=>{const b=e.target.closest('[data-lift]');if(!b)return;const v=b.dataset.lift,k='mm-lift-'+today;
+  if(v==='skip'){store.set(k,'skip');drawLift();toast('Okay – vi ses i morgen');return;}
+  if(v==='done'){store.set(k,'done');drawLift();toast('Flot! En god start på dagen 🌞');return;}
+  location.hash='#traening';setTimeout(()=>{try{pick(v);}catch(x){}const pl=document.querySelector('#v-tr .player');if(pl)pl.scrollIntoView({behavior:'smooth',block:'start'});},250);});
+setTimeout(drawLift,0);setInterval(drawLift,10*60*1000);
 
 /* ===== log hurtigt ===== */
 function toast(t){const el=$('toast');el.textContent=t;el.hidden=false;clearTimeout(toast.t);toast.t=setTimeout(()=>el.hidden=true,2600);}
