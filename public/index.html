@@ -576,6 +576,10 @@ button.saved{background:#1F8A5B!important;color:#fff!important;border-color:#1F8
 label.hot{display:flex!important;align-items:center;gap:12px;flex-direction:row!important}
 label.hot span{color:var(--ink);font-weight:600;font-size:15px}
 label.hot input{flex:0 0 auto;margin:0}
+
+#todo .td-btns{display:flex;align-items:center;gap:6px;flex:0 0 auto}
+#todo .td-x{all:unset;box-sizing:border-box;width:38px;height:38px;border-radius:50%;display:grid;place-items:center;color:var(--mute);cursor:pointer}
+#todo .td-x:active{background:var(--soft)}
 </style>
 </head>
 <body>
@@ -1299,12 +1303,15 @@ function missing(){
     if(!d.n)out.push(['fMeal',k,`Ingen mad logget ${nm}`]);else if(d.n===1)out.push(['fMeal',k,`Kun ét måltid logget ${nm}`]);
     if(!d.sleep&&D.sleep.length)out.push(['fSleep',k,`Søvn mangler for natten til ${nm}`]);});
   if(R.work&&h>=17&&!t.woMin)out.push(['fWork',today,'Har du trænet i dag?']);
-  return out.filter(x=>(R.meal||x[0]!=='fMeal')&&(R.sleep||x[0]!=='fSleep')).slice(0,5);
+  const dis=new Set(S().dismissed||[]);
+  return out.filter(x=>(R.meal||x[0]!=='fMeal')&&(R.sleep||x[0]!=='fSleep')&&!dis.has(x[0]+':'+x[1])).slice(0,5);
 }
 function gaps(){const ds=range(7,addDays(today,-1)),miss=ds.filter(d=>!d.n),thin=ds.filter(d=>d.n===1),noSleep=D.sleep.length?ds.filter(d=>!d.sleep):[];return {miss,thin,noSleep,n:miss.length+thin.length};}
 function drawTodo(){
   const m=missing();$('todo').hidden=!m.length;$('todoSum').innerHTML=`<span class="td-ic">!</span><span class="td-t">Mangler du at logge noget?</span><span class="td-n">${m.length}</span>`;
-  $('todoList').innerHTML=m.map(([f,k,t],i)=>`<li><span>${esc(t)}</span><button class="ghost" data-i="${i}">Log</button></li>`).join('');
+  $('todoList').innerHTML=m.map(([f,k,t],i)=>`<li><span>${esc(t)}</span><span class="td-btns"><button class="ghost" data-i="${i}">Log</button><button class="td-x" type="button" data-x="${i}" aria-label="Skjul – der er ikke noget at logge"><svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M6 6l12 12M18 6L6 18"/></svg></button></span></li>`).join('');
+  $('todoList').querySelectorAll('[data-x]').forEach(b=>b.onclick=()=>{const [f,k]=m[+b.dataset.x];const keep=(S().dismissed||[]).filter(x=>x.split(':')[1]>=addDays(today,-7));
+    D.settings={...S(),dismissed:[...keep,f+':'+k]};save();toast('Skjult – du kan stadig logge det under + Log');const op=$('todo').open;drawTodo();$('todo').open=op&&missing().length>0;});
   $('todoList').querySelectorAll('[data-i]').forEach(b=>b.onclick=()=>{const [f,k]=m[+b.dataset.i];openForm(f,k,true);});
 }
 const median=a=>{const b=[...a].sort((x,y)=>x-y);return b.length?b[Math.floor(b.length/2)]:null;};
@@ -1666,7 +1673,7 @@ const rel=k=>k===today?'i dag':k===addDays(today,-1)?'i går':k===addDays(today,
 function setNight(k){
   nightKey=k;const f=$('fSleep'),ex=D.sleep.find(z=>z.d===k);f.elements.d.value=k;
   f.elements.from.value=ex?ex.from:'23:00';f.elements.to.value=ex?ex.to:'07:00';
-  f.querySelectorAll('[name=q]').forEach(r=>r.checked=+r.value===(ex?ex.q:3));f.elements.hot.checked=!!(ex&&ex.hot);
+  f.querySelectorAll('[name=q]').forEach(r=>r.checked=+r.value===(ex&&+ex.q>=1&&+ex.q<=5?+ex.q:3));f.elements.hot.checked=!!(ex&&ex.hot);
   $('sleepSave').textContent=ex?'Opdatér søvn':'Gem søvn';$('nNext').disabled=k>=today;updSleepLen();}
 function updSleepLen(){
   const f=$('fSleep'),fr=f.elements.from.value,to=f.elements.to.value,W=nightKey,P=addDays(W,-1);if(!fr||!to)return;
@@ -1688,6 +1695,7 @@ function updSleepLen(){
   sv.innerHTML=o;}
 const nightRO=new ResizeObserver(updSleepLen);nightRO.observe($('nightSvg'));
 $('fSleep').oninput=updSleepLen;
+$('fSleep').querySelectorAll('.qual label').forEach(l=>l.addEventListener('click',e=>{const r=l.querySelector('input');if(r){r.checked=true;e.preventDefault();}}));
 $('nPrev').onclick=()=>setNight(addDays(nightKey,-1));
 $('nNext').onclick=()=>{if(nightKey<today)setNight(addDays(nightKey,1));};
 $('fSleep').querySelectorAll('[data-s]').forEach(b=>b.onclick=()=>{const [n,d]=b.dataset.s.split(':'),inp=$('fSleep').elements[n];let m=Math.round(hm(inp.value||'00:00')*60)+(+d);m=((m%1440)+1440)%1440;inp.value=pad(Math.floor(m/60))+':'+pad(m%60);updSleepLen();});
