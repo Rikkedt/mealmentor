@@ -659,6 +659,14 @@ body.kb .tabs,body.kb #botFab{display:none!important}
 .dtl-t:empty{visibility:hidden}
 .dtl-empty{display:block!important;padding:4px 0 10px 108px!important;color:var(--mute);font-size:14px}
 .dtl .sl .dtl-t{font-size:12px;line-height:1.2}
+
+.prog-h{all:unset;box-sizing:border-box;display:flex;align-items:center;gap:10px;width:100%;cursor:pointer}
+.prog-h h2{margin:0}.prog-h #progCur{margin-left:auto;font-size:14px;font-weight:700;color:var(--mute)}
+.prog-chev{font-size:22px;color:var(--mute);transform:rotate(90deg);transition:transform .2s}
+.progs:not(.folded) #progCur{display:none}.progs:not(.folded) .prog-chev{margin-left:auto}
+.progs.folded .prog-chev{transform:rotate(0)}
+.progs.folded .prog-sub,.progs.folded #cards{display:none}
+.progs.folded{padding-bottom:6px!important}
 </style>
 </head>
 <body>
@@ -699,8 +707,8 @@ body.kb .tabs,body.kb #botFab{display:none!important}
 
 <div id="v-tr" hidden>
 <section class="band progs" style="border-top:0"><div class="wrap">
-<h2>Vælg program</h2>
-<p class="small" style="margin:4px 0 0">10 minutter: 10 øvelser á 50 sekunder. Bodyscan er 10 rolige trin.</p>
+<button class="prog-h" id="progH" type="button" aria-expanded="true"><h2>Vælg program</h2><span id="progCur"></span><span class="prog-chev">›</span></button>
+<p class="small prog-sub" style="margin:4px 0 0">Ca. 10 minutter pr. program. Følg figuren, og lad uret holde tiden.</p>
 <div class="cards" id="cards"></div>
 </div></section>
 <main class="band" style="padding-top:0"><div class="wrap player">
@@ -1285,7 +1293,7 @@ function advance(){
   run.left=dur();run.beeped=null;run.sw=false;beep(run.phase==='work'?990:520,.25);drawPlayer();
 }
 function finish(){
-  pause();beep(990,.2);setTimeout(()=>beep(1320,.35),220);
+  pause();progFold(false);beep(990,.2);setTimeout(()=>beep(1320,.35),220);
   if(!done.includes(run.prog.id)){done.push(run.prog.id);store.set('tr-done-'+today,done);}
   D.workouts.push({id:uid(),t:nowT(),navn:'10 min '+run.prog.navn.toLowerCase(),min:10});save();
   $('exname').textContent='Godt gået!';$('extip').textContent=`Du har gennemført ${run.prog.navn.toLowerCase()} i dag. Vælg et nyt program eller tag det samme igen i morgen.`;
@@ -1294,11 +1302,15 @@ function finish(){
   run.i=0;run.phase='work';run.left=dur();run.restart=true;drawCards();
 }
 function start(){
+  progFold(true);
   if(run.restart){run.restart=false;drawPlayer();}
   try{ac=ac||new (window.AudioContext||window.webkitAudioContext)();if(ac.state==='suspended')ac.resume();}catch(e){}
   run.on=true;run.last=performance.now();beep(990,.15);timer=setInterval(tick,200);cancelAnimationFrame(raf);raf=requestAnimationFrame(loop);drawPlayer();
 }
 function pause(){run.on=false;clearInterval(timer);cancelAnimationFrame(raf);if(run.prog&&!run.restart)drawPlayer();}
+
+function progFold(on){const sec=document.querySelector('#v-tr .progs');if(!sec)return;sec.classList.toggle('folded',on);$('progH').setAttribute('aria-expanded',!on);$('progCur').textContent=on&&run.prog?run.prog.navn+' · skift':'';}
+$('progH').onclick=()=>{const f=document.querySelector('#v-tr .progs').classList.contains('folded');progFold(!f);};
 $('play').onclick=()=>run.on?pause():start();
 $('next').onclick=()=>{run.restart=false;if(run.i<run.prog.ex.length-1){run.i++;run.phase='work';run.left=dur();run.sw=false;run.beeped=null;drawPlayer();}};
 $('prev').onclick=()=>{run.restart=false;if(run.phase==='rest'){run.phase='work';}else if(run.i>0)run.i--;run.left=dur();run.sw=false;run.beeped=null;drawPlayer();};
