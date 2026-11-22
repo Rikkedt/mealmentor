@@ -133,6 +133,8 @@ def build_html(src):
     # structural fixes
     out = out.replace('<html lang="da">', '<html lang="en">')
     out = out.replace("'da-DK'", "'en-GB'")
+    for a, b in [('morgenloeft.mp3', 'morning-lift-en.mp3'), ('aftenro.mp3', 'evening-calm-en.mp3'), ('bodyscan.mp3', 'bodyscan-en.mp3')]:
+        out = out.replace(a, b)
     out = out.replace("return m%1?`${hh}.30`:`${hh}`;", "return m%1?`${hh}:30`:`${hh}:00`;")
     for da, en in [('Morgenmad', 'Breakfast'), ('Frokost', 'Lunch'), ('Eftermiddag', 'Afternoon'), ('Aftensmad', 'Dinner'), ('Aftensnack', 'Evening snack')]:
         out = re.sub(r'([{,]\s*)' + da + r':\[', lambda m: f"{m.group(1)}'{en}':[", out)

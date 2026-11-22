@@ -2143,7 +2143,7 @@ const AUDIO=location.protocol.startsWith('http')&&!/claude|anthropic/.test(locat
     toast(cur==='morgenloeft'?'Great! A good start to the day 🌞':cur==='aftenro'?'Sleep well 🌙':'Well done – body scan done 🌙');a.currentTime=0;paint();};}
 /* Bodyscan fra Soft Motel (lyd) */
 {const a=$('bsaAudio'),fm=x=>Math.floor(x/60)+':'+String(Math.floor(x%60)).padStart(2,'0');
-  $('bsaPlay').onclick=()=>{if(!a.src)a.src=(typeof AUDIO!=='undefined'?AUDIO:'')+'/audio/bodyscan.mp3';
+  $('bsaPlay').onclick=()=>{if(!a.src)a.src=(typeof AUDIO!=='undefined'?AUDIO:'')+'/audio/bodyscan-en.mp3';
     if(a.paused){a.play().catch(()=>toast('The audio could not be played'));}else a.pause();};
   a.onplay=()=>{$('bsaPi').textContent='❚❚';$('bsaT').textContent='Pause';};
   a.onpause=()=>{$('bsaPi').textContent='▶';$('bsaT').textContent=a.currentTime>1?'Continue':'Start body scan';};
@@ -2153,7 +2153,7 @@ function drawLift(){const el=$('lift');if(!el)return;{const a=$('liftAudio');if(
   if(h>=20||h<2){const rk='mm-ro-'+(h<2?addDays(today,-1):today),rs=store.get(rk,null);if(rs==='skip'){el.hidden=true;return;}el.hidden=false;el.className='lift ro';
     if(rs==='done'){el.innerHTML=`<div class="lift-done"><span class="lift-ck">✓</span><div><b>Evening Calm done</b><span>Sleep well – see you tomorrow.</span></div></div>`;return;}
     el.innerHTML=`<div class="lift-h"><div><small>EVENING CALM · 5 MIN</small><b>Let go of the day and get ready to sleep</b></div><button class="lift-x" type="button" data-lift="skip" aria-label="Ikke i aften"><svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M6 6l12 12M18 6L6 18"/></svg></button></div>
-    <button class="lift-play" type="button" data-lift="lyd"><span class="lift-pi">▶</span><span><b>Evening Calm</b><small>5 min of calm for body and mind</small></span></button><audio id="liftAudio" preload="none" src="${AUDIO}/audio/aftenro.mp3"></audio>
+    <button class="lift-play" type="button" data-lift="lyd"><span class="lift-pi">▶</span><span><b>Evening Calm</b><small>5 min of calm for body and mind</small></span></button><audio id="liftAudio" preload="none" src="${AUDIO}/audio/evening-calm-en.mp3"></audio>
     <button class="lift-ok" type="button" data-lift="done">I'm ready to sleep ✓</button>`;return;}
   el.className='lift';
   const trained=(D.workouts||[]).some(w=>String(w.t).slice(0,10)===today);
@@ -2161,7 +2161,7 @@ function drawLift(){const el=$('lift');if(!el)return;{const a=$('liftAudio');if(
   el.hidden=false;
   if(st==='done'||trained){el.innerHTML=`<div class="lift-done"><span class="lift-ck">✓</span><div><b>Morning Lift done</b><span>Well done – that's how to start a good day.</span></div></div>`;return;}
   el.innerHTML=`<div class="lift-h"><div><small>MORNING LIFT · 5 MIN</small><b>Start the day with something for yourself</b></div><button class="lift-x" type="button" data-lift="skip" aria-label="Ikke i dag"><svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M6 6l12 12M18 6L6 18"/></svg></button></div>
-  <button class="lift-play" type="button" data-lift="lyd"><span class="lift-pi">▶</span><span><b>Morning audio</b><small>5 min of calm, energy and confidence</small></span></button><audio id="liftAudio" preload="none" src="${AUDIO}/audio/morgenloeft.mp3"></audio>
+  <button class="lift-play" type="button" data-lift="lyd"><span class="lift-pi">▶</span><span><b>Morning audio</b><small>5 min of calm, energy and confidence</small></span></button><audio id="liftAudio" preload="none" src="${AUDIO}/audio/morning-lift-en.mp3"></audio>
   <div class="lift-o"><button type="button" data-lift="morgen"><span class="lift-ic">🤸</span><span><b>Morning routine</b><small>Wake up in your body</small></span></button><button type="button" data-lift="mobility"><span class="lift-ic">🌿</span><span><b>Movement</b><small>Loosen joints and back</small></span></button></div>
   <button class="lift-ok" type="button" data-lift="done">I did something good for myself ✓</button>`;}
 $('lift').addEventListener('click',e=>{const b=e.target.closest('[data-lift]');if(!b)return;const v=b.dataset.lift,hh=new Date().getHours(),eve=hh>=20||hh<2,k=eve?'mm-ro-'+(hh<2?addDays(today,-1):today):'mm-lift-'+today;
