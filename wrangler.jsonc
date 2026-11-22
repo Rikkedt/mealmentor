@@ -4,6 +4,12 @@
   "compatibility_date": "2026-11-01",
   "assets": { "directory": "./public", "binding": "ASSETS", "run_worker_first": ["/api/*"], "not_found_handling": "single-page-application" },
   "observability": { "enabled": true },
+  // Eget domæne (DNS ligger i Cloudflare). workers.dev virker stadig.
+  "routes": [
+    { "pattern": "mealmentorai.com/*", "zone_name": "mealmentorai.com" },
+    { "pattern": "www.mealmentorai.com/*", "zone_name": "mealmentorai.com" }
+  ],
+  "workers_dev": true,
   // Push-beskeder: tjekker hvert 5. minut, om der er beskeder, der skal sendes.
   "triggers": { "crons": ["*/5 * * * *"] },
   // Dagligt AI-loft pr. bruger: 40 AI-kald i alt, heraf højst 15 fotoscanninger.
