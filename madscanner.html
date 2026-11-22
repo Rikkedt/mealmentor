@@ -553,7 +553,7 @@ body{padding-bottom:calc(150px + env(safe-area-inset-bottom))}
 .onb-body .seg{display:grid;grid-template-columns:1fr 1fr;gap:8px}.onb-body .seg button{min-height:48px;border-radius:14px;font-weight:700}
 
 .lact{display:flex;align-items:center;gap:8px;flex:0 0 auto}
-.lnext .lrow>span:first-child{white-space:nowrap;min-width:0}
+.lnext .lrow{flex-wrap:wrap;row-gap:10px}.lnext .lrow>span:first-child{flex:1 1 150px;min-width:0}
 .lswap{all:unset;box-sizing:border-box;flex:0 0 auto;display:inline-flex;align-items:center;gap:6px;height:40px;padding:0 12px;border-radius:12px;border:1.5px solid rgba(255,255,255,.35);background:rgba(20,20,24,.55);backdrop-filter:blur(6px);color:#fff;font:700 13px 'Inter Tight',sans-serif;cursor:pointer}
 .lswap:active{background:rgba(255,255,255,.28)}
 .diet{display:flex;flex-wrap:wrap;gap:8px;margin:4px 0 14px}
@@ -571,6 +571,11 @@ body{padding-bottom:calc(150px + env(safe-area-inset-bottom))}
 #todo .td-n::after{content:"";}
 #todo>summary::after{content:"›";font-size:22px;color:var(--mute);transition:transform .15s}#todo[open]>summary::after{transform:rotate(90deg)}
 #todo ul{margin:0;padding:0 16px 10px}
+
+button.saved{background:#1F8A5B!important;color:#fff!important;border-color:#1F8A5B!important;transition:background .2s}
+label.hot{display:flex!important;align-items:center;gap:12px;flex-direction:row!important}
+label.hot span{color:var(--ink);font-weight:600;font-size:15px}
+label.hot input{flex:0 0 auto;margin:0}
 </style>
 </head>
 <body>
@@ -1647,7 +1652,11 @@ regMenu.onkeydown=e=>{if(e.key==='Escape'){regClose();regBtn.focus();}};
 regMenu.querySelectorAll('button').forEach(b=>b.onclick=()=>{regClose();if(b.dataset.scan){location.hash='#mad';return;}openForm(b.dataset.f,null,true);});
 document.querySelectorAll('[data-open]').forEach(b=>b.onclick=()=>{location.hash='#vejleder';setTimeout(()=>openForm(b.dataset.open,null,true),60);});
 $('panelClose').onclick=()=>{panel.hidden=true;$('panelBack').hidden=true;backFrom=null;document.querySelectorAll('.quick [data-f]').forEach(x=>x.setAttribute('aria-pressed','false'));};
-const flash=(form,msg)=>{const m=form.querySelector('.ok-msg');m.textContent=msg;setTimeout(()=>m.textContent='',2500);};
+const flash=(form,msg)=>{const m=form.querySelector('.ok-msg');if(m){m.textContent='';}
+  const b=form.querySelector('button[type=submit],button.go:not([type=button])');
+  if(b){const lbl=b.textContent;clearTimeout(b._ft);b.textContent='✓ '+msg;b.classList.add('saved');b.disabled=true;
+    b._ft=setTimeout(()=>{b.textContent=lbl;b.classList.remove('saved');b.disabled=false;},1800);}
+  try{toast(msg==='Gemt'?'Gemt ✓':msg);}catch(e){}};
 function resetDates(force){document.querySelectorAll('#v-vej input[type=date]').forEach(i=>{if(!i.value||force)i.value=today;i.max=today;});
   document.querySelectorAll('#v-vej input[type=time]:not([name=from]):not([name=to])').forEach(i=>{if(!i.value||force)i.value=nowT().slice(11);});updSleepLen();}
 let nightKey=today;
