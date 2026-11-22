@@ -1851,7 +1851,7 @@ function drawOnb(){const S_=onbSteps(),i=onb.s,c=S_[i];
   $('onbOpts').innerHTML=c.o.map(([ic,t,d,v],oi)=>{const on=c.multi?!!val[v]:c.acct?false:String(val)===v;return `<button data-v="${v||''}" data-i="${oi}" class="" ${c.acct?'':`aria-pressed="${on}"`}><span class="oi">${ic}</span><span><b>${t}</b><small>${d}</small></span><span class="om">${c.multi?(on?'●':'○'):on?'✓':''}</span></button>`;}).join('');
   $('onbOpts').querySelectorAll('button').forEach(b=>b.onclick=()=>{if(c.acct&&!$('onbOk').checked){$('onbConsent').classList.add('need');$('onbConsent').scrollIntoView({block:'center',behavior:'smooth'});return;}if(c.acct){D.settings={...S(),consent:new Date().toISOString()};save();if(window.mmAuth&&!window.mmAuth.user()){store.set('mm-onb',{s:1});return window.mmAuth.login(['apple','google','email'][+b.dataset.i]);}onb.s=1;return drawOnb();}
     if(c.multi)onb.p.rem={...val,[b.dataset.v]:!val[b.dataset.v]};else{onb.p[c.key]=b.dataset.v;if(c.key==='theme'){D.settings={...S(),theme:b.dataset.v};applyTheme();}}drawOnb();});
-  $('onbConsent').hidden=!c.acct;$('onbConsent').classList.remove('need');
+  $('onbConsent').hidden=!c.acct;$('onbConsent').classList.remove('need');$('onbSkip').hidden=!!c.acct;
   const lock=c.acct&&!$('onbOk').checked&&!S().consent;$('onbOpts').classList.toggle('locked',lock);$('onbNext').classList.toggle('locked',lock);
   $('onbNext').textContent=c.acct?'Jeg har allerede en konto':i===S_.length-1?'Kom i gang':'Næste';
 }
@@ -1859,12 +1859,13 @@ function openOnb(){onb.s=window.mmAuth&&window.mmAuth.user()?1:0;onb.p={};$('onb
 function finishOnb(){const p=onb.p,st=S();D.settings={...st,...(p.goal?{goal:p.goal}:{}),...(p.act?{act:p.act}:{}),...(p.theme?{theme:p.theme}:{}),reminders:{...reminders(),...(p.rem||{})},onboarded:true};
   applyTheme();save();try{fillSettings();}catch(e){}$('onb').hidden=true;location.hash='#vejleder';
   if(!st.kcal)setTimeout(()=>toast('Sæt din højde, alder og vægt under Profil, så beregner vi dit mål'),400);}
-$('onbNext').onclick=()=>{const n=onbSteps().length;if(onb.s===0){if(!$('onbOk').checked&&!S().consent){$('onbConsent').classList.add('need');return;}if($('onbOk').checked)D.settings={...S(),consent:S().consent||new Date().toISOString()};finishOnb();return;}if(onb.s>=n-1)finishOnb();else{onb.s++;drawOnb();}};
+$('onbNext').onclick=()=>{const n=onbSteps().length;if(onb.s===0){if(!$('onbOk').checked&&!S().consent){$('onbConsent').classList.add('need');return;}if($('onbOk').checked){D.settings={...S(),consent:S().consent||new Date().toISOString()};save();}if(window.mmAuth&&!window.mmAuth.user()){window.mmAuth.login('email');return;}finishOnb();return;}if(onb.s>=n-1)finishOnb();else{onb.s++;drawOnb();}};
 $('onbBack').onclick=()=>{onb.s=Math.max(0,onb.s-1);drawOnb();};
 $('onbSkip').onclick=finishOnb;
 $('onbAgain').onclick=openOnb;
 applyTheme();
-if(!S().onboarded&&!D.meals.length&&!D.demo)openOnb();
+if(window.mmAuth)window.mmAuth.ready.then(()=>{if(!window.mmAuth.user()&&$('onb').hidden)openOnb();});
+else if(!S().onboarded&&!D.meals.length&&!D.demo)openOnb();
 
 
 /* ===== tilbage-pile ===== */
