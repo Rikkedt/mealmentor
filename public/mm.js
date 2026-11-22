@@ -1,3 +1,9 @@
+function daErr(e){const m=(e&&e.message)||'';let t;
+  if((t=m.match(/after (\d+) seconds?/i)))return 'Vent '+t[1]+' sekunder, og prøv så igen.';
+  if(/rate limit|too many/i.test(m))return 'Der er sendt for mange mails lige nu. Prøv igen om lidt.';
+  if(/invalid.*email|email.*invalid|valid email/i.test(m))return 'Tjek at e-mailen er skrevet rigtigt.';
+  if(/fetch|network/i.test(m))return 'Ingen forbindelse. Tjek internettet og prøv igen.';
+  return 'Mailen kunne ikke sendes. Prøv igen om lidt.';}
 /* Meal Mentor – kobler appen til Supabase (login + data) og /api/ai (Claude).
    Giver appen samme interface som prototypen: claude.use('sample'|'db'|'user'). */
 (function () {
@@ -26,7 +32,7 @@
       if (e.submitter && e.submitter.value === 'cancel') { d.close(); return; }
       e.preventDefault(); msg.textContent = 'Sender …';
       const { error } = await sb.auth.signInWithOtp({ email: inp.value.trim(), options: { emailRedirectTo: location.origin } });
-      msg.textContent = error ? 'Kunne ikke sende: ' + error.message : 'Tjek din mail og tryk på linket.';
+      msg.textContent = error ? daErr(error) : 'Tjek din mail og tryk på linket.';
     };
     d.addEventListener('close', () => d.remove());
     d.showModal(); inp.focus();
