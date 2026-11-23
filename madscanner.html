@@ -1500,7 +1500,7 @@ function recs(){
   else if(t&&k7>t.v*1.1&&S().goal!=='styrke')r.push(['warn',`${nf(k7-t.v)} kcal over målet i snit`,`Du ligger på ${nf(k7)} kcal om dagen mod ${nf(t.v)}.`]);
   const lateShare=avg(L7,d=>d.kcal?d.lateKcal/d.kcal:0);
   if(lateShare>0.25)r.push(['warn',`${nf(lateShare*100)} % af maden spises i spisepausen om aftenen`,`Din spisepause starter kl. ${lateH()}. Flyt lidt af maden til frokost og eftermiddag, så aftenen bliver lettere.`]);
-  if(pt&&p7<pt*0.85)r.push(['warn',`Protein: ${nf(p7)} af ${nf(pt)} g`,'Få 25–30 g i hvert måltid, fx skyr, æg, kylling, fisk eller bønner.']);
+  if(pt&&p7<pt*0.85)r.push(['warn',`Protein i snit: ${nf(p7)} af ${nf(pt)} g om dagen`,'Gennemsnit for de seneste 7 dage. Få 25–30 g i hvert måltid, fx skyr, æg, kylling, fisk eller bønner.']);
   const S7=range(7).filter(d=>d.sleepH!=null),sh=S7.length>=3?avg(S7,d=>d.sleepH):null,se=sleepEffect();
   if(sh!=null&&sh<6.5)r.push(['warn',`Du sover ${nf(sh,1)} timer i snit`,se&&se.short>se.good*1.05?`Efter korte nætter spiser du ca. ${nf(se.short-se.good)} kcal mere. Gå lidt tidligere i seng i aften.`:'Kort søvn giver ofte mere sult. Sigt efter 7 timer.']);
   const tdy=day(today),de=doseEffect();

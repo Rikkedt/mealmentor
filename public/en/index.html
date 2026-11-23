@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,viewport-fit=cover">
-<title>Meal Mentor AI</title><meta name="mm-version" content="be743380b1"><link rel="manifest" href="/manifest.webmanifest"><link rel="apple-touch-icon" href="/apple-touch-icon.png"><link rel="icon" href="/icon-192.png"><meta name="theme-color" content="#F1F1F4"><link rel="stylesheet" href="/mm.css"><script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script><script src="/mm.en.js"></script>
+<title>Meal Mentor AI</title><meta name="mm-version" content="e0a5645e6e"><link rel="manifest" href="/manifest.webmanifest"><link rel="apple-touch-icon" href="/apple-touch-icon.png"><link rel="icon" href="/icon-192.png"><meta name="theme-color" content="#F1F1F4"><link rel="stylesheet" href="/mm.css"><script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script><script src="/mm.en.js"></script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Inter+Tight:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <style>
@@ -1500,7 +1500,7 @@ function recs(){
   else if(t&&k7>t.v*1.1&&S().goal!=='styrke')r.push(['warn',`${nf(k7-t.v)} kcal over the goal on average`,`You are at ${nf(k7)} kcal a day vs. ${nf(t.v)}.`]);
   const lateShare=avg(L7,d=>d.kcal?d.lateKcal/d.kcal:0);
   if(lateShare>0.25)r.push(['warn',`${nf(lateShare*100)} % of the food is eaten during the evening eating break`,`Your eating break starts at ${lateH()}. Move some of the food to lunch and the afternoon, so the evening gets easier.`]);
-  if(pt&&p7<pt*0.85)r.push(['warn',`Protein: ${nf(p7)} of ${nf(pt)} g`,'Get 25–30 g in every meal, e.g. skyr, eggs, chicken, fish or beans.']);
+  if(pt&&p7<pt*0.85)r.push(['warn',`Average protein: ${nf(p7)} of ${nf(pt)} g a day`,'Average for the last 7 days. Get 25–30 g in every meal, e.g. skyr, eggs, chicken, fish or beans.']);
   const S7=range(7).filter(d=>d.sleepH!=null),sh=S7.length>=3?avg(S7,d=>d.sleepH):null,se=sleepEffect();
   if(sh!=null&&sh<6.5)r.push(['warn',`You sleep ${nf(sh,1)} hours on average`,se&&se.short>se.good*1.05?`After short nights you eat about ${nf(se.short-se.good)} kcal more. Go to bed a little earlier tonight.`:'Short sleep often brings more hunger. Aim for 7 hours.']);
   const tdy=day(today),de=doseEffect();

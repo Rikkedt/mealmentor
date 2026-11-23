@@ -202,3 +202,4 @@ r'\n\nSvar KUN med gyldig JSON – ingen forklaring og ingen markdown.':r'\n\nRe
 })
 X.update({'din@mail.dk':'you@email.com'})
 X.update({'Log søvn':'Log sleep','Har du spist':'Did you eat','Ja, log den':'Yes, log it','Sprang over':'Skipped','Skjul':'Hide','Visning':'Appearance','Hvordan har du sovet?':'How did you sleep?'})
+X.update({'Protein i snit:':'Average protein:','g om dagen':'g a day','Gennemsnit for de seneste 7 dage. Få 25–30 g i hvert måltid, fx skyr, æg, kylling, fisk eller bønner.':'Average for the last 7 days. Get 25–30 g in every meal, e.g. skyr, eggs, chicken, fish or beans.'})
