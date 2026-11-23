@@ -329,7 +329,9 @@ function daErr(e){const m=(e&&e.message)||'';let t;
     if (!window.mmAuth.user()) return;
     const onb = document.getElementById('onb');
     if (onb && !onb.hidden) { new MutationObserver((m, o) => { if (onb.hidden) { o.disconnect(); gate(); } }).observe(onb, { attributes: true, attributeFilter: ['hidden'] }); return; }
-    if (!(await active())) showWall();
+    if (await active()) return;
+    if (!(await loadProduct())) return; /* Apple-produktet er ikke klar endnu (fx aftale ikke aktiv): lad appen være åben */
+    showWall();
   }
   window.mmPay = { manage: () => P.manageSubscriptions(), active };
   const start = () => { gate(); try { cap.Plugins.App && cap.Plugins.App.addListener('resume', () => { if (!wall) gate(); }); } catch (e) {}
