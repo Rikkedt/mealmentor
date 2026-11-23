@@ -78,5 +78,16 @@
 	<array>
 		<string>audio</string>
 	</array>
+	<key>CFBundleURLTypes</key>
+	<array>
+		<dict>
+			<key>CFBundleURLName</key>
+			<string>dk.sableandmons.mealmentor</string>
+			<key>CFBundleURLSchemes</key>
+			<array>
+				<string>dk.sableandmons.mealmentor</string>
+			</array>
+		</dict>
+	</array>
 </dict>
 </plist>

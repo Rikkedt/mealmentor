@@ -79,9 +79,42 @@ function daErr(e){const m=(e&&e.message)||'';let t;
     if (!provider || provider === 'email') return emailDialog();
     const on = await providers();
     if (!on[provider]) return emailDialog(`Login med ${provider === 'apple' ? 'Apple' : 'Google'} kommer snart. Indtil da: log ind med din e-mail.`);
+    if (iosApp) {
+      try { if (provider === 'apple' && plug('SignInWithApple')) return await appleNative(); if (provider === 'google' && plug('Browser')) return await googleNative(); }
+      catch (e) { if (!/cancel|1001/i.test(String((e && (e.message || e.code)) || ''))) emailDialog('Det virkede ikke. Log ind med din e-mail i stedet.'); return; }
+    }
     const { error } = await sb.auth.signInWithOAuth({ provider, options: { redirectTo: location.origin } });
     if (error) emailDialog('Det virkede ikke. Log ind med din e-mail i stedet.');
   }
+
+  /* ---------- login i iPhone-appen ---------- */
+  const cap = window.Capacitor, iosApp = !!(cap && cap.isNativePlatform && cap.isNativePlatform() && cap.getPlatform && cap.getPlatform() === 'ios');
+  const plug = n => { try { if (!iosApp || !(cap.isPluginAvailable && cap.isPluginAvailable(n))) return null; return (cap.Plugins && cap.Plugins[n]) || (cap.registerPlugin && cap.registerPlugin(n)) || null; } catch (e) { return null; } };
+  const APP_CB = 'dk.sableandmons.mealmentor://auth';
+  async function appleNative() {
+    const raw = Array.from(crypto.getRandomValues(new Uint8Array(16)), b => b.toString(16).padStart(2, '0')).join('');
+    const hash = Array.from(new Uint8Array(await crypto.subtle.digest('SHA-256', new TextEncoder().encode(raw))), b => b.toString(16).padStart(2, '0')).join('');
+    const r = await plug('SignInWithApple').authorize({ clientId: 'dk.sableandmons.mealmentor', redirectURI: location.origin, scopes: 'email name', nonce: hash });
+    const tok = r && r.response && r.response.identityToken;
+    if (!tok) throw new Error('no token');
+    const { error } = await sb.auth.signInWithIdToken({ provider: 'apple', token: tok, nonce: raw });
+    if (error) throw error;
+    const g = r.response.givenName, f = r.response.familyName;
+    if (g || f) { try { await sb.auth.updateUser({ data: { full_name: [g, f].filter(Boolean).join(' ') } }); } catch (e) {} }
+  }
+  async function googleNative() {
+    const { data, error } = await sb.auth.signInWithOAuth({ provider: 'google', options: { redirectTo: APP_CB, skipBrowserRedirect: true } });
+    if (error || !data || !data.url) throw error || new Error('no url');
+    await plug('Browser').open({ url: data.url, presentationStyle: 'popover' });
+  }
+  if (iosApp && plug('App')) ready.then(() => plug('App').addListener('appUrlOpen', async ({ url }) => {
+    if (!url || url.indexOf(APP_CB) !== 0) return;
+    try { plug('Browser') && await plug('Browser').close(); } catch (e) {}
+    const q = new URLSearchParams((url.split('#')[1] || '') + '&' + ((url.split('?')[1] || '').split('#')[0]));
+    if (q.get('access_token') && q.get('refresh_token')) { const { error } = await sb.auth.setSession({ access_token: q.get('access_token'), refresh_token: q.get('refresh_token') }); if (!error) return; }
+    else if (q.get('code')) { const { error } = await sb.auth.exchangeCodeForSession(q.get('code')); if (!error) return; }
+    emailDialog('Login med Google virkede ikke. Log ind med din e-mail i stedet.');
+  }));
 
   /* ---------- push ---------- */
   const isIOS = /iP(hone|ad|od)/.test(navigator.userAgent) || (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);

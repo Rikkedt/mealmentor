@@ -187,6 +187,7 @@ X.update({
 'Der er lige sendt en kode. Tjek din mail – eller vent':'A code was just sent. Check your email – or wait',
 'Der er sendt for mange mails lige nu. Prøv igen om lidt.':'Too many emails have been sent right now. Try again in a moment.',
 'Det virkede ikke. Log ind med din e-mail i stedet.':"That didn't work. Log in with your email instead.",
+'Login med Google virkede ikke. Log ind med din e-mail i stedet.':"Google login didn't work. Log in with your email instead.",
 'Du er logget ind.':'You are logged in.','Du kan sende en ny kode nu.':'You can send a new code now.',
 'Ingen forbindelse. Tjek internettet og prøv igen.':'No connection. Check your internet and try again.',
 'Kode fra mailen':'Code from the email','Koden har 6 cifre.':'The code has 6 digits.',
