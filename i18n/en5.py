@@ -201,3 +201,4 @@ r'\n\nSvar KUN med gyldig JSON – ingen forklaring og ingen markdown.':r'\n\nRe
 'Vent':'Wait','Annullér':'Cancel','Sender …':'Sending …','Log ind':'Log in',
 })
 X.update({'din@mail.dk':'you@email.com'})
+X.update({'Log søvn':'Log sleep','Har du spist':'Did you eat','Ja, log den':'Yes, log it','Sprang over':'Skipped','Skjul':'Hide','Visning':'Appearance','Hvordan har du sovet?':'How did you sleep?'})

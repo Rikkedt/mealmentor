@@ -675,6 +675,19 @@ body.kb .tabs,body.kb #botFab{display:none!important}
 .hgrid button span{font-size:26px}
 .hgrid button[aria-pressed=true],#hWhy button[aria-pressed=true]{background:var(--acc);color:var(--accInk);border-color:var(--acc)}
 .dtl .hu .dtl-dot{background:#FFF1D6}
+
+.regwrap{margin-bottom:18px}
+.sleepask{display:flex;flex-wrap:wrap;align-items:center;gap:12px;padding:16px 16px 16px 18px;border-radius:22px;background:var(--card);box-shadow:0 8px 22px rgba(17,17,20,.08);margin:0 0 16px}
+.sleepask .sa-t{flex:1 1 200px;display:grid;gap:4px}.sleepask .sa-t b{font-size:18px}.sleepask .sa-t span{font-size:14px;color:var(--mute)}
+.sleepask .sa-b{display:flex;align-items:center;gap:6px}.sleepask .go{min-height:44px;padding:0 18px;white-space:nowrap}
+.lmiss{margin-top:10px;padding:12px 14px;border-radius:16px;background:var(--soft);display:flex;flex-wrap:wrap;align-items:center;gap:8px 12px;font-weight:600}
+.lmiss>span:first-child{flex:1 1 150px}.lmiss-b{display:flex;gap:8px}.lmiss .ghost{min-height:38px;padding:0 14px;font-size:14px}
+.onb-opts button{position:relative}
+.onb-opts button[aria-pressed=true]{background:var(--ink)!important;color:var(--bg)!important;border-color:var(--ink)!important}
+.onb-opts button[aria-pressed=true] small{color:color-mix(in srgb,var(--bg) 75%,transparent)!important}
+.onb-opts button[aria-pressed=false]{opacity:.75}
+.onb-opts button[aria-pressed=true]::after{content:'✓';margin-left:auto;font-weight:800;font-size:18px}
+.onb-opts button[aria-pressed=true] .om{display:none}
 </style>
 </head>
 <body>
@@ -774,6 +787,7 @@ body.kb .tabs,body.kb #botFab{display:none!important}
 <div class="btns" style="margin-top:14px"><button class="go" id="hAsk" type="button" disabled>Spørg mentoren, hvad jeg kan gøre</button><button class="ghost" id="hSave" type="button" disabled>Bare gem</button></div>
 </div></div>
 <div class="toast" id="toast" hidden role="status"></div>
+<div class="sleepask" id="sleepAsk" hidden><div class="sa-t"><b>Hvordan har du sovet?</b><span>Log nattens søvn med to tryk, så kan Mentoren tage højde for den i dag.</span></div><div class="sa-b"><button type="button" class="go" id="saLog">Log søvn</button><button type="button" class="td-x" id="saX" aria-label="Skjul"><svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M6 6l12 12M18 6L6 18"/></svg></button></div></div>
 <div class="lift" id="lift" hidden></div>
 <details class="todo" id="todo" hidden><summary id="todoSum"></summary><ul id="todoList"></ul></details>
 <section class="hero"><div class="left" id="left" aria-live="polite"></div>
@@ -1517,7 +1531,7 @@ function missing(){
   const t=day(today),R=reminders();
   if(R.weight&&new Date().getDay()===1&&h>=6&&t.weight==null)out.push(['fWeight',today,'Mandag: tid til at veje dig']);
   const ld=doseOn(today);if(R.dose&&ld&&ld.phase!=='stop'&&addDays(ld.d,7)===today)out.push(['fDose',today,'I dag er din doseringsdag']);
-  if(h>=6&&!t.sleep)out.push(['fSleep',today,'Nattens søvn er ikke logget']);
+  if((h>=12||store.get('mm-saX-'+today,false))&&h>=6&&!t.sleep)out.push(['fSleep',today,'Nattens søvn er ikke logget']);
   if(h>=11&&!t.n)out.push(['fMeal',today,'Ingen måltider logget i dag']);
   else if(h>=20&&t.n===1)out.push(['fMeal',today,'Kun ét måltid logget i dag']);
   [1,2].forEach(i=>{const k=addDays(today,-i),d=day(k),nm=i===1?'i går':'i forgårs';
@@ -1550,11 +1564,15 @@ function bedTime(){const s=D.sleep.filter(x=>x.d>addDays(today,-14)).map(x=>{con
 function remaining(){
   const t=target(),pt=protTarget(),d=day(today),now=new Date(),nowH=now.getHours()+now.getMinutes()/60,pat=mealPattern(),bed=bedTime();
   const kLeft=t?t.v-d.kcal:null,pLeft=pt?pt-d.protein:null;
-  const idx=[];for(let i=d.n;i<pat.typ;i++)idx.push(i);
+  const sk=store.get('mm-skip-'+today,[]),covered=new Set();
+  [...d.meals].sort((a,b)=>a.t.localeCompare(b.t)).forEach(m=>{const mh=hr(m.t);let best=-1,bd=99;pat.slots.forEach((h,i)=>{if(covered.has(i))return;const dd=Math.abs(h-mh)+(slotName(h)===slotName(mh)?0:3);if(dd<bd){bd=dd;best=i;}});if(best>=0&&bd<6)covered.add(best);});
+  const open=pat.slots.map((h,i)=>i).filter(i=>!covered.has(i)&&!sk.includes(slotName(pat.slots.at(i))));
+  const missed=open.filter(i=>{const nm=slotName(pat.slots.at(i));return (nm==='Morgenmad'&&nowH>=10.5)||(nm==='Frokost'&&nowH>=14.5);});
+  const idx=open.filter(i=>!missed.includes(i));
   const shareSum=idx.reduce((a,i)=>a+pat.shares.at(i),0)||1;
   const slots=idx.map(i=>{const h=pat.slots.at(i),f=pat.shares.at(i)/shareSum;return {name:slotName(h),h,late:h<nowH-0.75,kcal:kLeft!=null?Math.max(0,kLeft*f):null,prot:pLeft!=null?Math.max(0,pLeft*f):null};});
   const lastH=slots.length?Math.max(...slots.map(x=>x.h)):null,hoursLeft=lastH!=null?Math.max(0,lastH-nowH):null;
-  return {t,pt,d,nowH,pat,bed,kLeft,pLeft,slots,hoursLeft};
+  return {t,pt,d,nowH,pat,bed,kLeft,pLeft,slots,hoursLeft,missed:missed.map(i=>({name:slotName(pat.slots.at(i)),h:pat.slots.at(i)}))};
 }
 function reminders(){return {sleep:true,meal:true,pause:true,checkin:true,work:true,weight:false,dose:true,...(S().reminders||{})};}
 function mealCountInsight(){
@@ -1587,11 +1605,18 @@ function drawLeft(){
   el.innerHTML=(D.meals.length?'':startCard(true))+`<div class="lgrid">${big('Kalorier tilbage',r.kLeft,'',kp,r.d.kcal,r.t.v)}${r.pt?big('Protein tilbage',r.pLeft,' g',pp,r.d.protein,r.pt):''}</div>
   <p class="lstatus">${parts.map(esc).join(' · ')}</p>
   ${next?`<div class="sec-h spis-h"><b>SPIS</b><span>${r.d.n} af ${r.pat.typ}</span></div><div class="lnext"><button class="lswap" id="lSwap" type="button" aria-label="Byt forslag" title="Byt forslag"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 3l4 4-4 4"/><path d="M3 11V9a2 2 0 0 1 2-2h16"/><path d="M7 21l-4-4 4-4"/><path d="M21 13v2a2 2 0 0 1-2 2H3"/></svg></button><small>Næste måltid · ${next.late?'snarest':`ca. kl. ${kl(next.h)}`}</small><b>${next.name}: ${foodFor(next.name,next.kcal)}</b><div class="lbar"><i style="width:${kp}%"></i></div><div class="lrow"><span><b>${nf(Math.round(next.kcal/10)*10)} kcal</b>${pTxt(next)}</span><span class="lact"><button class="lcheck" id="lCheck" aria-label="Log ${next.name.toLowerCase()}">✓</button></span></div>${r.slots.length>1?`<span class="lthen">Derefter: ${r.slots.slice(1).map(x=>`${x.name.toLowerCase()} ca. kl. ${kl(x.h)}, ${nf(Math.round(x.kcal/10)*10)} kcal`).join(' · ')}</span>`:''}</div>`:''}
+  ${r.missed&&r.missed.length&&!over?r.missed.map(m=>`<div class="lmiss"><span>Har du spist ${m.name.toLowerCase()}?</span><span class="lmiss-b"><button type="button" class="ghost" data-mlog="${m.name}" data-mh="${m.h}">Ja, log den</button><button type="button" class="ghost" data-mskip="${m.name}">Sprang over</button></span></div>`).join(''):''}
 `;
+  el.querySelectorAll('[data-mskip]').forEach(b=>b.onclick=()=>{const k='mm-skip-'+today;store.set(k,[...store.get(k,[]),b.dataset.mskip]);toast('Gemt – forslagene tager højde for det.');drawRecs();});
+  el.querySelectorAll('[data-mlog]').forEach(b=>b.onclick=()=>{openForm('fMeal',null,true);const f=$('fMeal'),hh=+b.dataset.mh,ti=f.querySelector('input[type=time]');if(ti)ti.value=String(Math.floor(hh)).padStart(2,'0')+':'+(hh%1?'30':'00');});
   if(next&&$('lSwap'))$('lSwap').onclick=()=>{if(swapN.d!==today)swapN={d:today};swapN[next.name]=(swapN[next.name]||0)+1;store.set('mm-swap',swapN);drawLeft();};
   if(next&&$('lCheck'))$('lCheck').onclick=()=>{openForm('fMeal',null,true);const f=$('fMeal');f.elements.titel.value=foodFor(next.name,next.kcal);if(next.kcal)f.elements.kcal.value=Math.round(next.kcal/10)*10;if(next.prot!=null)f.elements.protein.value=Math.round(next.prot);};
 }
-function drawRecs(){drawTodo();drawLeft();drawCheckin();drawAnl();
+function drawSleepAsk(){const el=$('sleepAsk');if(!el)return;const h=new Date().getHours();
+  el.hidden=!(h>=4&&h<12&&!day(today).sleep&&reminders().sleep&&!store.get('mm-saX-'+today,false));}
+$('saLog').onclick=()=>openForm('fSleep',today,true);
+$('saX').onclick=()=>{store.set('mm-saX-'+today,true);drawSleepAsk();drawTodo();};
+function drawRecs(){drawSleepAsk();drawTodo();drawLeft();drawCheckin();drawAnl();
   const h=new Date().getHours();$('hello').textContent=h<10?'God morgen':h<12?'God formiddag':h<17?'God eftermiddag':'God aften';
   const R=recs(),li=([c,t,s])=>`<li class="${c}" tabindex="0" role="button" aria-expanded="false"><b>${esc(t)}</b><span>${esc(s)}</span></li>`;
   $('recs').innerHTML=R.slice(0,2).map(li).join('');$('recs2').innerHTML=R.slice(2).map(li).join('');
@@ -2032,7 +2057,7 @@ async function botAsk(q){
   catch(e){a.content=e&&e.name==='AbortError'?'(afbrudt)':aiErr(e);}
   finally{bot.busy=false;botRender();store.set('bot-'+today,bot.msgs);}
 }
-function openBot(){$('bot').hidden=false;$('botFab').setAttribute('aria-expanded','true');$('botFab').hidden=true;botRender();setTimeout(()=>$('botQ').focus({preventScroll:true}),50);}
+function openBot(){if(!bot.busy){bot.msgs=[];store.set('bot-'+today,[]);$('botChips').hidden=false;}$('bot').hidden=false;$('botFab').setAttribute('aria-expanded','true');$('botFab').hidden=true;botRender();setTimeout(()=>$('botQ').focus({preventScroll:true}),50);}
 function closeBot(){$('bot').hidden=true;$('botFab').setAttribute('aria-expanded','false');$('botFab').hidden=false;}
 $('botFab').onclick=openBot;$('botClose').onclick=closeBot;
 $('botForm').onsubmit=e=>{e.preventDefault();const q=$('botQ').value;$('botQ').value='';botAsk(q);};
