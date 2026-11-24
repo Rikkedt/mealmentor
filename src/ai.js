@@ -27,15 +27,20 @@ export async function handleAI(request, env, ctx) {
   if (!messages.length) return new Response('empty', { status: 400 });
 
   const ac = new AbortController();
-  const aiP = fetch('https://api.anthropic.com/v1/messages', {
+  const callAI = (extra) => fetch('https://api.anthropic.com/v1/messages', {
     method: 'POST', signal: ac.signal,
     headers: { 'x-api-key': env.ANTHROPIC_API_KEY, 'anthropic-version': '2023-06-01', 'content-type': 'application/json' },
-    body: JSON.stringify({
+    body: JSON.stringify({ ...extra,
       model, stream: true, messages: messages.slice(-12),
       // Chat: korte svar = hurtigere. Scanning/JSON må fylde mere.
       max_tokens: b.json ? 1500 : (Array.isArray(b.messages) ? 450 : 1200),
       ...(typeof b.system === 'string' && b.system ? { system: [{ type: 'text', text: b.system.slice(0, 60000), cache_control: { type: 'ephemeral' } }] } : {})
     })
+  });
+  // Ingen "tænke"-fase i chatten: den gør svaret langsomt og kan bruge alle tokens, så der ingen tekst kommer.
+  const aiP = callAI({ thinking: { type: 'disabled' } }).then(async r => {
+    if (r.status === 400) { const t = await r.clone().text(); if (/thinking/i.test(t)) return callAI({}); }
+    return r;
   });
   aiP.catch(() => {});
   const user = await userP;
@@ -56,7 +61,7 @@ export async function handleAI(request, env, ctx) {
   let r;
   try { r = await aiP; } catch (e) { return new Response('ai error', { status: 502 }); }
   if (r.status === 429) return new Response('rate', { status: 429 });
-  if (!r.ok) { const et = await r.text(); console.log(JSON.stringify({ ai: true, model, status: r.status, err: et.slice(0, 500) })); return new Response(et, { status: 502 }); }
+  if (!r.ok) { const et = await r.text(); { const line = JSON.stringify({ ai: true, model, status: r.status, err: et.slice(0, 500), at: new Date().toISOString() }); console.log(line); if (env.LIMITS) ctx?.waitUntil?.(env.LIMITS.put('debug:ai', line, { expirationTtl: 86400 })); } return new Response(et, { status: 502 }); }
   // Fejlsøgning: log hvad AI'en sender tilbage (typer af hændelser, tid til første tekst, evt. fejl).
   const t0 = Date.now(); let first = 0, head = '', types = {};
   const dec = new TextDecoder();
@@ -68,7 +73,7 @@ export async function handleAI(request, env, ctx) {
       if (!first && /text_delta/.test(txt)) first = Date.now() - t0;
       ctl.enqueue(chunk);
     },
-    flush() { console.log(JSON.stringify({ ai: true, model, sys: (b.system || '').length, msgs: messages.length, firstTextMs: first, totalMs: Date.now() - t0, types, head: first ? undefined : head.slice(0, 600) })); }
+    flush() { const line = JSON.stringify({ ai: true, model, sys: (b.system || '').length, msgs: messages.length, firstTextMs: first, totalMs: Date.now() - t0, types, head: first ? undefined : head.slice(0, 600), at: new Date().toISOString() }); console.log(line); const pub = JSON.stringify({ ...JSON.parse(line), head: undefined }); if (env.LIMITS) ctx?.waitUntil?.(env.LIMITS.put('debug:ai', pub, { expirationTtl: 86400 })); }
   });
   return new Response(r.body.pipeThrough(ts), { headers: { 'content-type': 'text/event-stream', 'cache-control': 'no-store' } });
 }
