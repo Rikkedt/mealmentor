@@ -47,3 +47,22 @@ Mappen `mobile/` er en Capacitor-app, der viser web-appen fra serveren (`server.
 - Ikon og splash: `mobile/assets/` → `npm run icons`
 
 Byg på Mac: `cd mobile && npm install && npx cap sync ios && npx cap open ios` → Xcode: vælg dit Team under Signing & Capabilities → Product → Archive → Distribute App → App Store Connect → Upload.
+
+
+## Betaling (RevenueCat) – 49 kr./md. i Danmark, 8 USD/md. i udlandet
+
+Abonnementet styres af RevenueCat. Brugerens Supabase-id er RevenueCats `app_user_id`, så ét abonnement gælder på iPhone, Android og web, og betalinger kommer ind i Sable & Mons-admin via webhooken `/api/revenuecat/apps-webhook?app=mealmentor`.
+
+**I RevenueCat (projekt Meal Mentor AI):**
+1. Produkt `mealmentor_monthly` (månedligt). Pris 49 kr. i DKK og 8 USD i resten af verden (i App Store Connect og Google Play vælges det nærmeste prisniveau).
+2. Entitlement `premium` med produktet tilknyttet.
+3. Offering `default` med en pakke `$rc_monthly`.
+4. Tre apps i projektet: App Store (iOS), Play Store (Android) og Web Billing (kræver en Stripe-konto).
+5. Webhook til `https://sableandmons.dk/api/revenuecat/apps-webhook?app=mealmentor` med samme Authorization-værdi som `RC_APPS_WEBHOOK_AUTH` i sableandmons.
+
+**I Cloudflare (Worker `mealmentor` → Settings → Variables):** tilføj som Text (de er offentlige nøgler):
+`RC_IOS_PUBLIC_KEY` (starter med `appl_`), `RC_ANDROID_PUBLIC_KEY` (`goog_`) og `RC_WEB_PUBLIC_KEY` (`rcb_`).
+
+Uden en nøgle sker der ingen betaling på den platform: iPhone-builds uden RC-nøgle bruger Apple direkte som før, og web forbliver låst som app-side. Når `RC_WEB_PUBLIC_KEY` er sat, åbner web-appen med betalingsvæg.
+
+iPhone/Android: kør `cd mobile && npm install && npx cap sync` og byg en ny version i Xcode/Android Studio, så RevenueCat-pluginet kommer med.
