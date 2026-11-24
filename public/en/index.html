@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,viewport-fit=cover">
-<title>Meal Mentor AI</title><meta name="mm-version" content="5e1b4ff93b"><link rel="manifest" href="/manifest.webmanifest"><link rel="apple-touch-icon" href="/apple-touch-icon.png"><link rel="icon" href="/icon-192.png"><meta name="theme-color" content="#F1F1F4"><link rel="stylesheet" href="/mm.css"><script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script><script src="/mm.en.js"></script>
+<title>Meal Mentor AI</title><meta name="mm-version" content="321179bcdc"><link rel="manifest" href="/manifest.webmanifest"><link rel="apple-touch-icon" href="/apple-touch-icon.png"><link rel="icon" href="/icon-192.png"><meta name="theme-color" content="#F1F1F4"><link rel="stylesheet" href="/mm.css"><script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script><script src="/mm.en.js"></script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Inter+Tight:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <style>
@@ -807,6 +807,7 @@ body.kb .tabs,body.kb #botFab{display:none!important}
 <div class="btns" style="margin-top:14px"><button class="go" id="hAsk" type="button" disabled>Ask the mentor what I can do</button><button class="ghost" id="hSave" type="button" disabled>Just save</button></div>
 </div></div>
 <div class="toast" id="toast" hidden role="status"></div>
+<div class="ainote" id="aiNote" hidden><div class="ainote-h"><b>Meal Mentor AI says</b><button class="link" id="aiRefresh">Update</button></div><div id="aiNoteTxt"></div></div>
 <div class="sleepask" id="sleepAsk" hidden><div class="sa-t"><b>How did you sleep?</b><span>Log last night's sleep with two taps, so the mentor can take it into account today.</span></div><div class="sa-b"><button type="button" class="go" id="saLog">Log sleep</button><button type="button" class="td-x" id="saX" aria-label="Hide"><svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M6 6l12 12M18 6L6 18"/></svg></button></div></div>
 <div class="lift" id="lift" hidden></div>
 <details class="todo" id="todo" hidden><summary id="todoSum"></summary><ul id="todoList"></ul></details>
@@ -867,7 +868,7 @@ body.kb .tabs,body.kb #botFab{display:none!important}
 <button class="backbtn panelback" id="panelBack" hidden>‹ Back to Quick log</button><button class="close" id="panelClose" aria-label="Close">×</button>
 </div>
 
-<div class="ainote" id="aiNote" hidden><div class="ainote-h"><b>Meal Mentor AI says</b><button class="link" id="aiRefresh">Update</button></div><div id="aiNoteTxt"></div></div>
+
 <div class="vtop" style="margin-top:26px">
 <div class="dnav"><button class="ghost" id="dPrev" aria-label="Previous day">‹</button><b id="dLabel"></b><button class="ghost" id="dNext" aria-label="Next day">›</button></div>
 <div class="seg" role="group" aria-label="Appearance"><button id="vDay" aria-pressed="true">Day</button><button id="vWeek" aria-pressed="false">Week</button></div></div>
@@ -1123,7 +1124,7 @@ function render(){
   </tbody></table>${c.note?`<p class="note">${esc(c.note)}</p>`:''}
   <div class="btns" style="align-items:center"><label class="small" for="mtime">Eaten at</label><input class="t" type="time" id="mtime" value="${nowT().slice(11)}" style="width:8em"><button class="go" id="add">Add to today's log</button></div>`;
   res.querySelectorAll('td input').forEach(inp=>inp.onchange=()=>{c.emner[+inp.dataset.i].gram=Math.max(0,+inp.value||0);render();});
-  $('add').onclick=()=>{const s=sums(c.emner);D.meals.push({id:uid(),t:today+'T'+($('mtime').value||nowT().slice(11)),titel:c.titel,kcal:s.kcal,protein:s.protein,fedt:s.fedt,kulhydrat:s.kulhydrat});save();drawLog();$('add').textContent='Added ✓';$('add').disabled=true;};
+  $('add').onclick=()=>{const s=sums(c.emner);D.meals.push({id:uid(),t:today+'T'+($('mtime').value||nowT().slice(11)),titel:c.titel,kcal:s.kcal,protein:s.protein,fedt:s.fedt,kulhydrat:s.kulhydrat});save();drawLog();toast(`${c.titel} added · ${nf(r0(s.kcal))} kcal`);$('reset').click();window.scrollTo({top:0,behavior:'smooth'});};
 }
 function drawLog(){
   const log=D.meals.filter(m=>m.t.startsWith(today)).sort((a,b)=>b.t.localeCompare(a.t)).map(m=>({...m,tid:m.t.slice(11)}));
@@ -1863,10 +1864,7 @@ function todayFacts(){const r=remaining(),d=r.d,hu=(D.hunger||[]).filter(x=>x.t.
   return `FACTS FOR TODAY (at ${fmtH(r.nowH)}) – use these numbers exactly, don't calculate yourself: ${k}; ${pr}; ${d.n} meals (${d.meals.map(m=>m.t.slice(11)+' '+m.titel+' '+r0(m.kcal)+' kcal').join('; ')||'none'}); training ${d.woMin} min; sleep last night ${d.sleepH!=null?nf(d.sleepH,1)+' t':'not logged'}.${huTxt}`;}
 /* Ny kommentar fra Mentor ligger øverst (før kcal-kortet), til den er set. Derefter ligger den over dagens måltider. */
 let noteKeyShown='';
-function placeNote(key){const box=$('aiNote'),hero=document.querySelector('#v-vej .hero'),below=document.querySelector('#v-vej .vtop[style*="margin-top:26px"]');if(!box||!hero||!below)return;
-  noteKeyShown=key;const fresh=store.get('ai-note-seen','')!==key;
-  if(fresh){if(box.nextElementSibling!==hero)hero.parentNode.insertBefore(box,hero);box.classList.add('new');}
-  else{if(box.nextElementSibling!==below)below.parentNode.insertBefore(box,below);box.classList.remove('new');}}
+function placeNote(key){noteKeyShown=key;}
 document.addEventListener('visibilitychange',()=>{if(document.hidden&&noteKeyShown)store.set('ai-note-seen',noteKeyShown);});
 async function autoNote(force){
   const box=$('aiNote'),txt=$('aiNoteTxt');
