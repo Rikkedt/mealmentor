@@ -723,8 +723,8 @@ details.trust>summary::after{content:"›";margin-left:8px;transition:transform 
 .dnav button:not(:disabled):active{background:var(--soft)!important}.dnav button:disabled{opacity:.25}
 .dnav b{min-width:7.5em!important;text-align:center;font-size:18px!important;letter-spacing:-.2px}
 /* profil: afsnit kan foldes sammen */
-#v-prof .pcard>h2{cursor:pointer;user-select:none;margin-bottom:0!important}
-#v-prof .pcard>h2::after{content:"";margin-left:auto;width:9px;height:9px;border-right:2.5px solid currentColor;border-bottom:2.5px solid currentColor;transform:rotate(45deg);transition:transform .2s;opacity:.7}
+#v-prof .pcard:not(#pAccount)>h2{cursor:pointer;user-select:none;margin-bottom:0!important}
+#v-prof .pcard:not(#pAccount)>h2::after{content:"";margin-left:auto;width:9px;height:9px;border-right:2.5px solid currentColor;border-bottom:2.5px solid currentColor;transform:rotate(45deg);transition:transform .2s;opacity:.7}
 #v-prof .pcard.fold>h2::after{transform:rotate(-45deg)}
 #v-prof .pcard:not(.fold)>h2{margin-bottom:12px!important}
 #v-prof .pcard.fold>:not(h2){display:none!important}
