@@ -688,6 +688,21 @@ body.kb .tabs,body.kb #botFab{display:none!important}
 .onb-opts button[aria-pressed=false]{opacity:.75}
 .onb-opts button[aria-pressed=true]::after{content:'✓';margin-left:auto;font-weight:800;font-size:18px}
 .onb-opts button[aria-pressed=true] .om{display:none}
+/* Mentor-chat: kompakt top, forslag altid synlige lige over skrivefeltet, skrivefelt over tastaturet */
+.bot-h{padding:8px 8px 8px 14px!important}.bot-h small{display:none}.bot-h b{font-size:16px!important}
+.bot-h button{width:36px!important;min-height:36px!important}
+.bot-chips{flex-wrap:nowrap!important;overflow-x:auto;padding:8px 12px 6px!important;scrollbar-width:none;-webkit-overflow-scrolling:touch}
+.bot-chips::-webkit-scrollbar{display:none}.bot-chips button{flex:0 0 auto;white-space:nowrap}
+@media(max-width:600px){.bot{height:min(var(--bot-h,82vh),640px)!important;bottom:var(--bot-b,0px)!important}}
+.bot-in{padding-bottom:max(12px,env(safe-area-inset-bottom))!important}
+.bot.kb .bot-in{padding-bottom:10px!important}
+/* ret/slet måltid */
+.dtl li.tap{cursor:pointer}.dtl li.tap .dtl-b small::after{content:" · ret";opacity:.6}
+.mamt{display:flex;flex-wrap:wrap;gap:6px;margin:6px 0 10px}.mamt button{flex:1 1 auto}
+.mrow{display:flex;align-items:center;gap:10px;font-weight:600;font-size:14px;margin:8px 0}.mrow input{width:110px;min-height:42px}
+.mres{font-weight:700;font-size:18px;margin:10px 0 4px}
+.mpick{display:grid;gap:8px}.mpick button{display:grid;text-align:left;padding:10px 14px;min-height:52px}.mpick small{font-weight:400;opacity:.75}
+.mdel{color:#c0392b!important}
 </style>
 </head>
 <body>
@@ -774,7 +789,7 @@ body.kb .tabs,body.kb #botFab{display:none!important}
 <div class="sheet-h"><b id="qH">Log hurtigt</b><span class="small" id="qDate"></span><button class="close" data-close aria-label="Luk">×</button></div>
 <div class="sec-h"><span class="sq">🍽</span><b>MAD</b></div>
 <div class="qtiles"><button class="qt dark" data-scan="photo"><span class="qi">📷</span>AI-scan</button><button class="qt" data-scan="label"><span class="qi">▥</span>Stregkode</button><button class="qt" data-f="fMeal"><span class="qi">🔍</span>Søg / skriv</button></div>
-<small class="qsub">Favoritter · ét tryk</small><div class="qfav" id="qFav"></div>
+<small class="qsub">Tidligere mad · vælg mængde</small><div class="qfav" id="qFav"></div>
 <div class="sec-h"><span class="sq">＋</span><b>ANDET</b></div>
 <div class="qfav qother"><button data-hunger="1">😋 Sult</button><button data-f="fSleep">😴 Søvn</button><button data-f="fWeight">⚖️ Vægt</button><button data-f="fWork">🏃 Træning</button><button data-f="fDose">💉 GLP-1 dosis</button></div>
 </div></div>
@@ -791,7 +806,7 @@ body.kb .tabs,body.kb #botFab{display:none!important}
 <div class="lift" id="lift" hidden></div>
 <details class="todo" id="todo" hidden><summary id="todoSum"></summary><ul id="todoList"></ul></details>
 <section class="hero"><div class="left" id="left" aria-live="polite"></div>
-<div class="ainote" id="aiNote" hidden><div class="ainote-h"><b>Meal Mentor AI siger</b><button class="link" id="aiRefresh">Opdatér</button></div><div id="aiNoteTxt"></div></div></section>
+</section>
 <ul class="recs" id="recs" aria-live="polite"></ul>
 <details class="morerecs" id="moreRecs" hidden><summary id="moreRecsSum"></summary><ul class="recs" id="recs2"></ul></details>
 <section class="ci" id="checkin" hidden><div class="sec-h"><span class="sq">🌙</span><b>AFTENENS CHECK-IN</b><span id="ciWhen"></span></div>
@@ -847,6 +862,7 @@ body.kb .tabs,body.kb #botFab{display:none!important}
 <button class="backbtn panelback" id="panelBack" hidden>‹ Tilbage til Log hurtigt</button><button class="close" id="panelClose" aria-label="Luk">×</button>
 </div>
 
+<div class="ainote" id="aiNote" hidden><div class="ainote-h"><b>Meal Mentor AI siger</b><button class="link" id="aiRefresh">Opdatér</button></div><div id="aiNoteTxt"></div></div>
 <div class="vtop" style="margin-top:26px">
 <div class="dnav"><button class="ghost" id="dPrev" aria-label="Forrige dag">‹</button><b id="dLabel"></b><button class="ghost" id="dNext" aria-label="Næste dag">›</button></div>
 <div class="seg" role="group" aria-label="Visning"><button id="vDay" aria-pressed="true">Dag</button><button id="vWeek" aria-pressed="false">Uge</button></div></div>
@@ -1664,13 +1680,15 @@ function drawStrip(){
   const d=day(vKey),isT=vKey===today,nowH=new Date().getHours()+new Date().getMinutes()/60,L=lateH(),rows=[];
   const add=(h,cls,ic,time,title,sub)=>rows.push({h,cls,ic,time,title,sub});
   if(d.sleep)add(-1,'sl','😴',`${d.sleep.from}–${d.sleep.to}`,`Søvn · ${nf(d.sleepH,1)} timer`,(q=>q?q[0].toUpperCase()+q.slice(1):'')(QUAL[d.sleep.q]||''));
-  [...d.meals].sort((p,q)=>p.t.localeCompare(q.t)).forEach(m=>add(hr(m.t),'ml','🍽️',m.t.slice(11,16),esc(m.titel||'Måltid'),[m.kcal!=null?nf(r0(m.kcal))+' kcal':'',m.protein!=null?nf(r0(m.protein))+' g protein':''].filter(Boolean).join(' · ')));
+  [...d.meals].sort((p,q)=>p.t.localeCompare(q.t)).forEach(m=>{add(hr(m.t),'ml','🍽️',m.t.slice(11,16),esc(m.titel||'Måltid'),[m.kcal!=null?nf(r0(m.kcal))+' kcal':'',m.protein!=null?nf(r0(m.protein))+' g protein':''].filter(Boolean).join(' · '));rows.at(-1).ids=(m.items||[]).map(x=>x.id).filter(Boolean).join(',');});
   (D.hunger||[]).filter(x=>x.t.startsWith(vKey)).forEach(x=>add(hr(x.t),'hu','😋',x.t.slice(11,16),['Lidt sulten','Sulten','Meget sulten'][x.lvl-1]||'Sulten',(x.why||[]).join(', ')));
   d.wo.forEach(w=>add(hr(w.t),'wo','🏃',w.t.slice(11,16),esc(w.navn),/min/.test(w.navn)?'Træning':w.min+' min træning'));
   const lateDone=!isT||nowH>=L;add(L,'lt'+(isT&&nowH<L?' up':''),'🌙',pad(Math.floor(L))+':'+pad(Math.round((L%1)*60)),'Spisepause',isT&&nowH<L?'starter – derefter kun vand og te':'kun vand og te');
   rows.sort((a,b)=>a.h-b.h);
-  el.innerHTML=(d.n?'':'<li class="dtl-empty">Ingen måltider registreret endnu</li>')+rows.map(r=>`<li class="${r.cls}"><span class="dtl-t">${r.time}</span><span class="dtl-dot">${r.ic}</span><span class="dtl-b"><b>${r.title}</b>${r.sub?`<small>${r.sub}</small>`:''}</span></li>`).join('');
+  el.innerHTML=(d.n?'':'<li class="dtl-empty">Ingen måltider registreret endnu</li>')+rows.map(r=>`<li class="${r.cls}${r.ids?' tap':''}"${r.ids?` data-mids="${r.ids}" role="button" tabindex="0" aria-label="Ret eller slet måltid"`:''}><span class="dtl-t">${r.time}</span><span class="dtl-dot">${r.ic}</span><span class="dtl-b"><b>${r.title}</b>${r.sub?`<small>${r.sub}</small>`:''}</span></li>`).join('');
 }
+$('dayList').addEventListener('click',e=>{const li=e.target.closest('[data-mids]');if(li)openMealPick(li.dataset.mids.split(','));});
+$('dayList').addEventListener('keydown',e=>{const li=e.target.closest('[data-mids]');if(li&&(e.key==='Enter'||e.key===' ')){e.preventDefault();openMealPick(li.dataset.mids.split(','));}});
 const stripRO=new ResizeObserver(drawStrip);stripRO.observe($('strip'));
 
 /* uge */
@@ -1815,6 +1833,7 @@ Regler:
 - Er målet at blive stærkere og mere markeret og holde vægten, så fokusér på protein fordelt over dagen, styrketræning 2–4 gange om ugen og stabil vægt.
 - SULT: Når brugeren er sulten (står i SULT I DAG eller i spørgsmålet), så find den sandsynlige årsag ud fra data, før du giver råd: hvor længe siden sidste måltid, om der var protein og fibre nok, søvn i nat, dag efter dosis (dag 4–6 stiger appetitten ofte), tidspunkt (sen eftermiddag/aften), og brugerens eget bud (træt, stress, kedsomhed, trøst, tørst). Sig kort, hvad du tror årsagen er, og giv 1–2 konkrete råd: ved rigtig sult et konkret måltid/mellemmåltid med protein, der passer til de kalorier, der er tilbage og spisepausen; ved træthed, stress, kedsomhed eller trøst noget andet end mad (vand/te, en kort gåtur, vejrtrækning, ringe til en ven) – uden at moralisere. Ser du et mønster over flere dage (fx sult hver dag kl. 15), så sig det og foreslå at flytte eller styrke et måltid.
 - Sig det, hvis der er for få data til at konkludere.
+- Skriv korrekt dansk, fx "en god start" (ikke "et godt start").
 - Mangler der logning nogle dage (se 'Manglende logning'), så nævn kort at vurderingen derfor er usikker, og at brugeren kan efterregistrere, hvis hun har glemt det. Dage med 0 måltider betyder sandsynligvis manglende logning, ikke faste.`;
 function context(){
   const t=target(),dg=S().diet||[],veg=dg.includes('veg'),dn=dg.filter(d=>d!=='veg').map(d=>(DIETS.find(x=>x[0]===d)||[])[1]).filter(Boolean).map(x=>x.toLowerCase()),dk=S().dislike;
@@ -2037,8 +2056,13 @@ function statusNow(){const r=remaining();
   (r.t?`Tilbage: ${nf(r.kLeft)} kcal${r.pt?` og ${nf(r.pLeft)} g protein`:''}. `:'Intet kalorimål sat. ')+
   `Plejer at spise ${r.pat.typ} gange (ca. kl. ${r.pat.slots.map(kl).join(', ')})${r.pat.known?'':' (antaget)'}. Planlagte resterende måltider: ${r.slots.map(x=>`${x.name} ${x.late?'snarest':'ca. kl. '+kl(x.h)} ca. ${r0(x.kcal)} kcal/${r0(x.prot)} g protein`).join('; ')||'ingen'}. `+
   `${r.bed?`Går typisk i seng ca. ${fmtH(r.bed%24)}. `:''}Træning i dag: ${r.d.woMin} min. Søvn i nat: ${r.d.sleepH!=null?nf(r.d.sleepH,1)+' t':'ikke logget'}.]`;}
+function patterns(){
+  const lines=range(8,addDays(today,-1)).map(d=>{const hu=(D.hunger||[]).filter(x=>x.t.startsWith(d.k));
+    return `${d.k}: ${d.n?d.meals.map(m=>m.t.slice(11,16)+' '+m.titel+' '+r0(m.kcal)+' kcal/'+r0(m.protein)+' g prot').join('; '):'ingen måltider logget'}. I alt ${nf(d.kcal)} kcal, ${nf(d.protein)} g protein. Søvn ${d.sleepH!=null?nf(d.sleepH,1)+' t':'ikke logget'}. Træning ${d.woMin} min.${hu.length?' Sult: '+hu.map(x=>'kl. '+x.t.slice(11,16)+' '+['lidt sulten','sulten','meget sulten'][x.lvl-1]+(x.why&&x.why.length?' ('+x.why.join(', ')+')':'')).join('; ')+'.':''}${d.sinceDose!=null?' Dag '+d.sinceDose+' efter dosis.':''}`;});
+  return 'MØNSTRE – de seneste 8 dage før i dag (ældste først):\n'+lines.join('\n');}
 const botRules=`${rules}
-Du er appens chat-mentor, Meal Mentor AI. Svar kort (højst 120 ord), venligt og konkret på dansk. Foreslå gerne konkrete danske måltider med omtrentlige kcal og protein, der passer til det, brugeren har tilbage, og til tidspunktet. Brug punktopstilling ved forslag. Spørg kort tilbage, hvis noget er uklart. Hvis spørgsmålet handler om medicindosis, så henvis til lægen. Respektér spisepausen om aftenen: foreslå ikke mad i spisepausen, medmindre brugeren selv spørger, og nævn så at det er i spisepausen. Ros ikke træning, medmindre brugeren spørger.`;
+Du er appens chat-mentor, Meal Mentor AI. Svar kort (højst 80 ord, gerne færre), venligt og konkret på dansk. Foreslå gerne konkrete danske måltider med omtrentlige kcal og protein, der passer til det, brugeren har tilbage, og til tidspunktet. Brug punktopstilling ved forslag. Spørg kort tilbage, hvis noget er uklart. Hvis spørgsmålet handler om medicindosis, så henvis til lægen. Respektér spisepausen om aftenen: foreslå ikke mad i spisepausen, medmindre brugeren selv spørger, og nævn så at det er i spisepausen. Ros ikke træning, medmindre brugeren spørger.
+MØNSTRE: Brug afsnittet MØNSTRE til at give feedback på mønstre, når det er relevant: fx sult i forhold til søvn, træning, gårsdagens måltider, tid siden sidste måltid og dag efter dosis. Nævn kun en sammenhæng, hvis dataene viser den mindst 2 gange, og formulér det forsigtigt ("det ser ud til"). Ét mønster ad gangen.`;
 function botRender(){
   const log=$('botLog');
   if(!bot.msgs.length){log.innerHTML=`<div class="bm a"><p>Hej! Jeg kan se, hvad du har spist i dag, og hvad du har tilbage. Spørg fx, hvad du kan spise, eller hvornår du skal spise næste gang.</p></div>`;return;}
@@ -2048,11 +2072,11 @@ function botRender(){
 async function botAsk(q){
   q=(q||'').trim();if(!q||bot.busy)return;
   if(!sample){bot.msgs.push({role:'user',content:q,show:q},{role:'assistant',content:'AI er ikke tilgængelig i denne visning.'});botRender();return;}
-  const first=!bot.msgs.length;
-  bot.msgs.push({role:'user',show:q,content:(first?`${botRules}\n\n${context()}\n\n`:'')+statusNow()+'\n\n'+q});
-  const a={role:'assistant',content:''};bot.msgs.push(a);bot.busy=true;botRender();$('botChips').hidden=true;
+  bot.msgs.push({role:'user',show:q,content:q});
+  const a={role:'assistant',content:''};bot.msgs.push(a);bot.busy=true;botRender();
   try{bot.ctl=new AbortController();
-    const r=await sample(bot.msgs.slice(0,-1).map(m=>({role:m.role,content:m.content})),{modelTier:'quick',cache:false,signal:bot.ctl.signal,onText:({text})=>{a.content=text;botRender();}});
+    const hist=bot.msgs.slice(0,-1).slice(-8).map(m=>({role:m.role,content:m.role==='user'?(m.show||m.content):m.content}));hist[hist.length-1].content=statusNow()+'\n\n'+q;
+    const r=await sample(hist,{system:`${botRules}\n\n${context()}\n\n${patterns()}`,modelTier:'quick',cache:false,signal:bot.ctl.signal,onText:({text})=>{a.content=text;botRender();}});
     a.content=r.text;}
   catch(e){a.content=e&&e.name==='AbortError'?'(afbrudt)':aiErr(e);}
   finally{bot.busy=false;botRender();store.set('bot-'+today,bot.msgs);}
@@ -2063,7 +2087,11 @@ $('botFab').onclick=openBot;$('botClose').onclick=closeBot;
 $('botForm').onsubmit=e=>{e.preventDefault();const q=$('botQ').value;$('botQ').value='';botAsk(q);};
 $('botChips').querySelectorAll('[data-q]').forEach(b=>b.onclick=()=>botAsk(b.dataset.q));
 document.addEventListener('keydown',e=>{if(e.key==='Escape'&&!$('bot').hidden)closeBot();});
-bot.msgs=store.get('bot-'+today,[]);if(bot.msgs.length)$('botChips').hidden=true;
+bot.msgs=store.get('bot-'+today,[]);
+/* hold chatten over tastaturet (iPhone) */
+if(window.visualViewport){const vv=window.visualViewport,fit=()=>{const b=$('bot');if(b.hidden)return;const kb=Math.max(0,window.innerHeight-vv.height-vv.offsetTop);
+  b.classList.toggle('kb',kb>80);b.style.setProperty('--bot-b',kb>80?kb+'px':'0px');b.style.setProperty('--bot-h',kb>80?Math.max(260,vv.height-8)+'px':'82vh');if(kb>80){const l=$('botLog');l.scrollTop=l.scrollHeight;}};
+  vv.addEventListener('resize',fit);vv.addEventListener('scroll',fit);$('botQ').addEventListener('focus',()=>setTimeout(fit,300));}
 setInterval(()=>{if(!$('v-vej').hidden)drawLeft();},60000);
 
 resetDates();fillSettings();setSync('local');cloudInit();
@@ -2202,12 +2230,39 @@ setTimeout(drawLift,0);setInterval(drawLift,10*60*1000);
 /* ===== log hurtigt ===== */
 function toast(t){const el=$('toast');el.textContent=t;el.hidden=false;clearTimeout(toast.t);toast.t=setTimeout(()=>el.hidden=true,2600);}
 function favorites(){const m={};D.meals.forEach(x=>{const k=String(x.titel||'').trim().toLowerCase();if(!k||!x.kcal)return;(m[k]=m[k]||{n:0,last:x}).n++;if(x.t>m[k].last.t)m[k].last=x;});
-  return Object.values(m).filter(x=>x.n>=2).sort((a,b)=>b.n-a.n).slice(0,8).map(x=>x.last);}
+  return Object.values(m).sort((a,b)=>b.n-a.n||b.last.t.localeCompare(a.last.t)).slice(0,16).map(x=>x.last);}
 function openSheet(){const sh=$('qSheet');$('qDate').textContent=new Date().toLocaleDateString('da-DK',{weekday:'long',day:'numeric',month:'short'});
-  const F=favorites();$('qFav').innerHTML=F.length?F.map((x,i)=>`<button data-fav="${i}">${esc(x.titel.length>28?x.titel.slice(0,26)+'…':x.titel)}</button>`).join(''):'<span class="small">Dine faste måltider dukker op her, når du har logget dem et par gange.</span>';
-  $('qFav').querySelectorAll('[data-fav]').forEach(b=>b.onclick=()=>{const x=F[+b.dataset.fav],n=new Date(),hh=String(n.getHours()).padStart(2,'0'),mm=String(n.getMinutes()).padStart(2,'0');
-    D.meals.push({id:uid(),t:`${today}T${hh}:${mm}`,titel:x.titel,kcal:x.kcal,protein:x.protein||0,fedt:x.fedt||0,kulhydrat:x.kulhydrat||0});save();b.classList.add('on');b.disabled=true;toast(`${x.titel} tilføjet · ${nf(x.kcal)} kcal`);});
+  const F=favorites();$('qFav').innerHTML=F.length?F.map((x,i)=>`<button data-fav="${i}">${esc(x.titel.length>28?x.titel.slice(0,26)+'…':x.titel)}</button>`).join(''):'<span class="small">Mad, du har logget før, dukker op her. Tryk og vælg mængden.</span>';
+  $('qFav').querySelectorAll('[data-fav]').forEach(b=>b.onclick=()=>{closeSheet();openMealEdit(F[+b.dataset.fav],'add');});
   sh.hidden=false;$('regBtn').setAttribute('aria-expanded','true');setTimeout(()=>sh.querySelector('.qt').focus(),30);}
+/* ret, slet eller tilføj tidligere mad med valgfri mængde */
+function mealSheet(html){let el=$('mSheet');if(!el){el=document.createElement('div');el.className='sheet';el.id='mSheet';document.body.appendChild(el);}
+  el.innerHTML=`<div class="sheet-bg" data-mclose></div><div class="sheet-c" role="dialog" aria-modal="true" aria-labelledby="mH">${html}</div>`;el.hidden=false;
+  el.querySelectorAll('[data-mclose]').forEach(b=>b.onclick=()=>el.hidden=true);return el;}
+function openMealPick(ids){const ms=ids.map(id=>D.meals.find(m=>m.id===id)).filter(Boolean);if(!ms.length)return;if(ms.length===1)return openMealEdit(ms[0],'edit');
+  const el=mealSheet(`<div class="sheet-h"><b id="mH">Hvilken del vil du rette?</b><button class="close" data-mclose aria-label="Luk">×</button></div><div class="mpick">${ms.map((m,i)=>`<button class="ghost" data-i="${i}"><b>${esc(m.titel)}</b><small>kl. ${m.t.slice(11,16)} · ${nf(r0(m.kcal))} kcal</small></button>`).join('')}</div>`);
+  el.querySelectorAll('[data-i]').forEach(b=>b.onclick=()=>openMealEdit(ms[+b.dataset.i],'edit'));}
+function openMealEdit(m,mode){const add=mode==='add',now=nowT();let f=1;
+  const val=k=>r0((+m[k]||0)*f);
+  const el=mealSheet(`<div class="sheet-h"><b id="mH">${add?'Tilføj':'Ret måltid'}</b><span class="small">${esc(m.titel)}</span><button class="close" data-mclose aria-label="Luk">×</button></div>
+    <small class="qsub">Mængde</small><div class="seg mamt" role="group" aria-label="Mængde">${[[.5,'½'],[1,'1'],[1.5,'1½'],[2,'2']].map(([v,l])=>`<button type="button" data-f="${v}" aria-pressed="${v===1}">${l} portion</button>`).join('')}</div>
+    <label class="mrow">Eller i procent <input class="t" type="number" inputmode="numeric" min="5" max="500" step="5" id="mPct" value="100"> %</label>
+    <p class="mres" id="mRes"></p>
+    <label class="mrow">Tidspunkt <input class="t" type="time" id="mTime" value="${add?now.slice(11,16):m.t.slice(11,16)}"></label>
+    <div class="btns" style="margin-top:14px"><button class="go" id="mSave" type="button">${add?'Tilføj':'Gem'}</button>${add?'':'<button class="ghost mdel" id="mDel" type="button">Slet måltid</button>'}</div>`);
+  const res=()=>{$('mRes').textContent=`${nf(val('kcal'))} kcal · ${nf(val('protein'))} g protein`;};
+  const setF=v=>{f=Math.max(.05,Math.min(5,v));$('mPct').value=Math.round(f*100);el.querySelectorAll('.mamt [data-f]').forEach(b=>b.setAttribute('aria-pressed',+b.dataset.f===f));res();};
+  el.querySelectorAll('.mamt [data-f]').forEach(b=>b.onclick=()=>setF(+b.dataset.f));
+  $('mPct').oninput=()=>{const v=+$('mPct').value;if(v>0){f=Math.max(.05,Math.min(5,v/100));el.querySelectorAll('.mamt [data-f]').forEach(b=>b.setAttribute('aria-pressed',+b.dataset.f===f));res();}};
+  res();
+  $('mSave').onclick=()=>{const tm=$('mTime').value||now.slice(11,16),nv={kcal:val('kcal'),protein:val('protein'),fedt:val('fedt'),kulhydrat:val('kulhydrat')},pct=Math.round(f*100);
+    const titel=String(m.titel||'Måltid').replace(/ \(\d+ %\)$/,'')+(pct!==100&&add?` (${pct} %)`:'');
+    if(add){D.meals.push({id:uid(),t:`${today}T${tm}`,titel,...nv});toast(`${titel} tilføjet · ${nf(nv.kcal)} kcal`);}
+    else{Object.assign(m,nv,{t:m.t.slice(0,11)+tm});toast('Måltidet er rettet');}
+    save();el.hidden=true;drawLog();};
+  if(!add){let arm=false;$('mDel').onclick=()=>{if(!arm){arm=true;$('mDel').textContent='Tryk igen for at slette';setTimeout(()=>{arm=false;const b=$('mDel');if(b)b.textContent='Slet måltid';},4000);return;}
+    D.meals=D.meals.filter(x=>x.id!==m.id);save();el.hidden=true;drawLog();toast('Måltidet er slettet');};}
+}
 function closeSheet(){$('qSheet').hidden=true;$('regBtn').setAttribute('aria-expanded','false');}
 $('qSheet').addEventListener('click',e=>{if(e.target.closest('[data-hunger]')){closeSheet();setTimeout(()=>window.openHunger&&window.openHunger(),200);return;}const t=e.target.closest('[data-close],[data-scan],[data-f]');if(!t)return;closeSheet();
   if(t.dataset.close){backFrom=null;return;}

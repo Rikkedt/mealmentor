@@ -198,7 +198,7 @@ function daErr(e){const m=(e&&e.message)||'';let t;
     const s = await fresh();
     if (!s) throw Object.assign(new Error('login'), { code: 'login' });
     const images = await Promise.all((o.images || []).map(toB64));
-    const body = { tier: o.modelTier || 'quick', images, json: !!o.json, ...(typeof input === 'string' ? { prompt: input } : { messages: input }) };
+    const body = { tier: o.modelTier || 'quick', images, json: !!o.json, system: o.system || undefined, ...(typeof input === 'string' ? { prompt: input } : { messages: input }) };
     const r = await fetch('/api/ai', { method: 'POST', headers: { 'content-type': 'application/json', authorization: 'Bearer ' + s.access_token }, body: JSON.stringify(body), signal: o.signal });
     if (r.status === 429) { const t = await r.text().catch(() => ''); throw Object.assign(new Error('rate'), { code: t === 'limit' ? 'daily_limit' : t === 'photo_limit' ? 'photo_limit' : 'rate_limited' }); }
     if (r.status === 401) throw Object.assign(new Error('login'), { code: 'login' });

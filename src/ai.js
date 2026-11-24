@@ -40,7 +40,12 @@ export async function handleAI(request, env) {
   const r = await fetch('https://api.anthropic.com/v1/messages', {
     method: 'POST',
     headers: { 'x-api-key': env.ANTHROPIC_API_KEY, 'anthropic-version': '2023-06-01', 'content-type': 'application/json' },
-    body: JSON.stringify({ model, max_tokens: b.json ? 1500 : 1200, stream: true, messages })
+    body: JSON.stringify({
+      model, stream: true, messages: messages.slice(-12),
+      // Chat: korte svar = hurtigere. Scanning/JSON må fylde mere.
+      max_tokens: b.json ? 1500 : (Array.isArray(b.messages) ? 450 : 1200),
+      ...(typeof b.system === 'string' && b.system ? { system: [{ type: 'text', text: b.system.slice(0, 60000), cache_control: { type: 'ephemeral' } }] } : {})
+    })
   });
   if (r.status === 429) return new Response('rate', { status: 429 });
   if (!r.ok) return new Response(await r.text(), { status: 502 });
