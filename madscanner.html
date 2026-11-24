@@ -693,7 +693,7 @@ body.kb .tabs,body.kb #botFab{display:none!important}
 .bot-h button{width:36px!important;min-height:36px!important}
 .bot-chips{flex-wrap:nowrap!important;overflow-x:auto;padding:8px 12px 6px!important;scrollbar-width:none;-webkit-overflow-scrolling:touch}
 .bot-chips::-webkit-scrollbar{display:none}.bot-chips button{flex:0 0 auto;white-space:nowrap}
-@media(max-width:600px){.bot{height:min(var(--bot-h,82vh),640px)!important;bottom:var(--bot-b,0px)!important}}
+@media(max-width:600px){.bot{height:min(calc(var(--bot-h,82vh) - env(safe-area-inset-top) - 6px),640px)!important;bottom:var(--bot-b,0px)!important}}
 .bot-in{padding-bottom:max(12px,env(safe-area-inset-bottom))!important}
 .bot.kb .bot-in{padding-bottom:10px!important}
 /* ret/slet måltid */

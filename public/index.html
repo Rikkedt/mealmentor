@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,viewport-fit=cover">
-<title>Meal Mentor AI</title><meta name="mm-version" content="1e823fcb60"><link rel="manifest" href="/manifest.webmanifest"><link rel="apple-touch-icon" href="/apple-touch-icon.png"><link rel="icon" href="/icon-192.png"><meta name="theme-color" content="#F1F1F4"><link rel="stylesheet" href="/mm.css"><script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script><script src="/mm.js"></script>
+<title>Meal Mentor AI</title><meta name="mm-version" content="cad85ecfe2"><link rel="manifest" href="/manifest.webmanifest"><link rel="apple-touch-icon" href="/apple-touch-icon.png"><link rel="icon" href="/icon-192.png"><meta name="theme-color" content="#F1F1F4"><link rel="stylesheet" href="/mm.css"><script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script><script src="/mm.js"></script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Inter+Tight:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <style>
@@ -693,7 +693,7 @@ body.kb .tabs,body.kb #botFab{display:none!important}
 .bot-h button{width:36px!important;min-height:36px!important}
 .bot-chips{flex-wrap:nowrap!important;overflow-x:auto;padding:8px 12px 6px!important;scrollbar-width:none;-webkit-overflow-scrolling:touch}
 .bot-chips::-webkit-scrollbar{display:none}.bot-chips button{flex:0 0 auto;white-space:nowrap}
-@media(max-width:600px){.bot{height:min(var(--bot-h,82vh),640px)!important;bottom:var(--bot-b,0px)!important}}
+@media(max-width:600px){.bot{height:min(calc(var(--bot-h,82vh) - env(safe-area-inset-top) - 6px),640px)!important;bottom:var(--bot-b,0px)!important}}
 .bot-in{padding-bottom:max(12px,env(safe-area-inset-bottom))!important}
 .bot.kb .bot-in{padding-bottom:10px!important}
 /* ret/slet måltid */
