@@ -56,6 +56,19 @@ export async function handleAI(request, env, ctx) {
   let r;
   try { r = await aiP; } catch (e) { return new Response('ai error', { status: 502 }); }
   if (r.status === 429) return new Response('rate', { status: 429 });
-  if (!r.ok) return new Response(await r.text(), { status: 502 });
-  return new Response(r.body, { headers: { 'content-type': 'text/event-stream', 'cache-control': 'no-store' } });
+  if (!r.ok) { const et = await r.text(); console.log(JSON.stringify({ ai: true, model, status: r.status, err: et.slice(0, 500) })); return new Response(et, { status: 502 }); }
+  // Fejlsøgning: log hvad AI'en sender tilbage (typer af hændelser, tid til første tekst, evt. fejl).
+  const t0 = Date.now(); let first = 0, head = '', types = {};
+  const dec = new TextDecoder();
+  const ts = new TransformStream({
+    transform(chunk, ctl) {
+      const txt = dec.decode(chunk, { stream: true });
+      if (head.length < 600) head += txt;
+      for (const m of txt.matchAll(/"type":"([a-z_]+)"/g)) types[m[1]] = (types[m[1]] || 0) + 1;
+      if (!first && /text_delta/.test(txt)) first = Date.now() - t0;
+      ctl.enqueue(chunk);
+    },
+    flush() { console.log(JSON.stringify({ ai: true, model, sys: (b.system || '').length, msgs: messages.length, firstTextMs: first, totalMs: Date.now() - t0, types, head: first ? undefined : head.slice(0, 600) })); }
+  });
+  return new Response(r.body.pipeThrough(ts), { headers: { 'content-type': 'text/event-stream', 'cache-control': 'no-store' } });
 }
