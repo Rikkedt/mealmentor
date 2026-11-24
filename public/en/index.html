@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,viewport-fit=cover">
-<title>Meal Mentor AI</title><meta name="mm-version" content="321179bcdc"><link rel="manifest" href="/manifest.webmanifest"><link rel="apple-touch-icon" href="/apple-touch-icon.png"><link rel="icon" href="/icon-192.png"><meta name="theme-color" content="#F1F1F4"><link rel="stylesheet" href="/mm.css"><script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script><script src="/mm.en.js"></script>
+<title>Meal Mentor AI</title><meta name="mm-version" content="8d742080cb"><link rel="manifest" href="/manifest.webmanifest"><link rel="apple-touch-icon" href="/apple-touch-icon.png"><link rel="icon" href="/icon-192.png"><meta name="theme-color" content="#F1F1F4"><link rel="stylesheet" href="/mm.css"><script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script><script src="/mm.en.js"></script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Inter+Tight:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <style>
@@ -708,6 +708,10 @@ body.kb .tabs,body.kb #botFab{display:none!important}
 .pf{list-style:none;margin:0;padding:0;max-height:55vh;overflow:auto}
 .pf li button{width:100%;display:flex;justify-content:space-between;align-items:center;gap:12px;background:none;border:0;border-bottom:1px solid var(--line);border-radius:0;min-height:48px;padding:6px 2px;text-align:left;color:inherit;font-weight:500}
 .pf li button span{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.pf li button small{flex:0 0 auto;opacity:.7}
+.trust{margin-top:18px}.tr-list{display:grid;gap:10px}.tr{background:var(--card);border-radius:18px;padding:14px 16px;display:grid;gap:6px}
+.tr-h{display:flex;justify-content:space-between;align-items:center;gap:10px}.tr-bar{height:6px;border-radius:99px;background:var(--soft);overflow:hidden}.tr-bar i{display:block;height:100%;background:var(--acc,var(--tomato));border-radius:99px}
+.tr small{opacity:.75}.wd{list-style:none;margin:8px 0 0;padding:0;display:grid;gap:6px;text-align:left}.wd li{display:grid;grid-template-columns:1fr auto;gap:2px 10px}.wd small{grid-column:1/-1;opacity:.7}
+#fOA .tl{display:block;margin:12px 0 6px;font-weight:700;font-size:14px}#fOA .chk{display:flex;gap:10px;align-items:center;margin-top:12px;font-weight:600}
 </style>
 </head>
 <body>
@@ -796,7 +800,7 @@ body.kb .tabs,body.kb #botFab{display:none!important}
 <div class="qtiles"><button class="qt dark" data-scan="photo"><span class="qi">📷</span>AI scan</button><button class="qt" id="qPrev" type="button"><span class="qi">🕘</span>Earlier food</button><button class="qt" data-f="fMeal"><span class="qi">🔍</span>Search / type</button></div>
 <div id="qFav" hidden></div>
 <div class="sec-h"><span class="sq">＋</span><b>OTHER</b></div>
-<div class="qfav qother"><button data-hunger="1">😋 Hunger</button><button data-f="fSleep">😴 Sleep</button><button data-f="fWeight">⚖️ Weight</button><button data-f="fWork">🏃 Training</button><button data-f="fDose">💉 GLP-1 dose</button></div>
+<div class="qfav qother"><button data-hunger="1">😋 Hunger</button><button data-f="fSleep">😴 Sleep</button><button data-f="fWeight">⚖️ Weight</button><button data-f="fWork">🏃 Training</button><button data-f="fDose">💉 GLP-1 dose</button><button data-f="fOA" class="oaonly" hidden>🌸 Body and hormones</button></div>
 </div></div>
 <div class="sheet" id="hSheet" hidden><div class="sheet-bg" data-hclose></div><div class="sheet-c" role="dialog" aria-modal="true" aria-labelledby="hH">
 <div class="sheet-h"><b id="hH">Are you hungry?</b><span class="small" id="hTime"></span><button class="close" data-hclose aria-label="Close">×</button></div>
@@ -818,6 +822,7 @@ body.kb .tabs,body.kb #botFab{display:none!important}
 <section class="ci" id="checkin" hidden><div class="sec-h"><span class="sq">🌙</span><b>EVENING CHECK-IN</b><span id="ciWhen"></span></div>
 <div class="ci-card"><b class="ci-q">How did the day go?</b><span class="small">Choose as many as you like</span><div class="moods" id="moods"></div>
 <div class="ci-reply" id="ciReply" hidden><span class="mtag">Mentor</span><span id="ciReplyTxt"></span></div></div></section>
+<section class="trust" id="trust" hidden></section>
 <section class="anl" id="anlSec" hidden><div class="sec-h"><span class="sq">📊</span><b>ANALYSES</b><span>Last 8 weeks · tap for more</span></div><div class="anl-list" id="anl"></div></section>
 
 </section>
@@ -860,6 +865,20 @@ body.kb .tabs,body.kb #botFab{display:none!important}
 <div class="row3"><label>Date<input class="t" type="date" name="d" required></label><label>At<input class="t" type="time" name="tm" required></label><label>Minutes<input class="t" type="number" name="min" min="1" inputmode="numeric" required></label></div>
 <div class="fbtn"><button class="go">Save</button><span class="ok-msg"></span></div></form>
 
+<form class="form" id="fOA" hidden><h3>Body and hormones</h3>
+<p class="small" style="margin:0 0 8px">Log how your body feels today. After 2–3 months the Mentor can see what is linked to your weight going up.</p>
+<label>Date<input class="t" type="date" name="d" required></label>
+<span class="tl">Bleeding today</span>
+<div class="qual" role="radiogroup" aria-label="Bleeding today"><label><input type="radio" name="bleed" value="0" checked><span>Ingen</span></label><label><input type="radio" name="bleed" value="1"><span>Spotting</span></label><label><input type="radio" name="bleed" value="2"><span>Let</span></label><label><input type="radio" name="bleed" value="3"><span>Normal</span></label><label><input type="radio" name="bleed" value="4"><span>Heavy</span></label></div>
+<span class="tl">Hot flushes today</span>
+<div class="qual" role="radiogroup" aria-label="Hot flushes today"><label><input type="radio" name="hotd" value="0" checked><span>Ingen</span></label><label><input type="radio" name="hotd" value="1"><span>1–3</span></label><label><input type="radio" name="hotd" value="2"><span>4 or more</span></label></div>
+<span class="tl">Do you notice any of these?</span>
+<div class="qual"><label><input type="checkbox" name="sym" value="bloat"><span>Bloated / fluid retention</span></label><label><input type="checkbox" name="sym" value="crave"><span>Sweet cravings</span></label><label><input type="checkbox" name="sym" value="mood"><span>Low mood / irritable</span></label><label><input type="checkbox" name="sym" value="anx"><span>Restless / anxious</span></label><label><input type="checkbox" name="sym" value="fog"><span>Brain fog / tired</span></label><label><input type="checkbox" name="sym" value="joint"><span>Joint pain</span></label><label><input type="checkbox" name="sym" value="head"><span>Headache</span></label><label><input type="checkbox" name="sym" value="breast"><span>Sore breasts</span></label><label><input type="checkbox" name="sym" value="const"><span>Constipation</span></label></div>
+<span class="tl">Stress today</span>
+<div class="qual" role="radiogroup" aria-label="Stress today"><label><input type="radio" name="stress" value="1"><span>Low</span></label><label><input type="radio" name="stress" value="2" checked><span>Medium</span></label><label><input type="radio" name="stress" value="3"><span>High</span></label></div>
+<div class="row"><label>Alcohol (drinks)<input class="t" type="number" name="alc" min="0" max="30" step="1" inputmode="numeric" value="0"></label></div>
+<label class="chk"><input type="checkbox" name="hrt"><span>I took hormone therapy today</span></label>
+<div class="fbtn"><button class="go">Save</button><span class="ok-msg"></span></div></form>
 <form class="form" id="fDose" hidden><h3>GLP-1 dose</h3>
 <input class="t" name="med" placeholder="Medication, e.g. Wegovy" list="meds" aria-label="Medication">
 <datalist id="meds"><option value="Wegovy"><option value="Ozempic"><option value="Mounjaro"><option value="Saxenda"><option value="Rybelsus"></datalist>
@@ -998,7 +1017,7 @@ const blank=()=>({meals:[],weights:[],doses:[],workouts:[],sleep:[],checkins:[],
 let D=store.get('mob-data',null);
 if(!D){D=blank();const old=store.get('madscanner-'+today,[]);old.forEach(e=>D.meals.push({id:uid(),t:today+'T'+(e.tid||'12:00').replace('.',':'),titel:e.titel,kcal:e.kcal,protein:e.protein,fedt:e.fedt,kulhydrat:e.kulhydrat}));}
 if(D.demo){D={...blank(),settings:{...(D.settings||{late:20})}};store.set('mob-data',D);}
-if(!D.sleep)D.sleep=[];if(!D.checkins)D.checkins=[];if(!D.hunger)D.hunger=[];
+if(!D.sleep)D.sleep=[];if(!D.checkins)D.checkins=[];if(!D.hunger)D.hunger=[];if(!D.oa)D.oa=[];
 const save=()=>{store.set('mob-data',D);cloudSchedule();if(typeof refreshVej==='function')refreshVej();if(typeof pushSync==='function')pushSync();if(typeof drawLift==='function')drawLift();};
 /* ---------- login og synkronisering ---------- */
 const KINDS={meals:x=>x.t,sleep:x=>x.d,weights:x=>x.d,doses:x=>x.d,workouts:x=>x.t,checkins:x=>x.d,hunger:x=>x.t};
@@ -1794,6 +1813,40 @@ function drawSlChart(){
 
 
 /* sammenhænge */
+
+function oaTxt(o){return [o.bleed?'bleeding: '+BLEED[o.bleed]:'',o.hot?'hot flushes: '+(o.hot===2?'4+':'1–3'):'',...(o.sym||[]).map(k=>OASYM[k]),o.alc?o.alc+' drinks of alcohol':'',o.stress===3?'high stress':'',o.hrt?'hormone therapy':''].filter(Boolean).join(', ')||'no symptoms';}
+/* Hvad går forud for, at vægten stiger? Sammenligner de 2 dage før en vægtstigning med de 2 dage før stabil/faldende vægt. */
+function weightDrivers(){
+  const W=[...D.weights].filter(w=>w.d>addDays(today,-120)).sort((a,b)=>a.d.localeCompare(b.d)),ev=[];
+  for(let i=1;i<W.length;i++){const gap=(new Date(W[i].d)-new Date(W[i-1].d))/864e5;if(gap<1||gap>5)continue;ev.push({d:W[i].d,up:W[i].kg-W[i-1].kg>=0.4});}
+  const up=ev.filter(e=>e.up),rest=ev.filter(e=>!e.up);if(up.length<3||rest.length<3)return null;
+  const before=(e,f)=>[1,2].some(n=>{const k=addDays(e.d,-n);return f(k);});
+  const pre=k=>{const nb=(D.oa||[]).filter(o=>o.bleed>=2).map(o=>o.d).filter(b=>b>k&&b<=addDays(k,6));return nb.length>0;};
+  const F=[['too much food (over your target)',k=>{const t=target(),d=day(k);return t&&d.n&&d.kcal>t.v*1.1;}],
+    ['a lot eaten late in the evening',k=>{const d=day(k);return d.kcal&&d.lateKcal/d.kcal>0.25;}],
+    ['a short night (under 6½ h)',k=>{const d=day(k);return d.sleepH!=null&&d.sleepH<6.5;}],
+    ['alcohol (2+ drinks)',k=>(oaOn(k)||{}).alc>=2],
+    ['bloating / fluid',k=>((oaOn(k)||{}).sym||[]).includes('bloat')],
+    ['sweet cravings',k=>((oaOn(k)||{}).sym||[]).includes('crave')],
+    ['high stress',k=>(oaOn(k)||{}).stress===3],
+    ['hedeture',k=>(oaOn(k)||{}).hot>0],
+    ['the days before bleeding',pre],
+    ['no training',k=>{const d=day(k);return d.n>0&&!d.woMin;}]];
+  const res=F.map(([l,f])=>{const a=up.filter(e=>before(e,f)).length/up.length,b=rest.filter(e=>before(e,f)).length/rest.length;return {l,a,b,diff:a-b};}).filter(x=>x.a>=0.4&&x.diff>=0.2).sort((x,y)=>y.diff-x.diff);
+  return {n:up.length,m:rest.length,top:res.slice(0,3)};}
+function cycleInfo(){const days=(D.oa||[]).filter(o=>o.bleed>=2).map(o=>o.d).sort();if(!days.length)return null;
+  const starts=days.filter((k,i)=>i===0||(new Date(k)-new Date(days[i-1]))/864e5>5),len=starts.slice(1).map((k,i)=>Math.round((new Date(k)-new Date(starts[i]))/864e5));
+  return {starts,len,since:Math.round((new Date(today)-new Date(starts.at(-1)))/864e5)};}
+/* Hvor sikre er analyserne? Vokser med mængden af data. */
+function trust(){const d90=range(90),food=logged(range(28)).length,wWeeks=[0,1,2,3,4,5,6,7].filter(i=>D.weights.filter(w=>w.d>addDays(today,-7*(i+1))&&w.d<=addDays(today,-7*i)).length>=2).length;
+  const oaDays=(D.oa||[]).filter(o=>o.d>addDays(today,-90)).length,first=(D.oa||[]).map(o=>o.d).sort()[0],span=first?Math.round((new Date(today)-new Date(first))/864e5):0;
+  const lvl=p=>p>=1?'High':p>=0.5?'Medium':'Low';
+  const rows=[{k:'food',t:'Eating patterns',p:Math.min(1,food/21),need:'2–3 weeks of logged food',say:'when you eat, hunger, sleep and meals',have:`${Math.min(food,21)} of 21 days`},
+    {k:'weight',t:'What makes your weight go up',p:Math.min(1,wWeeks/6),need:'6 weeks of weighing at least twice a week',say:'which habits come before your weight goes up',have:`${Math.min(wWeeks,6)} of 6 weeks`}];
+  if(isOA())rows.push({k:'oa',t:'Menopause and hormones',p:Math.min(1,Math.min(oaDays/60,span/75)),need:'2–3 months of "Body and hormones" on most days',say:'links between cycle, hot flushes, symptoms and weight',have:`${oaDays} logs over ${span} days`});
+  return rows.map(r=>({...r,lvl:lvl(r.p)}));}
+function drawTrust(){const el=$('trust');if(!el)return;const R=trust();el.hidden=!D.meals.length;
+  el.innerHTML=`<div class="sec-h"><span class="sq">🎯</span><b>HOW CONFIDENT ARE THE ANALYSES?</b></div><div class="tr-list">${R.map(r=>`<div class="tr"><div class="tr-h"><b>${r.t}</b><span class="badge2 ${r.p>=1?'b-ok':r.p>=0.5?'b-pat':'b-rel'}">${r.lvl}</span></div><div class="tr-bar"><i style="width:${Math.round(r.p*100)}%"></i></div><small>${r.p>=1?`Enough data to say something about ${r.say}.`:`Needs ${r.need}. You have ${r.have}.`}</small></div>`).join('')}</div>`;}
 function correlations(){
   const L=logged(range(56)),out=[];
   const grp=(label,pred)=>{const a=L.filter(pred),b=L.filter(d=>!pred(d));if(a.length>=3&&b.length>=3){const x=avg(a,d=>d.kcal),y=avg(b,d=>d.kcal);
@@ -1828,6 +1881,7 @@ function aiData(n){
     foerste:d.first!=null?fmtH(d.first):null,sidste:d.last!=null?fmtH(d.last):null,kcal_i_spisepausen:r0(d.lateKcal),traening_min:d.woMin,
     soevn:d.sleep?`${d.sleep.from}-${d.sleep.to} (${nf(d.sleepH,1)} t, ${QUAL[d.sleep.q]}${d.sleep.hot?', hot flashes':''})`:null,
     vaegt_kg:d.weight,glp1:d.dose?`${d.dose.med||'GLP-1'} ${d.dose.mg} mg`:null,fase:d.dose?PH[d.dose.phase]:null,dage_efter_dosis:d.sinceDose,
+    ...(isOA()&&oaOn(d.k)?{krop_og_hormoner:oaTxt(oaOn(d.k))}:{}),
     sult:(D.hunger||[]).filter(x=>x.t.startsWith(d.k)).map(x=>`${x.t.slice(11,16)} ${['a little hungry','hungry','very hungry'][x.lvl-1]}${x.why&&x.why.length?' ('+x.why.join(', ')+')':''}`)}));
 }
 const rules=`You are Meal Mentor AI, a warm, practical food mentor in an app for people who use GLP-1 medication (e.g. Wegovy, Ozempic, Mounjaro) or are tapering off it.
@@ -1839,6 +1893,7 @@ Rules:
 - If the goal is to get stronger and more toned while keeping the weight, focus on protein spread over the day, strength training 2–4 times a week and a stable weight.
 - HUNGER: When the user is hungry (listed under HUNGER TODAY or in the question), find the likely cause from the data before giving advice: time since the last meal, whether there was enough protein and fibre, last night's sleep, day after dose (appetite often rises on days 4–6), time of day (late afternoon/evening), and the user's own guess (tired, stress, boredom, comfort, thirst). Say briefly what you think the cause is and give 1–2 concrete tips: for real hunger a specific meal/snack with protein that fits the calories left and the evening eating break; for tiredness, stress, boredom or comfort something other than food (water/tea, a short walk, breathing, calling a friend) – without moralising. If you see a pattern over several days (e.g. hunger every day at 3 pm), say so and suggest moving or strengthening a meal.
 - Say so if there is too little data to conclude.
+- MENOPAUSE: If the user uses 'Body and hormones', look for connections between cycle, hot flushes, bloating, sweet cravings, stress, alcohol, sleep and weight. Help her see what comes before weight gain so she can avoid it. Fluid and the days before bleeding can cause temporary weight gain; say so, so she does not worry. Never diagnose, and refer to the doctor for heavy or unexpected bleeding or bleeding after menopause.
 - Write correct, natural English.
 - If logging is missing on some days (see 'Missing logging'), briefly mention that the assessment is therefore uncertain and that the user can add entries afterwards if she forgot. Days with 0 meals most likely mean missing logging, not fasting.`;
 function context(){
@@ -1846,7 +1901,8 @@ function context(){
   return `${veg||dn.length||dk?`Diet – NEVER suggest food that breaks this (it may be an allergy or intolerance): ${[veg?'is vegetarian':'',dn.length?'does not eat '+dn.join(', '):'',dk?'also does not eat: '+dk:''].filter(Boolean).join('; ')}. `:''}Goal: ${S().goal?GOAL[S().goal]:'not given'}.${isOA()?` The user is ${OAT[S().oa]}: emphasise protein spread over the day (at least 25–30 g per meal), strength training 2–3 times a week, fibre and calcium; distinguish between weight gain from menopause and from tapering off GLP-1. Only mention menopause when relevant.`:''} Calorie goal: ${t?nf(t.v)+' kcal ('+t.src+')':'not given'}. Protein goal: ${protTarget()?protTarget()+' g':'not given'}. The evening eating break starts at ${lateH()}; always call it "the evening eating break", not "after X o'clock".
 The app's own recommendations right now: ${recs().map(r=>r[1]+': '+r[2]).join(' | ')}.
 Connections: ${correlations().map(c=>c.t+': '+c.v+'. '+c.s).join(' | ')||'none yet'}.
-Missing logging over the last 7 days: ${(()=>{const g=gaps();return [g.miss.length?'no food: '+g.miss.map(d=>d.k).join(', '):'',g.thin.length?'only one meal: '+g.thin.map(d=>d.k).join(', '):'',g.noSleep.length?'no sleep: '+g.noSleep.map(d=>d.k).join(', '):''].filter(Boolean).join('; ')||'none'})()}.`;
+Confidence of the analyses: ${trust().map(r=>r.t+': '+r.lvl+' ('+r.have+')').join('; ')}. Say clearly how confident you are, and do not conclude more than the confidence allows.${(()=>{const w=weightDrivers();return w&&w.top.length?' Before weight increases, most often: '+w.top.map(x=>x.l+' ('+Math.round(x.a*100)+' % vs '+Math.round(x.b*100)+' %)').join(', ')+'.':'';})()}
+Manglende logning de seneste 7 dage: ${(()=>{const g=gaps();return [g.miss.length?'no food: '+g.miss.map(d=>d.k).join(', '):'',g.thin.length?'only one meal: '+g.thin.map(d=>d.k).join(', '):'',g.noSleep.length?'no sleep: '+g.noSleep.map(d=>d.k).join(', '):''].filter(Boolean).join('; ')||'none'})()}.`;
 }
 function md(t){
   let h='',ul=false;
@@ -1912,6 +1968,7 @@ function openForm(id,date,force){
   document.querySelectorAll('.quick [data-f]').forEach(x=>x.setAttribute('aria-pressed',!open&&x.dataset.f===id));
   if(open)return;resetDates(true);
   if(id==='fSleep')setNight(date||today);
+  if(id==='fOA'){$('fOA').elements.d.value=date||today;fillOA();}
   else if(date){$(id).querySelectorAll('input[type=date]').forEach(i=>i.value=date);if(date<today)$(id).querySelectorAll('input[type=time]').forEach(i=>i.value='12:00');}
   const first=$(id).querySelector('input:not([type=date]):not([type=time]):not([type=radio]):not([type=hidden])');if(first)first.focus({preventScroll:true});
   panel.scrollIntoView({behavior:reduce?'auto':'smooth',block:'nearest'});
@@ -1999,6 +2056,17 @@ $('fWeight').onsubmit=e=>{e.preventDefault();const f=e.target;
   D.weights=D.weights.filter(w=>w.d!==val(f,'d'));D.weights.push({id:uid(),d:val(f,'d'),kg:+val(f,'kg'),...(isOA()&&+val(f,'waist')?{waist:+val(f,'waist')}:{})});f.elements.kg.value='';f.elements.waist.value='';save();flash(f,'Saved');};
 $('fWork').onsubmit=e=>{e.preventDefault();const f=e.target;
   D.workouts.push({id:uid(),t:val(f,'d')+'T'+val(f,'tm'),navn:val(f,'navn').trim(),min:+val(f,'min')});f.elements.navn.value='';f.elements.min.value='';save();flash(f,'Saved');};
+const OASYM={bloat:'bloated/fluid',crave:'sweet cravings',mood:'low mood',anx:'restless/anxious',fog:'brain fog/tired',joint:'joint pain',head:'headache',breast:'sore breasts',const:'constipation'};
+const BLEED=['none','spotting','let','normal','heavy'];
+const oaOn=k=>(D.oa||[]).find(x=>x.d===k)||null;
+function fillOA(){const f=$('fOA');if(!f)return;const k=val(f,'d')||today,o=oaOn(k);
+  f.querySelectorAll('input[type=checkbox][name=sym]').forEach(c=>c.checked=!!(o&&o.sym&&o.sym.includes(c.value)));
+  const r=(n,v)=>{const x=f.querySelector(`[name=${n}][value="${v}"]`);if(x)x.checked=true;};r('bleed',o?o.bleed:0);r('hotd',o?o.hot:0);r('stress',o?o.stress:2);
+  f.elements.alc.value=o?o.alc:0;f.elements.hrt.checked=!!(o&&o.hrt);}
+$('fOA').elements.d.addEventListener('change',fillOA);
+$('fOA').onsubmit=e=>{e.preventDefault();const f=e.target,k=val(f,'d')||today,g=n=>+((f.querySelector(`[name=${n}]:checked`)||{}).value||0);
+  D.oa=(D.oa||[]).filter(x=>x.d!==k);D.oa.push({id:uid(),d:k,bleed:g('bleed'),hot:g('hotd'),sym:[...f.querySelectorAll('[name=sym]:checked')].map(c=>c.value),stress:g('stress')||2,alc:+f.elements.alc.value||0,hrt:f.elements.hrt.checked});
+  save();flash(f,'Saved');try{drawLog();}catch(x){}};
 $('fDose').onsubmit=e=>{e.preventDefault();const f=e.target;
   D.doses.push({id:uid(),d:val(f,'d'),med:val(f,'with').trim(),mg:+val(f,'mg'),phase:val(f,'phase')});save();flash(f,'Saved');};
 $('fSet').onsubmit=e=>{e.preventDefault();const f=e.target;
@@ -2031,8 +2099,9 @@ function drawEntries(){
     ...D.sleep.map(s=>({id:s.id,typ:'sleep',t:s.d+'T'+s.to,txt:`Sleep ${nf(sleepLen(s.from,s.to),1)} t`,sub:`${s.from}–${s.to} · ${QUAL[s.q]}`})),
     ...D.weights.map(w=>({id:w.id,typ:'weights',t:w.d+'T07:00',txt:`Weight ${nf(w.kg,1)} kg`,sub:w.waist?`talje ${nf(w.waist,1)} cm`:''})),
     ...D.doses.map(d=>({id:d.id,typ:'doses',t:d.d+'T08:00',txt:`${esc(d.med||'GLP-1')} ${mgTxt(d.mg)} mg`,sub:PH[d.phase]})),
-    ...D.workouts.map(w=>({id:w.id,typ:'workouts',t:w.t,txt:esc(w.navn),sub:`${w.min} min`}))].filter(e=>!entFilter||e.typ===entFilter).sort((a,b)=>b.t.localeCompare(a.t));const tot=all.length;all.splice(entLimit);$('entMore').hidden=tot<=entLimit;
-  const TY={meals:'Food',sleep:'Sleep',weights:'Weight',doses:'Dose',workouts:'Training'};let lastDay='';
+    ...D.workouts.map(w=>({id:w.id,typ:'workouts',t:w.t,txt:esc(w.navn),sub:`${w.min} min`})),
+    ...(D.oa||[]).map(o=>({id:o.id,typ:'oa',t:o.d+'T21:00',txt:'Body and hormones',sub:oaTxt(o)}))].filter(e=>!entFilter||e.typ===entFilter).sort((a,b)=>b.t.localeCompare(a.t));const tot=all.length;all.splice(entLimit);$('entMore').hidden=tot<=entLimit;
+  const TY={meals:'Food',sleep:'Sleep',weights:'Weight',doses:'Dose',workouts:'Training',oa:'Body and hormones'};let lastDay='';
   $('entries').innerHTML=all.length?all.map(e=>{const dk=e.t.slice(0,10),head=dk!==lastDay?`<li class="eday">${dLabel(dk)}</li>`:'';lastDay=dk;
     const when=e.typ==='meals'||e.typ==='workouts'?'at '+e.t.slice(11):'';const sub=[when,e.sub].filter(Boolean).join(' · ');
     return head+`<li class="erow"><span class="edot t-${e.typ}" title="${TY[e.typ]}"></span><span class="etx"><b>${e.txt}</b>${sub?`<small>${sub}</small>`:''}</span><button class="edel" data-x="${e.typ}:${e.id}" aria-label="Delete ${TY[e.typ].toLowerCase()}">Delete</button></li>`;}).join(''):'<li class="eday">Nothing logged yet.</li>';
@@ -2069,7 +2138,7 @@ function statusNow(){const r=remaining();
   `${r.bed?`Usually goes to bed around ${fmtH(r.bed%24)}. `:''}Training today: ${r.d.woMin} min. Sleep last night: ${r.d.sleepH!=null?nf(r.d.sleepH,1)+' t':'not logged'}.]`;}
 function patterns(){
   const lines=range(8,addDays(today,-1)).map(d=>{const hu=(D.hunger||[]).filter(x=>x.t.startsWith(d.k));
-    return `${d.k}: ${d.n?d.meals.map(m=>m.t.slice(11,16)+' '+m.titel+' '+r0(m.kcal)+' kcal/'+r0(m.protein)+' g prot').join('; '):'no meals logged'}. I alt ${nf(d.kcal)} kcal, ${nf(d.protein)} g protein. Sleep ${d.sleepH!=null?nf(d.sleepH,1)+' t':'not logged'}. Training ${d.woMin} min.${hu.length?' Sult: '+hu.map(x=>'at '+x.t.slice(11,16)+' '+['a little hungry','hungry','very hungry'][x.lvl-1]+(x.why&&x.why.length?' ('+x.why.join(', ')+')':'')).join('; ')+'.':''}${d.sinceDose!=null?' Day '+d.sinceDose+' after dose.':''}`;});
+    return `${d.k}: ${d.n?d.meals.map(m=>m.t.slice(11,16)+' '+m.titel+' '+r0(m.kcal)+' kcal/'+r0(m.protein)+' g prot').join('; '):'no meals logged'}. I alt ${nf(d.kcal)} kcal, ${nf(d.protein)} g protein. Sleep ${d.sleepH!=null?nf(d.sleepH,1)+' t':'not logged'}. Training ${d.woMin} min.${hu.length?' Sult: '+hu.map(x=>'at '+x.t.slice(11,16)+' '+['a little hungry','hungry','very hungry'][x.lvl-1]+(x.why&&x.why.length?' ('+x.why.join(', ')+')':'')).join('; ')+'.':''}${d.sinceDose!=null?' Day '+d.sinceDose+' after dose.':''}${isOA()&&oaOn(d.k)?' Body and hormones: '+oaTxt(oaOn(d.k))+'.':''}`;});
   return 'PATTERNS – the last 8 days before today (oldest first):\n'+lines.join('\n');}
 const botRules=`${rules}
 You are the app's chat mentor, Meal Mentor AI. Answer briefly (max 80 words, preferably fewer), kindly and concretely in English. Feel free to suggest concrete everyday meals with approximate kcal and protein that fit what the user has left and the time of day. Use bullet points for suggestions. Ask a short follow-up question if something is unclear. If the question is about medication doses, refer to the doctor. Respect the evening eating break: do not suggest food during the eating break unless the user asks, and then mention that it is during the eating break. Do not praise training unless the user asks.
@@ -2316,7 +2385,14 @@ function drawAnl(){const L=logged(range(56)),cards=[];const open=drawAnl.open||{
   const mi=mealCountInsight();
   if(mi){cards.push({k:'meals',sub:'Number of meals a day',h:`${mi.best.lab} meals suit you best`,badge:['Good','b-ok'],
     body:bars(mi.groups.map(g=>({l:g.lab+' meals',v:g.kcal,g})),x=>x.l,x=>x.g===mi.best,'var(--acc)'),more:mi.groups.map(g=>`${g.lab} meals: ${nf(Math.round(g.kcal/10)*10)} kcal on average (${g.n} days)`).join(' · ')+'.'});}
-  $('anlSec').hidden=!cards.length;
+  const wd=weightDrivers();
+  if(wd){cards.push({k:'wdrv',sub:'Before your weight goes up',h:wd.top.length?`Most often: ${wd.top[0].l}`:'No clear cause yet',badge:wd.top.length?['Pattern','b-pat']:['Stable','b-ok'],
+    body:wd.top.length?`<ul class="wd">${wd.top.map(x=>`<li><span>${esc(x.l)}</span><b>${nf(Math.round(x.a*100))} %</b><small>mod ${nf(Math.round(x.b*100))} % ellers</small></li>`).join('')}</ul>`:'',
+    more:`Based on ${wd.n} times your weight rose at least 0.4 kg and ${wd.m} times it did not. The percentage shows how often it happened in the 2 days before. Weight also varies with fluid, so look at the pattern over time.`});}
+  const cy=isOA()?cycleInfo():null;
+  if(cy){cards.push({k:'cycle',sub:'Cycle',h:cy.len.length?`Cycle of ${nf(Math.min(...cy.len))}–${nf(Math.max(...cy.len))} days`:`Last bleeding ${cy.since} days ago`,badge:cy.len.some(l=>l<21||l>35)?['Irregular','b-pat']:['Logget','b-ok'],body:'',
+    more:`${cy.starts.length} bleedings logged. The last one started ${cy.since} days ago. Irregular cycles are common in the run-up to menopause. If you have questions about bleeding, talk to your doctor.`});}
+  $('anlSec').hidden=!cards.length;drawTrust();
   $('anl').innerHTML=cards.map(c=>`<button class="ac" data-k="${c.k}" aria-expanded="${!!open[c.k]}"><div class="ac-h"><div><small>${c.sub}</small><b>${esc(c.h)}</b></div><span class="badge2 ${c.badge[1]}">${c.badge[0]}</span></div>${c.body}${open[c.k]?`<p>${esc(c.more)}</p>`:''}</button>`).join('');
   $('anl').querySelectorAll('.ac').forEach(b=>b.onclick=()=>{drawAnl.open={...open,[b.dataset.k]:!open[b.dataset.k]};drawAnl();});}
 

@@ -708,6 +708,10 @@ body.kb .tabs,body.kb #botFab{display:none!important}
 .pf{list-style:none;margin:0;padding:0;max-height:55vh;overflow:auto}
 .pf li button{width:100%;display:flex;justify-content:space-between;align-items:center;gap:12px;background:none;border:0;border-bottom:1px solid var(--line);border-radius:0;min-height:48px;padding:6px 2px;text-align:left;color:inherit;font-weight:500}
 .pf li button span{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.pf li button small{flex:0 0 auto;opacity:.7}
+.trust{margin-top:18px}.tr-list{display:grid;gap:10px}.tr{background:var(--card);border-radius:18px;padding:14px 16px;display:grid;gap:6px}
+.tr-h{display:flex;justify-content:space-between;align-items:center;gap:10px}.tr-bar{height:6px;border-radius:99px;background:var(--soft);overflow:hidden}.tr-bar i{display:block;height:100%;background:var(--acc,var(--tomato));border-radius:99px}
+.tr small{opacity:.75}.wd{list-style:none;margin:8px 0 0;padding:0;display:grid;gap:6px;text-align:left}.wd li{display:grid;grid-template-columns:1fr auto;gap:2px 10px}.wd small{grid-column:1/-1;opacity:.7}
+#fOA .tl{display:block;margin:12px 0 6px;font-weight:700;font-size:14px}#fOA .chk{display:flex;gap:10px;align-items:center;margin-top:12px;font-weight:600}
 </style>
 </head>
 <body>
@@ -796,7 +800,7 @@ body.kb .tabs,body.kb #botFab{display:none!important}
 <div class="qtiles"><button class="qt dark" data-scan="photo"><span class="qi">📷</span>AI-scan</button><button class="qt" id="qPrev" type="button"><span class="qi">🕘</span>Tidligere mad</button><button class="qt" data-f="fMeal"><span class="qi">🔍</span>Søg / skriv</button></div>
 <div id="qFav" hidden></div>
 <div class="sec-h"><span class="sq">＋</span><b>ANDET</b></div>
-<div class="qfav qother"><button data-hunger="1">😋 Sult</button><button data-f="fSleep">😴 Søvn</button><button data-f="fWeight">⚖️ Vægt</button><button data-f="fWork">🏃 Træning</button><button data-f="fDose">💉 GLP-1 dosis</button></div>
+<div class="qfav qother"><button data-hunger="1">😋 Sult</button><button data-f="fSleep">😴 Søvn</button><button data-f="fWeight">⚖️ Vægt</button><button data-f="fWork">🏃 Træning</button><button data-f="fDose">💉 GLP-1 dosis</button><button data-f="fOA" class="oaonly" hidden>🌸 Krop og hormoner</button></div>
 </div></div>
 <div class="sheet" id="hSheet" hidden><div class="sheet-bg" data-hclose></div><div class="sheet-c" role="dialog" aria-modal="true" aria-labelledby="hH">
 <div class="sheet-h"><b id="hH">Er du sulten?</b><span class="small" id="hTime"></span><button class="close" data-hclose aria-label="Luk">×</button></div>
@@ -818,6 +822,7 @@ body.kb .tabs,body.kb #botFab{display:none!important}
 <section class="ci" id="checkin" hidden><div class="sec-h"><span class="sq">🌙</span><b>AFTENENS CHECK-IN</b><span id="ciWhen"></span></div>
 <div class="ci-card"><b class="ci-q">Hvordan er dagen gået?</b><span class="small">Vælg så mange du vil</span><div class="moods" id="moods"></div>
 <div class="ci-reply" id="ciReply" hidden><span class="mtag">Mentor</span><span id="ciReplyTxt"></span></div></div></section>
+<section class="trust" id="trust" hidden></section>
 <section class="anl" id="anlSec" hidden><div class="sec-h"><span class="sq">📊</span><b>ANALYSER</b><span>Sidste 8 uger · tryk for mere</span></div><div class="anl-list" id="anl"></div></section>
 
 </section>
@@ -860,6 +865,20 @@ body.kb .tabs,body.kb #botFab{display:none!important}
 <div class="row3"><label>Dato<input class="t" type="date" name="d" required></label><label>Kl.<input class="t" type="time" name="tm" required></label><label>Minutter<input class="t" type="number" name="min" min="1" inputmode="numeric" required></label></div>
 <div class="fbtn"><button class="go">Gem</button><span class="ok-msg"></span></div></form>
 
+<form class="form" id="fOA" hidden><h3>Krop og hormoner</h3>
+<p class="small" style="margin:0 0 8px">Log hvordan kroppen har det i dag. Efter 2–3 måneder kan Mentoren se, hvad der hænger sammen med, at vægten stiger.</p>
+<label>Dato<input class="t" type="date" name="d" required></label>
+<span class="tl">Blødning i dag</span>
+<div class="qual" role="radiogroup" aria-label="Blødning i dag"><label><input type="radio" name="bleed" value="0" checked><span>Ingen</span></label><label><input type="radio" name="bleed" value="1"><span>Pletblødning</span></label><label><input type="radio" name="bleed" value="2"><span>Let</span></label><label><input type="radio" name="bleed" value="3"><span>Normal</span></label><label><input type="radio" name="bleed" value="4"><span>Kraftig</span></label></div>
+<span class="tl">Hedeture i dag</span>
+<div class="qual" role="radiogroup" aria-label="Hedeture i dag"><label><input type="radio" name="hotd" value="0" checked><span>Ingen</span></label><label><input type="radio" name="hotd" value="1"><span>1–3</span></label><label><input type="radio" name="hotd" value="2"><span>4 eller flere</span></label></div>
+<span class="tl">Mærker du noget af det her?</span>
+<div class="qual"><label><input type="checkbox" name="sym" value="bloat"><span>Oppustet / væske i kroppen</span></label><label><input type="checkbox" name="sym" value="crave"><span>Trang til sødt</span></label><label><input type="checkbox" name="sym" value="mood"><span>Lavt humør / irritabel</span></label><label><input type="checkbox" name="sym" value="anx"><span>Uro / angst</span></label><label><input type="checkbox" name="sym" value="fog"><span>Hjernetåge / træt</span></label><label><input type="checkbox" name="sym" value="joint"><span>Ledsmerter</span></label><label><input type="checkbox" name="sym" value="head"><span>Hovedpine</span></label><label><input type="checkbox" name="sym" value="breast"><span>Ømme bryster</span></label><label><input type="checkbox" name="sym" value="const"><span>Forstoppelse</span></label></div>
+<span class="tl">Stress i dag</span>
+<div class="qual" role="radiogroup" aria-label="Stress i dag"><label><input type="radio" name="stress" value="1"><span>Lav</span></label><label><input type="radio" name="stress" value="2" checked><span>Middel</span></label><label><input type="radio" name="stress" value="3"><span>Høj</span></label></div>
+<div class="row"><label>Alkohol (genstande)<input class="t" type="number" name="alc" min="0" max="30" step="1" inputmode="numeric" value="0"></label></div>
+<label class="chk"><input type="checkbox" name="hrt"><span>Jeg har taget hormonbehandling i dag</span></label>
+<div class="fbtn"><button class="go">Gem</button><span class="ok-msg"></span></div></form>
 <form class="form" id="fDose" hidden><h3>GLP-1 dosis</h3>
 <input class="t" name="med" placeholder="Præparat, fx Wegovy" list="meds" aria-label="Præparat">
 <datalist id="meds"><option value="Wegovy"><option value="Ozempic"><option value="Mounjaro"><option value="Saxenda"><option value="Rybelsus"></datalist>
@@ -998,7 +1017,7 @@ const blank=()=>({meals:[],weights:[],doses:[],workouts:[],sleep:[],checkins:[],
 let D=store.get('mob-data',null);
 if(!D){D=blank();const old=store.get('madscanner-'+today,[]);old.forEach(e=>D.meals.push({id:uid(),t:today+'T'+(e.tid||'12:00').replace('.',':'),titel:e.titel,kcal:e.kcal,protein:e.protein,fedt:e.fedt,kulhydrat:e.kulhydrat}));}
 if(D.demo){D={...blank(),settings:{...(D.settings||{late:20})}};store.set('mob-data',D);}
-if(!D.sleep)D.sleep=[];if(!D.checkins)D.checkins=[];if(!D.hunger)D.hunger=[];
+if(!D.sleep)D.sleep=[];if(!D.checkins)D.checkins=[];if(!D.hunger)D.hunger=[];if(!D.oa)D.oa=[];
 const save=()=>{store.set('mob-data',D);cloudSchedule();if(typeof refreshVej==='function')refreshVej();if(typeof pushSync==='function')pushSync();if(typeof drawLift==='function')drawLift();};
 /* ---------- login og synkronisering ---------- */
 const KINDS={meals:x=>x.t,sleep:x=>x.d,weights:x=>x.d,doses:x=>x.d,workouts:x=>x.t,checkins:x=>x.d,hunger:x=>x.t};
@@ -1794,6 +1813,40 @@ function drawSlChart(){
 
 
 /* sammenhænge */
+
+function oaTxt(o){return [o.bleed?'blødning: '+BLEED[o.bleed]:'',o.hot?'hedeture: '+(o.hot===2?'4+':'1–3'):'',...(o.sym||[]).map(k=>OASYM[k]),o.alc?o.alc+' genst. alkohol':'',o.stress===3?'høj stress':'',o.hrt?'hormonbehandling':''].filter(Boolean).join(', ')||'ingen gener';}
+/* Hvad går forud for, at vægten stiger? Sammenligner de 2 dage før en vægtstigning med de 2 dage før stabil/faldende vægt. */
+function weightDrivers(){
+  const W=[...D.weights].filter(w=>w.d>addDays(today,-120)).sort((a,b)=>a.d.localeCompare(b.d)),ev=[];
+  for(let i=1;i<W.length;i++){const gap=(new Date(W[i].d)-new Date(W[i-1].d))/864e5;if(gap<1||gap>5)continue;ev.push({d:W[i].d,up:W[i].kg-W[i-1].kg>=0.4});}
+  const up=ev.filter(e=>e.up),rest=ev.filter(e=>!e.up);if(up.length<3||rest.length<3)return null;
+  const before=(e,f)=>[1,2].some(n=>{const k=addDays(e.d,-n);return f(k);});
+  const pre=k=>{const nb=(D.oa||[]).filter(o=>o.bleed>=2).map(o=>o.d).filter(b=>b>k&&b<=addDays(k,6));return nb.length>0;};
+  const F=[['for meget mad (over dit mål)',k=>{const t=target(),d=day(k);return t&&d.n&&d.kcal>t.v*1.1;}],
+    ['meget spist sent om aftenen',k=>{const d=day(k);return d.kcal&&d.lateKcal/d.kcal>0.25;}],
+    ['en kort nat (under 6½ t)',k=>{const d=day(k);return d.sleepH!=null&&d.sleepH<6.5;}],
+    ['alkohol (2+ genstande)',k=>(oaOn(k)||{}).alc>=2],
+    ['oppustethed / væske',k=>((oaOn(k)||{}).sym||[]).includes('bloat')],
+    ['trang til sødt',k=>((oaOn(k)||{}).sym||[]).includes('crave')],
+    ['høj stress',k=>(oaOn(k)||{}).stress===3],
+    ['hedeture',k=>(oaOn(k)||{}).hot>0],
+    ['dagene op til blødning',pre],
+    ['ingen træning',k=>{const d=day(k);return d.n>0&&!d.woMin;}]];
+  const res=F.map(([l,f])=>{const a=up.filter(e=>before(e,f)).length/up.length,b=rest.filter(e=>before(e,f)).length/rest.length;return {l,a,b,diff:a-b};}).filter(x=>x.a>=0.4&&x.diff>=0.2).sort((x,y)=>y.diff-x.diff);
+  return {n:up.length,m:rest.length,top:res.slice(0,3)};}
+function cycleInfo(){const days=(D.oa||[]).filter(o=>o.bleed>=2).map(o=>o.d).sort();if(!days.length)return null;
+  const starts=days.filter((k,i)=>i===0||(new Date(k)-new Date(days[i-1]))/864e5>5),len=starts.slice(1).map((k,i)=>Math.round((new Date(k)-new Date(starts[i]))/864e5));
+  return {starts,len,since:Math.round((new Date(today)-new Date(starts.at(-1)))/864e5)};}
+/* Hvor sikre er analyserne? Vokser med mængden af data. */
+function trust(){const d90=range(90),food=logged(range(28)).length,wWeeks=[0,1,2,3,4,5,6,7].filter(i=>D.weights.filter(w=>w.d>addDays(today,-7*(i+1))&&w.d<=addDays(today,-7*i)).length>=2).length;
+  const oaDays=(D.oa||[]).filter(o=>o.d>addDays(today,-90)).length,first=(D.oa||[]).map(o=>o.d).sort()[0],span=first?Math.round((new Date(today)-new Date(first))/864e5):0;
+  const lvl=p=>p>=1?'Høj':p>=0.5?'Middel':'Lav';
+  const rows=[{k:'food',t:'Spisemønstre',p:Math.min(1,food/21),need:'2–3 uger med logget mad',say:'hvornår du spiser, sult, søvn og måltider',have:`${Math.min(food,21)} af 21 dage`},
+    {k:'weight',t:'Hvad får vægten til at stige',p:Math.min(1,wWeeks/6),need:'6 uger med vejning mindst 2 gange om ugen',say:'hvilke vaner der går forud for, at vægten stiger',have:`${Math.min(wWeeks,6)} af 6 uger`}];
+  if(isOA())rows.push({k:'oa',t:'Overgangsalder og hormoner',p:Math.min(1,Math.min(oaDays/60,span/75)),need:'2–3 måneder med "Krop og hormoner" de fleste dage',say:'sammenhæng mellem cyklus, hedeture, gener og vægt',have:`${oaDays} logninger over ${span} dage`});
+  return rows.map(r=>({...r,lvl:lvl(r.p)}));}
+function drawTrust(){const el=$('trust');if(!el)return;const R=trust();el.hidden=!D.meals.length;
+  el.innerHTML=`<div class="sec-h"><span class="sq">🎯</span><b>HVOR SIKRE ER ANALYSERNE?</b></div><div class="tr-list">${R.map(r=>`<div class="tr"><div class="tr-h"><b>${r.t}</b><span class="badge2 ${r.p>=1?'b-ok':r.p>=0.5?'b-pat':'b-rel'}">${r.lvl}</span></div><div class="tr-bar"><i style="width:${Math.round(r.p*100)}%"></i></div><small>${r.p>=1?`Nok data til at sige noget om ${r.say}.`:`Kræver ${r.need}. Du har ${r.have}.`}</small></div>`).join('')}</div>`;}
 function correlations(){
   const L=logged(range(56)),out=[];
   const grp=(label,pred)=>{const a=L.filter(pred),b=L.filter(d=>!pred(d));if(a.length>=3&&b.length>=3){const x=avg(a,d=>d.kcal),y=avg(b,d=>d.kcal);
@@ -1828,6 +1881,7 @@ function aiData(n){
     foerste:d.first!=null?fmtH(d.first):null,sidste:d.last!=null?fmtH(d.last):null,kcal_i_spisepausen:r0(d.lateKcal),traening_min:d.woMin,
     soevn:d.sleep?`${d.sleep.from}-${d.sleep.to} (${nf(d.sleepH,1)} t, ${QUAL[d.sleep.q]}${d.sleep.hot?', hedeture':''})`:null,
     vaegt_kg:d.weight,glp1:d.dose?`${d.dose.med||'GLP-1'} ${d.dose.mg} mg`:null,fase:d.dose?PH[d.dose.phase]:null,dage_efter_dosis:d.sinceDose,
+    ...(isOA()&&oaOn(d.k)?{krop_og_hormoner:oaTxt(oaOn(d.k))}:{}),
     sult:(D.hunger||[]).filter(x=>x.t.startsWith(d.k)).map(x=>`${x.t.slice(11,16)} ${['lidt sulten','sulten','meget sulten'][x.lvl-1]}${x.why&&x.why.length?' ('+x.why.join(', ')+')':''}`)}));
 }
 const rules=`Du er Meal Mentor AI, en varm, konkret dansk kost-mentor i en app for personer, der bruger GLP-1-medicin (fx Wegovy, Ozempic, Mounjaro) eller trapper ud af den.
@@ -1839,6 +1893,7 @@ Regler:
 - Er målet at blive stærkere og mere markeret og holde vægten, så fokusér på protein fordelt over dagen, styrketræning 2–4 gange om ugen og stabil vægt.
 - SULT: Når brugeren er sulten (står i SULT I DAG eller i spørgsmålet), så find den sandsynlige årsag ud fra data, før du giver råd: hvor længe siden sidste måltid, om der var protein og fibre nok, søvn i nat, dag efter dosis (dag 4–6 stiger appetitten ofte), tidspunkt (sen eftermiddag/aften), og brugerens eget bud (træt, stress, kedsomhed, trøst, tørst). Sig kort, hvad du tror årsagen er, og giv 1–2 konkrete råd: ved rigtig sult et konkret måltid/mellemmåltid med protein, der passer til de kalorier, der er tilbage og spisepausen; ved træthed, stress, kedsomhed eller trøst noget andet end mad (vand/te, en kort gåtur, vejrtrækning, ringe til en ven) – uden at moralisere. Ser du et mønster over flere dage (fx sult hver dag kl. 15), så sig det og foreslå at flytte eller styrke et måltid.
 - Sig det, hvis der er for få data til at konkludere.
+- OVERGANGSALDER: Bruger brugeren 'Krop og hormoner', så kig efter sammenhænge mellem cyklus, hedeture, oppustethed, trang til sødt, stress, alkohol, søvn og vægt. Hjælp hende med at se, hvad der går forud for vægtøgning, så hun kan undgå det. Væske og dagene op til blødning kan give midlertidig vægtstigning; sig det, så hun ikke bliver bekymret. Stil aldrig diagnoser, og henvis til lægen ved kraftige eller uventede blødninger eller blødning efter overgangsalderen.
 - Skriv korrekt dansk, fx "en god start" (ikke "et godt start").
 - Mangler der logning nogle dage (se 'Manglende logning'), så nævn kort at vurderingen derfor er usikker, og at brugeren kan efterregistrere, hvis hun har glemt det. Dage med 0 måltider betyder sandsynligvis manglende logning, ikke faste.`;
 function context(){
@@ -1846,6 +1901,7 @@ function context(){
   return `${veg||dn.length||dk?`Kost – foreslå ALDRIG mad, der bryder dette (det kan være allergi eller intolerance): ${[veg?'er vegetar':'',dn.length?'spiser ikke '+dn.join(', '):'',dk?'spiser heller ikke: '+dk:''].filter(Boolean).join('; ')}. `:''}Mål: ${S().goal?GOAL[S().goal]:'ikke angivet'}.${isOA()?` Brugeren er ${OAT[S().oa]}: læg vægt på protein fordelt over dagen (mindst 25–30 g pr. måltid), styrketræning 2–3 gange om ugen, fibre og kalk; skeln mellem vægtøgning fra overgangsalderen og fra nedtrapning af GLP-1. Nævn kun overgangsalderen, når det er relevant.`:''} Kalorimål: ${t?nf(t.v)+' kcal ('+t.src+')':'ikke angivet'}. Proteinmål: ${protTarget()?protTarget()+' g':'ikke angivet'}. Spisepausen om aftenen starter kl. ${lateH()}; kald det altid "spisepausen om aftenen", ikke "efter kl. X".
 Appens egne anbefalinger lige nu: ${recs().map(r=>r[1]+': '+r[2]).join(' | ')}.
 Sammenhænge: ${correlations().map(c=>c.t+': '+c.v+'. '+c.s).join(' | ')||'ingen endnu'}.
+Analysernes sikkerhed: ${trust().map(r=>r.t+': '+r.lvl+' ('+r.have+')').join('; ')}. Sig tydeligt, hvor sikker du er, og konkludér ikke mere, end sikkerheden tillader.${(()=>{const w=weightDrivers();return w&&w.top.length?' Før vægtstigninger ses oftest: '+w.top.map(x=>x.l+' ('+Math.round(x.a*100)+' % mod '+Math.round(x.b*100)+' %)').join(', ')+'.':'';})()}
 Manglende logning de seneste 7 dage: ${(()=>{const g=gaps();return [g.miss.length?'ingen mad: '+g.miss.map(d=>d.k).join(', '):'',g.thin.length?'kun ét måltid: '+g.thin.map(d=>d.k).join(', '):'',g.noSleep.length?'ingen søvn: '+g.noSleep.map(d=>d.k).join(', '):''].filter(Boolean).join('; ')||'ingen'})()}.`;
 }
 function md(t){
@@ -1912,6 +1968,7 @@ function openForm(id,date,force){
   document.querySelectorAll('.quick [data-f]').forEach(x=>x.setAttribute('aria-pressed',!open&&x.dataset.f===id));
   if(open)return;resetDates(true);
   if(id==='fSleep')setNight(date||today);
+  if(id==='fOA'){$('fOA').elements.d.value=date||today;fillOA();}
   else if(date){$(id).querySelectorAll('input[type=date]').forEach(i=>i.value=date);if(date<today)$(id).querySelectorAll('input[type=time]').forEach(i=>i.value='12:00');}
   const first=$(id).querySelector('input:not([type=date]):not([type=time]):not([type=radio]):not([type=hidden])');if(first)first.focus({preventScroll:true});
   panel.scrollIntoView({behavior:reduce?'auto':'smooth',block:'nearest'});
@@ -1999,6 +2056,17 @@ $('fWeight').onsubmit=e=>{e.preventDefault();const f=e.target;
   D.weights=D.weights.filter(w=>w.d!==val(f,'d'));D.weights.push({id:uid(),d:val(f,'d'),kg:+val(f,'kg'),...(isOA()&&+val(f,'waist')?{waist:+val(f,'waist')}:{})});f.elements.kg.value='';f.elements.waist.value='';save();flash(f,'Gemt');};
 $('fWork').onsubmit=e=>{e.preventDefault();const f=e.target;
   D.workouts.push({id:uid(),t:val(f,'d')+'T'+val(f,'tm'),navn:val(f,'navn').trim(),min:+val(f,'min')});f.elements.navn.value='';f.elements.min.value='';save();flash(f,'Gemt');};
+const OASYM={bloat:'oppustet/væske',crave:'trang til sødt',mood:'lavt humør',anx:'uro/angst',fog:'hjernetåge/træt',joint:'ledsmerter',head:'hovedpine',breast:'ømme bryster',const:'forstoppelse'};
+const BLEED=['ingen','pletblødning','let','normal','kraftig'];
+const oaOn=k=>(D.oa||[]).find(x=>x.d===k)||null;
+function fillOA(){const f=$('fOA');if(!f)return;const k=val(f,'d')||today,o=oaOn(k);
+  f.querySelectorAll('input[type=checkbox][name=sym]').forEach(c=>c.checked=!!(o&&o.sym&&o.sym.includes(c.value)));
+  const r=(n,v)=>{const x=f.querySelector(`[name=${n}][value="${v}"]`);if(x)x.checked=true;};r('bleed',o?o.bleed:0);r('hotd',o?o.hot:0);r('stress',o?o.stress:2);
+  f.elements.alc.value=o?o.alc:0;f.elements.hrt.checked=!!(o&&o.hrt);}
+$('fOA').elements.d.addEventListener('change',fillOA);
+$('fOA').onsubmit=e=>{e.preventDefault();const f=e.target,k=val(f,'d')||today,g=n=>+((f.querySelector(`[name=${n}]:checked`)||{}).value||0);
+  D.oa=(D.oa||[]).filter(x=>x.d!==k);D.oa.push({id:uid(),d:k,bleed:g('bleed'),hot:g('hotd'),sym:[...f.querySelectorAll('[name=sym]:checked')].map(c=>c.value),stress:g('stress')||2,alc:+f.elements.alc.value||0,hrt:f.elements.hrt.checked});
+  save();flash(f,'Gemt');try{drawLog();}catch(x){}};
 $('fDose').onsubmit=e=>{e.preventDefault();const f=e.target;
   D.doses.push({id:uid(),d:val(f,'d'),med:val(f,'med').trim(),mg:+val(f,'mg'),phase:val(f,'phase')});save();flash(f,'Gemt');};
 $('fSet').onsubmit=e=>{e.preventDefault();const f=e.target;
@@ -2031,8 +2099,9 @@ function drawEntries(){
     ...D.sleep.map(s=>({id:s.id,typ:'sleep',t:s.d+'T'+s.to,txt:`Søvn ${nf(sleepLen(s.from,s.to),1)} t`,sub:`${s.from}–${s.to} · ${QUAL[s.q]}`})),
     ...D.weights.map(w=>({id:w.id,typ:'weights',t:w.d+'T07:00',txt:`Vægt ${nf(w.kg,1)} kg`,sub:w.waist?`talje ${nf(w.waist,1)} cm`:''})),
     ...D.doses.map(d=>({id:d.id,typ:'doses',t:d.d+'T08:00',txt:`${esc(d.med||'GLP-1')} ${mgTxt(d.mg)} mg`,sub:PH[d.phase]})),
-    ...D.workouts.map(w=>({id:w.id,typ:'workouts',t:w.t,txt:esc(w.navn),sub:`${w.min} min`}))].filter(e=>!entFilter||e.typ===entFilter).sort((a,b)=>b.t.localeCompare(a.t));const tot=all.length;all.splice(entLimit);$('entMore').hidden=tot<=entLimit;
-  const TY={meals:'Mad',sleep:'Søvn',weights:'Vægt',doses:'Dosis',workouts:'Træning'};let lastDay='';
+    ...D.workouts.map(w=>({id:w.id,typ:'workouts',t:w.t,txt:esc(w.navn),sub:`${w.min} min`})),
+    ...(D.oa||[]).map(o=>({id:o.id,typ:'oa',t:o.d+'T21:00',txt:'Krop og hormoner',sub:oaTxt(o)}))].filter(e=>!entFilter||e.typ===entFilter).sort((a,b)=>b.t.localeCompare(a.t));const tot=all.length;all.splice(entLimit);$('entMore').hidden=tot<=entLimit;
+  const TY={meals:'Mad',sleep:'Søvn',weights:'Vægt',doses:'Dosis',workouts:'Træning',oa:'Krop og hormoner'};let lastDay='';
   $('entries').innerHTML=all.length?all.map(e=>{const dk=e.t.slice(0,10),head=dk!==lastDay?`<li class="eday">${dLabel(dk)}</li>`:'';lastDay=dk;
     const when=e.typ==='meals'||e.typ==='workouts'?'kl. '+e.t.slice(11):'';const sub=[when,e.sub].filter(Boolean).join(' · ');
     return head+`<li class="erow"><span class="edot t-${e.typ}" title="${TY[e.typ]}"></span><span class="etx"><b>${e.txt}</b>${sub?`<small>${sub}</small>`:''}</span><button class="edel" data-x="${e.typ}:${e.id}" aria-label="Slet ${TY[e.typ].toLowerCase()}">Slet</button></li>`;}).join(''):'<li class="eday">Intet registreret endnu.</li>';
@@ -2069,7 +2138,7 @@ function statusNow(){const r=remaining();
   `${r.bed?`Går typisk i seng ca. ${fmtH(r.bed%24)}. `:''}Træning i dag: ${r.d.woMin} min. Søvn i nat: ${r.d.sleepH!=null?nf(r.d.sleepH,1)+' t':'ikke logget'}.]`;}
 function patterns(){
   const lines=range(8,addDays(today,-1)).map(d=>{const hu=(D.hunger||[]).filter(x=>x.t.startsWith(d.k));
-    return `${d.k}: ${d.n?d.meals.map(m=>m.t.slice(11,16)+' '+m.titel+' '+r0(m.kcal)+' kcal/'+r0(m.protein)+' g prot').join('; '):'ingen måltider logget'}. I alt ${nf(d.kcal)} kcal, ${nf(d.protein)} g protein. Søvn ${d.sleepH!=null?nf(d.sleepH,1)+' t':'ikke logget'}. Træning ${d.woMin} min.${hu.length?' Sult: '+hu.map(x=>'kl. '+x.t.slice(11,16)+' '+['lidt sulten','sulten','meget sulten'][x.lvl-1]+(x.why&&x.why.length?' ('+x.why.join(', ')+')':'')).join('; ')+'.':''}${d.sinceDose!=null?' Dag '+d.sinceDose+' efter dosis.':''}`;});
+    return `${d.k}: ${d.n?d.meals.map(m=>m.t.slice(11,16)+' '+m.titel+' '+r0(m.kcal)+' kcal/'+r0(m.protein)+' g prot').join('; '):'ingen måltider logget'}. I alt ${nf(d.kcal)} kcal, ${nf(d.protein)} g protein. Søvn ${d.sleepH!=null?nf(d.sleepH,1)+' t':'ikke logget'}. Træning ${d.woMin} min.${hu.length?' Sult: '+hu.map(x=>'kl. '+x.t.slice(11,16)+' '+['lidt sulten','sulten','meget sulten'][x.lvl-1]+(x.why&&x.why.length?' ('+x.why.join(', ')+')':'')).join('; ')+'.':''}${d.sinceDose!=null?' Dag '+d.sinceDose+' efter dosis.':''}${isOA()&&oaOn(d.k)?' Krop og hormoner: '+oaTxt(oaOn(d.k))+'.':''}`;});
   return 'MØNSTRE – de seneste 8 dage før i dag (ældste først):\n'+lines.join('\n');}
 const botRules=`${rules}
 Du er appens chat-mentor, Meal Mentor AI. Svar kort (højst 80 ord, gerne færre), venligt og konkret på dansk. Foreslå gerne konkrete danske måltider med omtrentlige kcal og protein, der passer til det, brugeren har tilbage, og til tidspunktet. Brug punktopstilling ved forslag. Spørg kort tilbage, hvis noget er uklart. Hvis spørgsmålet handler om medicindosis, så henvis til lægen. Respektér spisepausen om aftenen: foreslå ikke mad i spisepausen, medmindre brugeren selv spørger, og nævn så at det er i spisepausen. Ros ikke træning, medmindre brugeren spørger.
@@ -2316,7 +2385,14 @@ function drawAnl(){const L=logged(range(56)),cards=[];const open=drawAnl.open||{
   const mi=mealCountInsight();
   if(mi){cards.push({k:'meals',sub:'Antal måltider om dagen',h:`${mi.best.lab} måltider passer bedst til dig`,badge:['Godt','b-ok'],
     body:bars(mi.groups.map(g=>({l:g.lab+' mål.',v:g.kcal,g})),x=>x.l,x=>x.g===mi.best,'var(--acc)'),more:mi.groups.map(g=>`${g.lab} måltider: ${nf(Math.round(g.kcal/10)*10)} kcal i snit (${g.n} dage)`).join(' · ')+'.'});}
-  $('anlSec').hidden=!cards.length;
+  const wd=weightDrivers();
+  if(wd){cards.push({k:'wdrv',sub:'Før vægten stiger',h:wd.top.length?`Oftest: ${wd.top[0].l}`:'Ingen tydelig årsag endnu',badge:wd.top.length?['Mønster','b-pat']:['Stabilt','b-ok'],
+    body:wd.top.length?`<ul class="wd">${wd.top.map(x=>`<li><span>${esc(x.l)}</span><b>${nf(Math.round(x.a*100))} %</b><small>mod ${nf(Math.round(x.b*100))} % ellers</small></li>`).join('')}</ul>`:'',
+    more:`Ud fra ${wd.n} gange hvor vægten steg mindst 0,4 kg og ${wd.m} gange hvor den ikke gjorde. Procenten viser, hvor ofte det skete i de 2 dage før. Vægten svinger også af væske, så se på mønstret over tid.`});}
+  const cy=isOA()?cycleInfo():null;
+  if(cy){cards.push({k:'cycle',sub:'Cyklus',h:cy.len.length?`Cyklus på ${nf(Math.min(...cy.len))}–${nf(Math.max(...cy.len))} dage`:`Sidste blødning for ${cy.since} dage siden`,badge:cy.len.some(l=>l<21||l>35)?['Uregelmæssig','b-pat']:['Logget','b-ok'],body:'',
+    more:`${cy.starts.length} blødninger logget. Sidste startede for ${cy.since} dage siden. Uregelmæssige cyklusser er almindelige op til overgangsalderen. Har du spørgsmål om blødninger, så tal med din læge.`});}
+  $('anlSec').hidden=!cards.length;drawTrust();
   $('anl').innerHTML=cards.map(c=>`<button class="ac" data-k="${c.k}" aria-expanded="${!!open[c.k]}"><div class="ac-h"><div><small>${c.sub}</small><b>${esc(c.h)}</b></div><span class="badge2 ${c.badge[1]}">${c.badge[0]}</span></div>${c.body}${open[c.k]?`<p>${esc(c.more)}</p>`:''}</button>`).join('');
   $('anl').querySelectorAll('.ac').forEach(b=>b.onclick=()=>{drawAnl.open={...open,[b.dataset.k]:!open[b.dataset.k]};drawAnl();});}
 
