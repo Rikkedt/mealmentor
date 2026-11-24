@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,viewport-fit=cover">
-<title>Meal Mentor AI</title><meta name="mm-version" content="cad85ecfe2"><link rel="manifest" href="/manifest.webmanifest"><link rel="apple-touch-icon" href="/apple-touch-icon.png"><link rel="icon" href="/icon-192.png"><meta name="theme-color" content="#F1F1F4"><link rel="stylesheet" href="/mm.css"><script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script><script src="/mm.js"></script>
+<title>Meal Mentor AI</title><meta name="mm-version" content="73672e8ee9"><link rel="manifest" href="/manifest.webmanifest"><link rel="apple-touch-icon" href="/apple-touch-icon.png"><link rel="icon" href="/icon-192.png"><meta name="theme-color" content="#F1F1F4"><link rel="stylesheet" href="/mm.css"><script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script><script src="/mm.js"></script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Inter+Tight:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <style>
@@ -703,6 +703,7 @@ body.kb .tabs,body.kb #botFab{display:none!important}
 .mres{font-weight:700;font-size:18px;margin:10px 0 4px}
 .mpick{display:grid;gap:8px}.mpick button{display:grid;text-align:left;padding:10px 14px;min-height:52px}.mpick small{font-weight:400;opacity:.75}
 .mdel{color:#c0392b!important}
+.ainote.new{margin-bottom:14px}
 </style>
 </head>
 <body>
@@ -1856,16 +1857,24 @@ function todayFacts(){const r=remaining(),d=r.d,hu=(D.hunger||[]).filter(x=>x.t.
   const k=r.t?(r.kLeft<0?`${nf(-r.kLeft)} kcal OVER målet (spist ${nf(d.kcal)} af ${nf(r.t.v)} kcal)`:`${nf(r.kLeft)} kcal tilbage (spist ${nf(d.kcal)} af ${nf(r.t.v)} kcal)`):`spist ${nf(d.kcal)} kcal, intet kalorimål`;
   const pr=r.pt?(r.pLeft<=0?`proteinmålet er nået (${nf(d.protein)} af ${nf(r.pt)} g)`:`${nf(r.pLeft)} g protein mangler (spist ${nf(d.protein)} af ${nf(r.pt)} g)`):`${nf(d.protein)} g protein`;
   return `FAKTA FOR I DAG (kl. ${fmtH(r.nowH)}) – brug disse tal præcist, regn ikke selv: ${k}; ${pr}; ${d.n} måltider (${d.meals.map(m=>m.t.slice(11)+' '+m.titel+' '+r0(m.kcal)+' kcal').join('; ')||'ingen'}); træning ${d.woMin} min; søvn i nat ${d.sleepH!=null?nf(d.sleepH,1)+' t':'ikke logget'}.${huTxt}`;}
+/* Ny kommentar fra Mentor ligger øverst (før kcal-kortet), til den er set. Derefter ligger den over dagens måltider. */
+let noteKeyShown='';
+function placeNote(key){const box=$('aiNote'),hero=document.querySelector('#v-vej .hero'),below=document.querySelector('#v-vej .vtop[style*="margin-top:26px"]');if(!box||!hero||!below)return;
+  noteKeyShown=key;const fresh=store.get('ai-note-seen','')!==key;
+  if(fresh){if(box.nextElementSibling!==hero)hero.parentNode.insertBefore(box,hero);box.classList.add('new');}
+  else{if(box.nextElementSibling!==below)below.parentNode.insertBefore(box,below);box.classList.remove('new');}}
+document.addEventListener('visibilitychange',()=>{if(document.hidden&&noteKeyShown)store.set('ai-note-seen',noteKeyShown);});
 async function autoNote(force){
   const box=$('aiNote'),txt=$('aiNoteTxt');
   if(!sample||logged(range(7)).length<3){box.hidden=true;return;}
   const td=day(today),key='ai-note3-'+today+(D.demo?'-demo':'')+'-'+[(target()||{}).v,gaps().n,td.n,Math.round(td.kcal/50),Math.round(td.protein/10),td.woMin,td.sleep?1:0,(D.hunger||[]).filter(x=>x.t.startsWith(today)).length].join('.'),c=store.get(key,null);
   box.hidden=false;
-  const show=(t,at)=>{txt.innerHTML=md(t)+(at?`<p class="small" style="margin-top:6px">Ud fra det, du havde logget kl. ${at}</p>`:'');};
-  if(c&&!force){show(c.text||c,c.at);return;}
+  const show=(t,at)=>{txt.innerHTML=md(t)+(at?`<p class="small" style="margin-top:6px">Ud fra det, du havde logget kl. ${at}</p>`:'');placeNote(key);};
+  const ct=c&&(typeof c==='string'?c:c.text);
+  if(ct&&!force){show(ct,c.at);return;}
   if(noteBusy||(!force&&noteKeyTried===key))return;noteBusy=true;noteKeyTried=key;txt.innerHTML='<p class="small">Mentoren kigger på dine data …</p>';
   const p=`${rules}\n\n${context()}\n\n${todayFacts()}\n\nDe seneste 14 dage: ${JSON.stringify(aiData(14))}\n\nSkriv en kort, personlig kommentar til i dag (højst 50 ord, ingen overskrifter, ingen punktopstilling). Kommentaren vises lige under et kort, der allerede viser kalorier og protein tilbage eller over målet. Derfor: nævn IKKE kcal- eller proteintal og regn ikke selv; det eneste kalorimål er det i FAKTA FOR I DAG (gennemsnit fra den stabile periode er ikke dagens mål). Er brugeren over målet, så sig det kort og venligt uden at gøre det til en stor sag, og ros aldrig et indtag over målet. Giv ét konkret råd til resten af dagen. Nævn ikke træning, medmindre der er for lidt af den (fx ingen træning i 4 dage). Spisepausen om aftenen starter kl. ${lateH()}: foreslå aldrig at spise i spisepausen. Er klokken efter kl. ${lateH()}, eller er dagens kalorier brugt, så foreslå i stedet vand, te eller at vente til morgenmaden. Rådene må ikke modsige hinanden. Skriv ikke om ærlighed, og gentag ikke appens anbefalinger.`;
-  try{const r=await sample(p,{modelTier:'quick',onText:({text})=>{txt.innerHTML=md(text);}});const at=nowT().slice(11);store.set(key,{text:r.text,at});show(r.text,at);}
+  try{const r=await sample(p,{modelTier:'quick',onText:({text})=>{txt.innerHTML=md(text);}});const at=nowT().slice(11);if(!String(r.text||'').trim())throw new Error('empty');store.set(key,{text:r.text,at});show(r.text,at);}
   catch(e){txt.innerHTML=`<p class="small">${aiErr(e)}</p>`;}finally{noteBusy=false;}
 }
 $('aiRefresh').onclick=()=>autoNote(true);
