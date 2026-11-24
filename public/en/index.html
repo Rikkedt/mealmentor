@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,viewport-fit=cover">
-<title>Meal Mentor AI</title><meta name="mm-version" content="7d105f4c17"><link rel="manifest" href="/manifest.webmanifest"><link rel="apple-touch-icon" href="/apple-touch-icon.png"><link rel="icon" href="/icon-192.png"><meta name="theme-color" content="#F1F1F4"><link rel="stylesheet" href="/mm.css"><script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script><script src="/mm.en.js"></script>
+<title>Meal Mentor AI</title><meta name="mm-version" content="6a42987302"><link rel="manifest" href="/manifest.webmanifest"><link rel="apple-touch-icon" href="/apple-touch-icon.png"><link rel="icon" href="/icon-192.png"><meta name="theme-color" content="#F1F1F4"><link rel="stylesheet" href="/mm.css"><script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script><script src="/mm.en.js"></script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Inter+Tight:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <style>
@@ -697,7 +697,7 @@ body.kb .tabs,body.kb #botFab{display:none!important}
 .bot-in{padding-bottom:max(12px,env(safe-area-inset-bottom))!important}
 .bot.kb .bot-in{padding-bottom:10px!important}
 /* ret/slet måltid */
-.dtl li.tap{cursor:pointer}.dtl li.tap .dtl-b small::after{content:" · ret";opacity:.6}
+.dtl li.tap{cursor:pointer}.dtl li.tap .dtl-b small::after{content:" · ✎";opacity:.6}
 .mamt{display:flex;flex-wrap:wrap;gap:6px;margin:6px 0 10px}.mamt button{flex:1 1 auto}
 .mrow{display:flex;align-items:center;gap:10px;font-weight:600;font-size:14px;margin:8px 0}.mrow input{width:110px;min-height:42px}
 .mres{font-weight:700;font-size:18px;margin:10px 0 4px}
@@ -873,9 +873,9 @@ details.trust>summary::after{content:"›";margin-left:8px;transition:transform 
 <p class="small" style="margin:0 0 8px">Log how your body feels today, also on good days. After 2–3 months the Mentor can see what is linked to your weight going up. Also weigh yourself 2–3 times a week.</p>
 <label>Date<input class="t" type="date" name="d" required></label>
 <span class="tl">Bleeding today</span>
-<div class="qual" role="radiogroup" aria-label="Bleeding today"><label><input type="radio" name="bleed" value="0" checked><span>Ingen</span></label><label><input type="radio" name="bleed" value="1"><span>Spotting</span></label><label><input type="radio" name="bleed" value="2"><span>Let</span></label><label><input type="radio" name="bleed" value="3"><span>Normal</span></label><label><input type="radio" name="bleed" value="4"><span>Heavy</span></label></div>
+<div class="qual" role="radiogroup" aria-label="Bleeding today"><label><input type="radio" name="bleed" value="0" checked><span>None</span></label><label><input type="radio" name="bleed" value="1"><span>Spotting</span></label><label><input type="radio" name="bleed" value="2"><span>Light</span></label><label><input type="radio" name="bleed" value="3"><span>Normal</span></label><label><input type="radio" name="bleed" value="4"><span>Heavy</span></label></div>
 <span class="tl">Hot flushes today</span>
-<div class="qual" role="radiogroup" aria-label="Hot flushes today"><label><input type="radio" name="hotd" value="0" checked><span>Ingen</span></label><label><input type="radio" name="hotd" value="1"><span>1–3</span></label><label><input type="radio" name="hotd" value="2"><span>4 or more</span></label></div>
+<div class="qual" role="radiogroup" aria-label="Hot flushes today"><label><input type="radio" name="hotd" value="0" checked><span>None</span></label><label><input type="radio" name="hotd" value="1"><span>1–3</span></label><label><input type="radio" name="hotd" value="2"><span>4 or more</span></label></div>
 <span class="tl">Do you notice any of these?</span>
 <div class="qual"><label><input type="checkbox" name="sym" value="bloat"><span>Bloated / fluid retention</span></label><label><input type="checkbox" name="sym" value="crave"><span>Sweet cravings</span></label><label><input type="checkbox" name="sym" value="mood"><span>Low mood / irritable</span></label><label><input type="checkbox" name="sym" value="anx"><span>Restless / anxious</span></label><label><input type="checkbox" name="sym" value="fog"><span>Brain fog / tired</span></label><label><input type="checkbox" name="sym" value="joint"><span>Joint pain</span></label><label><input type="checkbox" name="sym" value="head"><span>Headache</span></label><label><input type="checkbox" name="sym" value="breast"><span>Sore breasts</span></label><label><input type="checkbox" name="sym" value="const"><span>Constipation</span></label></div>
 <span class="tl">Stress today</span>
@@ -1007,7 +1007,7 @@ var DIETS=[['veg','Vegetarian'],['pesc','Meat'],['fisk','Fish'],['aeg','Eggs'],[
 /* tags: k=kød, s=svin, f=fisk, a=æg, m=mælk, g=gluten */
 var FOODS={'Breakfast':[[180,15,'skyr with berries and a little muesli','mg'],[250,16,'skyr with berries and flaxseed','m'],[300,20,'2 boiled eggs and a carrot','a'],[330,22,'porridge with skyr and berries','mg'],[360,22,'omelette with spinach and tomato','a'],[380,24,'2 eggs on rye bread with tomato','ag'],[400,25,'rye bread with cottage cheese and salmon','mfg'],[420,20,'chia pudding with coconut yogurt and berries',''],[450,28,'Greek yogurt with nuts and apple','m'],[480,24,'tofu scramble with rye bread','g'],[500,26,'protein shake with banana and oats','mg']],
  'Lunch':[[300,30,'big salad with chicken','k'],[350,25,'salad with tuna and beans','f'],[380,22,'lentil soup with rye bread','g'],[420,28,'rye bread with egg and salmon','afg'],[450,30,'chicken wrap with vegetables','kg'],[480,24,'quinoa salad with chickpeas and feta','m'],[500,30,'rye bread with turkey and hummus','kg'],[520,26,'falafel with salad and hummus',''],[550,32,'pasta salad with chicken and pesto','kmg'],[580,35,'tuna pitta with vegetables','fg'],[600,28,'tofu bowl with rice and edamame','']],
- 'Afternoon':[[120,12,'plain skyr with berries','m'],[150,10,'a boiled egg and a carrot','a'],[180,14,'cottage cheese and cucumber','m'],[200,8,'a handful of nuts and an apple',''],[220,15,'proteinbar',''],[250,12,'hummus with vegetable sticks',''],[260,16,'rye bread with cottage cheese','mg'],[300,20,'proteinshake','m']],
+ 'Afternoon':[[120,12,'plain skyr with berries','m'],[150,10,'a boiled egg and a carrot','a'],[180,14,'cottage cheese and cucumber','m'],[200,8,'a handful of nuts and an apple',''],[220,15,'proteinbar',''],[250,12,'hummus with vegetable sticks',''],[260,16,'rye bread with cottage cheese','mg'],[300,20,'protein shake','m']],
  'Dinner':[[380,32,'salmon with broccoli','f'],[420,30,'cod with potatoes and vegetables','f'],[450,35,'chicken breast with salad and bulgur','kg'],[500,30,'chilli sin carne with rice',''],[520,34,'chicken curry with rice and vegetables','k'],[550,30,'pork tenderloin stew with vegetables','ks'],[560,28,'vegetable lasagne','mg'],[600,38,'beef, potatoes and salad','k'],[620,26,'tofu stir-fry with noodles','g'],[650,36,'chicken, rice and vegetables','k'],[700,34,'salmon pasta with spinach','fg']],
  'Evening snack':[[100,8,'a cup of tea and a little skyr','m'],[120,0,'a cup of tea and a piece of fruit',''],[160,12,'skyr with berries','m'],[180,6,'a small handful of almonds','']]};
 var DIETX={veg:'kfs',pesc:'ks',fisk:'f',aeg:'a',maelk:'m',gluten:'g',svin:'s'};
@@ -2402,10 +2402,10 @@ function drawAnl(){const L=logged(range(56)),cards=[];const open=drawAnl.open||{
     body:bars(mi.groups.map(g=>({l:g.lab+' meals',v:g.kcal,g})),x=>x.l,x=>x.g===mi.best,'var(--acc)'),more:mi.groups.map(g=>`${g.lab} meals: ${nf(Math.round(g.kcal/10)*10)} kcal on average (${g.n} days)`).join(' · ')+'.'});}
   const wd=weightDrivers();
   if(wd){cards.push({k:'wdrv',sub:'Before your weight goes up',h:wd.top.length?`Most often: ${wd.top[0].l}`:'No clear cause yet',badge:wd.top.length?['Pattern','b-pat']:['Stable','b-ok'],
-    body:wd.top.length?`<ul class="wd">${wd.top.map(x=>`<li><span>${esc(x.l)}</span><b>${nf(Math.round(x.a*100))} %</b><small>mod ${nf(Math.round(x.b*100))} % ellers</small></li>`).join('')}</ul>`:'',
+    body:wd.top.length?`<ul class="wd">${wd.top.map(x=>`<li><span>${esc(x.l)}</span><b>${nf(Math.round(x.a*100))} %</b><small>vs ${nf(Math.round(x.b*100))} % otherwise</small></li>`).join('')}</ul>`:'',
     more:`Based on ${wd.n} times your weight rose at least 0.4 kg and ${wd.m} times it did not. The percentage shows how often it happened in the 2 days before. Weight also varies with fluid, so look at the pattern over time.`});}
   const cy=isOA()?cycleInfo():null;
-  if(cy){cards.push({k:'cycle',sub:'Cycle',h:cy.len.length?`Cycle of ${nf(Math.min(...cy.len))}–${nf(Math.max(...cy.len))} days`:`Last bleeding ${cy.since} days ago`,badge:cy.len.some(l=>l<21||l>35)?['Irregular','b-pat']:['Logget','b-ok'],body:'',
+  if(cy){cards.push({k:'cycle',sub:'Cycle',h:cy.len.length?`Cycle of ${nf(Math.min(...cy.len))}–${nf(Math.max(...cy.len))} days`:`Last bleeding ${cy.since} days ago`,badge:cy.len.some(l=>l<21||l>35)?['Irregular','b-pat']:['Logged','b-ok'],body:'',
     more:`${cy.starts.length} bleedings logged. The last one started ${cy.since} days ago. Irregular cycles are common in the run-up to menopause. If you have questions about bleeding, talk to your doctor.`});}
   $('anlSec').hidden=!cards.length;drawTrust();
   $('anl').innerHTML=cards.map(c=>`<button class="ac" data-k="${c.k}" aria-expanded="${!!open[c.k]}"><div class="ac-h"><div><small>${c.sub}</small><b>${esc(c.h)}</b></div><span class="badge2 ${c.badge[1]}">${c.badge[0]}</span></div>${c.body}${open[c.k]?`<p>${esc(c.more)}</p>`:''}</button>`).join('');
