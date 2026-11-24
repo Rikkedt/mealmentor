@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,viewport-fit=cover">
-<title>Meal Mentor AI</title><meta name="mm-version" content="e0a5645e6e"><link rel="manifest" href="/manifest.webmanifest"><link rel="apple-touch-icon" href="/apple-touch-icon.png"><link rel="icon" href="/icon-192.png"><meta name="theme-color" content="#F1F1F4"><link rel="stylesheet" href="/mm.css"><script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script><script src="/mm.js"></script>
+<title>Meal Mentor AI</title><meta name="mm-version" content="2479cd8145"><link rel="manifest" href="/manifest.webmanifest"><link rel="apple-touch-icon" href="/apple-touch-icon.png"><link rel="icon" href="/icon-192.png"><meta name="theme-color" content="#F1F1F4"><link rel="stylesheet" href="/mm.css"><script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script><script src="/mm.js"></script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Inter+Tight:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <style>
@@ -2258,7 +2258,7 @@ function applyTheme(){const t=S().theme;if(t==='light'||t==='dark')document.docu
 
 const onb={s:0,p:{}};
 function onbSteps(){const st=S(),R=reminders();return [
- {k:'OPRET KONTO',h:'Velkommen til Meal Mentor AI',s:'Din AI-mentor til hvornår, hvor tit og hvor meget du skal spise.',o:[['','Fortsæt med Apple','Hurtigst på iPhone','acc'],['G','Fortsæt med Google','Brug din Google-konto'],['✉️','Fortsæt med e-mail','Få et login-link på mail']],acct:1},
+ {k:'OPRET KONTO',h:'Velkommen til Meal Mentor AI',s:'Din AI-mentor til hvornår, hvor tit og hvor meget du skal spise.',o:[['<svg viewBox="0 0 384 512" width="26" height="26" fill="currentColor" aria-hidden="true"><path d="M318.7 268.7c-.2-36.7 16.4-64.4 50-84.8-18.8-26.9-47.2-41.7-84.7-44.6-35.5-2.8-74.3 20.7-88.5 20.7-15 0-49.4-19.7-76.4-19.7C63.3 141.2 4 184.8 4 273.5q0 39.3 14.4 81.2c12.8 36.7 59 126.7 107.2 125.2 25.2-.6 43-17.9 75.8-17.9 31.8 0 48.3 17.9 76.4 17.9 48.6-.7 90.4-82.5 102.6-119.3-65.2-30.7-61.7-90-61.7-91.9zm-56.6-164.2c27.3-32.4 24.8-61.9 24-72.5-24.1 1.4-52 16.4-67.9 34.9-17.5 19.8-27.8 44.3-25.6 71.9 26.1 2 49.9-11.4 69.5-34.3z"/></svg>','Fortsæt med Apple','Hurtigst på iPhone','acc'],['G','Fortsæt med Google','Brug din Google-konto'],['✉️','Fortsæt med e-mail','Få et login-link på mail']],acct:1},
  {k:'DIT MÅL',h:'Hvad vil du helst?',s:'Vi bruger det til at sætte dit daglige mål for kalorier og protein.',key:'goal',def:st.goal||'stabil',o:[['⬇️','Tabe mig','Roligt og sundt tempo','tab'],['⚖️','Holde vægten stabil på GLP-1','Spis nok – og det rigtige','stabil'],['📉','Trappe ud af GLP-1','Uden at tage på igen','ned'],['💪','Stærkere og mere markeret','Mere protein og træning','styrke']]},
  {k:'AKTIVITET',h:'Hvor aktiv er du?',s:'Tænk på en almindelig uge.',key:'act',def:String(st.act||'1.375'),o:[['🪑','Mest stillesiddende','Kontor og lidt gåture','1.2'],['🚶','Let aktiv','Gåture eller træning 1–2 gange','1.375'],['🏃','Moderat aktiv','Træning 3–4 gange om ugen','1.55'],['🔥','Meget aktiv','Hård træning næsten hver dag','1.725']]},
  {k:'OM DIG',h:'Lidt om dig',s:'Så kan vi regne dit mål for kalorier og protein ud. Du kan altid ændre det under Profil.',body:1},

@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,viewport-fit=cover">
-<title>Meal Mentor AI</title><meta name="mm-version" content="e0a5645e6e"><link rel="manifest" href="/manifest.webmanifest"><link rel="apple-touch-icon" href="/apple-touch-icon.png"><link rel="icon" href="/icon-192.png"><meta name="theme-color" content="#F1F1F4"><link rel="stylesheet" href="/mm.css"><script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script><script src="/mm.en.js"></script>
+<title>Meal Mentor AI</title><meta name="mm-version" content="2479cd8145"><link rel="manifest" href="/manifest.webmanifest"><link rel="apple-touch-icon" href="/apple-touch-icon.png"><link rel="icon" href="/icon-192.png"><meta name="theme-color" content="#F1F1F4"><link rel="stylesheet" href="/mm.css"><script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script><script src="/mm.en.js"></script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Inter+Tight:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <style>
@@ -2258,7 +2258,7 @@ function applyTheme(){const t=S().theme;if(t==='light'||t==='dark')document.docu
 
 const onb={s:0,p:{}};
 function onbSteps(){const st=S(),R=reminders();return [
- {k:'CREATE ACCOUNT',h:'Welcome to Meal Mentor AI',s:'Your AI mentor for when, how often and how much to eat.',o:[['','Continue with Apple','Fastest on iPhone','acc'],['G','Continue with Google','Use your Google account'],['✉️','Continue with email','Get a login link by email']],acct:1},
+ {k:'CREATE ACCOUNT',h:'Welcome to Meal Mentor AI',s:'Your AI mentor for when, how often and how much to eat.',o:[['<svg viewBox="0 0 384 512" width="26" height="26" fill="currentColor" aria-hidden="true"><path d="M318.7 268.7c-.2-36.7 16.4-64.4 50-84.8-18.8-26.9-47.2-41.7-84.7-44.6-35.5-2.8-74.3 20.7-88.5 20.7-15 0-49.4-19.7-76.4-19.7C63.3 141.2 4 184.8 4 273.5q0 39.3 14.4 81.2c12.8 36.7 59 126.7 107.2 125.2 25.2-.6 43-17.9 75.8-17.9 31.8 0 48.3 17.9 76.4 17.9 48.6-.7 90.4-82.5 102.6-119.3-65.2-30.7-61.7-90-61.7-91.9zm-56.6-164.2c27.3-32.4 24.8-61.9 24-72.5-24.1 1.4-52 16.4-67.9 34.9-17.5 19.8-27.8 44.3-25.6 71.9 26.1 2 49.9-11.4 69.5-34.3z"/></svg>','Continue with Apple','Fastest on iPhone','acc'],['G','Continue with Google','Use your Google account'],['✉️','Continue with email','Get a login link by email']],acct:1},
  {k:'YOUR GOAL',h:'What would you prefer?',s:'We use it to set your daily goal for calories and protein.',key:'goal',def:st.goal||'stabil',o:[['⬇️','Lose weight','Calm and healthy pace','tab'],['⚖️','Keep my weight stable on GLP-1','Eat enough – and the right things','stabil'],['📉','Taper off GLP-1','Without regaining weight','ned'],['💪','Stronger and more toned','More protein and training','styrke']]},
  {k:'AKTIVITET',h:'How active are you?',s:'Think of an ordinary week.',key:'act',def:String(st.act||'1.375'),o:[['🪑','Mostly sedentary','Office and some walking','1.2'],['🚶','Lightly active','Walks or training 1–2 times','1.375'],['🏃','Moderately active','Training 3–4 times a week','1.55'],['🔥','Very active','Hard training almost every day','1.725']]},
  {k:'ABOUT YOU',h:'A little about you',s:'Then we can work out your goal for calories and protein. You can always change it under Profile.',body:1},
