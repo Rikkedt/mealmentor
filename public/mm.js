@@ -255,7 +255,9 @@ function daErr(e){const m=(e&&e.message)||'';let t;
       const show = () => {
         const d = document.createElement('div'); d.className = 'mm-gate';
         d.innerHTML = `<div class="mm-gate-in"><img src="/icon-192.png" alt="" width="72" height="72"><h1>Meal Mentor AI</h1>
-          <p>${T('Meal Mentor AI er en app til iPhone. Den kommer snart i App Store.', 'Meal Mentor AI is an iPhone app. It is coming soon to the App Store.')}</p>
+          <p>${T('Meal Mentor AI er en mad-mentor med AI. Tag et billede af maden og få kalorier og protein, få forslag til hvornår og hvor meget du skal spise, log søvn og træn 10 minutter om dagen.', 'Meal Mentor AI is an AI food mentor. Snap a photo of your meal to get calories and protein, get suggestions for when and how much to eat, log sleep and train 10 minutes a day.')}</p>
+          <p>${T('Du logger ind med Apple, Google eller e-mail. Vi bruger kun dit navn og din e-mail til at oprette din konto. Læs mere i privatlivspolitikken.', 'You sign in with Apple, Google or email. We only use your name and email to create your account. Read more in the privacy policy.')}</p>
+          <p>${T('Meal Mentor AI er en app til iPhone og kommer snart i App Store.', 'Meal Mentor AI is an iPhone app and is coming soon to the App Store.')}</p>
           <p class="mm-gate-small"><a href="/privatliv/">${T('Privatlivspolitik', 'Privacy policy')}</a> · <a href="/vilkaar/">${T('Vilkår', 'Terms')}</a> · <a href="mailto:info@mealmentorai.com">info@mealmentorai.com</a></p></div>`;
         document.body.append(d); document.documentElement.classList.add('mm-locked');
       };
