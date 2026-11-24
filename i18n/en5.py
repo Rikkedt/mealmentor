@@ -217,3 +217,4 @@ X.update({'Log hvordan kroppen har det i dag, også på gode dage. Efter 2–3 m
 X.update({'Gennemsnit for de seneste 7 dage.':'Average for the last 7 days.','Flot, du er tæt på dit mål.':'Great, you are close to your target.'})
 X.update({'proteinshake':'protein shake','Ingen':'None','Let':'Light','Logget':'Logged','mod':'vs','% ellers':'% otherwise'})
 X.update({'Gennemsnit for de seneste 7 dage':'Average for the last 7 days',': du ligger på':': you are at','Kalorier i snit:':'Average calories:','kcal over målet i snit':'kcal over target on average','kcal om dagen mod':'kcal a day vs','kcal om dagen':'kcal a day'})
+X.update({'Tak – aftenens check-in er gemt 🌙':'Thanks – your evening check-in is saved 🌙'})

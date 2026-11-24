@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,viewport-fit=cover">
-<title>Meal Mentor AI</title><meta name="mm-version" content="87d0b594f6"><link rel="manifest" href="/manifest.webmanifest"><link rel="apple-touch-icon" href="/apple-touch-icon.png"><link rel="icon" href="/icon-192.png"><meta name="theme-color" content="#F1F1F4"><link rel="stylesheet" href="/mm.css"><script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script><script src="/mm.en.js"></script>
+<title>Meal Mentor AI</title><meta name="mm-version" content="99bbfb9b41"><link rel="manifest" href="/manifest.webmanifest"><link rel="apple-touch-icon" href="/apple-touch-icon.png"><link rel="icon" href="/icon-192.png"><meta name="theme-color" content="#F1F1F4"><link rel="stylesheet" href="/mm.css"><script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script><script src="/mm.en.js"></script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Inter+Tight:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <style>
@@ -717,6 +717,11 @@ details.trust>summary::after{content:"›";margin-left:8px;transition:transform 
 .tr-sum{margin-left:auto;font-size:12px;opacity:.7;font-weight:600}details.trust .tr-list{margin-top:10px}
 .oatip{background:var(--card);border-radius:18px;padding:14px 16px}.oatip ul{margin:8px 0 0;padding-left:18px;display:grid;gap:6px;font-size:14px}
 .tr-warn{border-left:4px solid var(--carb)}.pprot{background:var(--soft);border-radius:16px;padding:12px 14px;display:grid;gap:6px;margin:10px 0}.pprot small{opacity:.75}
+/* dag-navigation: samlet pille med pile tæt på dagen */
+.dnav{display:inline-flex!important;align-items:center;gap:2px!important;padding:4px;border-radius:999px;background:var(--card);border:1px solid var(--line);margin:18px 0 6px!important;flex-wrap:nowrap!important}
+.dnav button{width:40px;height:40px;min-height:40px!important;padding:0!important;border:0!important;border-radius:50%!important;background:transparent!important;display:grid;place-items:center;color:var(--ink)}
+.dnav button:not(:disabled):active{background:var(--soft)!important}.dnav button:disabled{opacity:.25}
+.dnav b{min-width:7.5em!important;text-align:center;font-size:18px!important;letter-spacing:-.2px}
 </style>
 </head>
 <body>
@@ -818,7 +823,7 @@ details.trust>summary::after{content:"›";margin-left:8px;transition:transform 
 <div class="toast" id="toast" hidden role="status"></div>
 <section class="ci" id="checkin" hidden><div class="sec-h"><span class="sq">🌙</span><b>EVENING CHECK-IN</b><span id="ciWhen"></span></div>
 <div class="ci-card"><b class="ci-q">How did the day go?</b><span class="small">Choose as many as you like</span><div class="moods" id="moods"></div>
-<div class="ci-reply" id="ciReply" hidden><span class="mtag">Mentor</span><span id="ciReplyTxt"></span></div></div></section>
+<div class="ci-reply" id="ciReply" hidden><span class="mtag">Mentor</span><span id="ciReplyTxt"></span></div><button class="go" id="ciDone" type="button" hidden style="margin-top:12px">Done</button></div></section>
 <div class="ainote" id="aiNote" hidden><div class="ainote-h"><b>Meal Mentor AI says</b><button class="link" id="aiRefresh">Update</button></div><div id="aiNoteTxt"></div></div>
 <div class="sleepask" id="sleepAsk" hidden><div class="sa-t"><b>How did you sleep?</b><span>Log last night's sleep with two taps, so the mentor can take it into account today.</span></div><div class="sa-b"><button type="button" class="go" id="saLog">Log sleep</button><button type="button" class="td-x" id="saX" aria-label="Hide"><svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M6 6l12 12M18 6L6 18"/></svg></button></div></div>
 <div class="lift" id="lift" hidden></div>
@@ -894,7 +899,7 @@ details.trust>summary::after{content:"›";margin-left:8px;transition:transform 
 
 
 <div class="vtop" style="margin-top:26px">
-<div class="dnav"><button class="ghost" id="dPrev" aria-label="Previous day">‹</button><b id="dLabel"></b><button class="ghost" id="dNext" aria-label="Next day">›</button></div>
+<div class="dnav"><button class="ghost" id="dPrev" aria-label="Previous day"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M15 6l-6 6 6 6"/></svg></button><b id="dLabel"></b><button class="ghost" id="dNext" aria-label="Next day"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6l6 6-6 6"/></svg></button></div>
 <div class="seg" role="group" aria-label="Appearance"><button id="vDay" aria-pressed="true">Day</button><button id="vWeek" aria-pressed="false">Week</button></div></div>
 
 <section id="dayView">
@@ -2385,12 +2390,15 @@ function ciReply(sel,t){const on=x=>sel.includes(x),r=remaining();
   if(on('Hungry'))return r.kLeft!=null&&r.kLeft>200?`You have about ${nf(Math.round(r.kLeft/10)*10)} kcal left – eat something light with protein, e.g. skyr or cottage cheese, and then it's the eating break.`:'The eating break has started. If it is real hunger, have water or tea – tomorrow we put more protein in lunch.';
   if(on('Proud')||on('Happy')||on('Energetic')||on('Fresh'))return t.n>=2?`Lovely! ${t.n} meals logged today – that gives the mentor a good picture. Well done.`:'Lovely! Remember to log today\'s meals, so the mentor can keep up.';
   return 'A completely ordinary day – and that is good enough. Keep the rhythm tomorrow.';}
-function drawCheckin(){const h=new Date().getHours(),c=D.checkins.find(x=>x.d===today);$('checkin').hidden=!(h>=18||c);if($('checkin').hidden)return;
+function drawCheckin(){const h=new Date().getHours(),c=D.checkins.find(x=>x.d===today);$('checkin').hidden=!(h>=18||c)||!!(c&&c.done&&!drawCheckin.keep);if($('checkin').hidden)return;
   const sel=c?c.moods:[];$('ciWhen').textContent=c?'gemt':'tonight';
   $('moods').innerHTML=moodList().map(([e,t])=>`<button aria-pressed="${sel.includes(t)}" data-m="${t}"><span>${e}</span>${t}</button>`).join('');
   $('moods').querySelectorAll('[data-m]').forEach(b=>b.onclick=()=>{const cur=D.checkins.find(x=>x.d===today)||(D.checkins.push({id:uid(),d:today,moods:[]}),D.checkins.at(-1));
-    const m=b.dataset.m;cur.moods=cur.moods.includes(m)?cur.moods.filter(x=>x!==m):[...cur.moods,m];if(!cur.moods.length)D.checkins=D.checkins.filter(x=>x!==cur);save();});
-  $('ciReply').hidden=!sel.length;if(sel.length)$('ciReplyTxt').textContent=ciReply(sel,day(today));}
+    const m=b.dataset.m;cur.moods=cur.moods.includes(m)?cur.moods.filter(x=>x!==m):[...cur.moods,m];if(!cur.moods.length)D.checkins=D.checkins.filter(x=>x!==cur);save();drawCheckin();});
+  $('ciReply').hidden=!sel.length;if(sel.length)$('ciReplyTxt').textContent=ciReply(sel,day(today));
+  $('ciDone').hidden=!sel.length||!!(c&&c.done);}
+$('ciDone').onclick=()=>{const c=D.checkins.find(x=>x.d===today);if(!c)return;c.done=true;save();drawCheckin.keep=true;$('ciDone').hidden=true;toast('Thanks – your evening check-in is saved 🌙');
+  setTimeout(()=>{drawCheckin.keep=false;const el=$('checkin');el.style.transition='opacity .5s';el.style.opacity='0';setTimeout(()=>{el.hidden=true;el.style.opacity='';},500);},6000);};
 /* ===== analyser ===== */
 function drawAnl(){const L=logged(range(56)),cards=[];const open=drawAnl.open||{};
   const bars=(arr,lab,hi,c)=>{const mx=Math.max(...arr.map(x=>x.v))||1;return `<div class="ac-bars" style="--c:${c}">${arr.map(x=>`<div><i class="${hi(x)?'hi':''}" style="height:${Math.max(8,x.v/mx*56)}px" title="${nf(x.v)} kcal"></i><small>${lab(x)}</small></div>`).join('')}</div>`;};
