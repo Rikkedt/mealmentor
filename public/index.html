@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,viewport-fit=cover">
-<title>Meal Mentor AI</title><meta name="mm-version" content="6a42987302"><link rel="manifest" href="/manifest.webmanifest"><link rel="apple-touch-icon" href="/apple-touch-icon.png"><link rel="icon" href="/icon-192.png"><meta name="theme-color" content="#F1F1F4"><link rel="stylesheet" href="/mm.css"><script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script><script src="/mm.js"></script>
+<title>Meal Mentor AI</title><meta name="mm-version" content="806752e57a"><link rel="manifest" href="/manifest.webmanifest"><link rel="apple-touch-icon" href="/apple-touch-icon.png"><link rel="icon" href="/icon-192.png"><meta name="theme-color" content="#F1F1F4"><link rel="stylesheet" href="/mm.css"><script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script><script src="/mm.js"></script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Inter+Tight:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <style>
@@ -816,6 +816,9 @@ details.trust>summary::after{content:"›";margin-left:8px;transition:transform 
 <div class="btns" style="margin-top:14px"><button class="go" id="hAsk" type="button" disabled>Spørg mentoren, hvad jeg kan gøre</button><button class="ghost" id="hSave" type="button" disabled>Bare gem</button></div>
 </div></div>
 <div class="toast" id="toast" hidden role="status"></div>
+<section class="ci" id="checkin" hidden><div class="sec-h"><span class="sq">🌙</span><b>AFTENENS CHECK-IN</b><span id="ciWhen"></span></div>
+<div class="ci-card"><b class="ci-q">Hvordan er dagen gået?</b><span class="small">Vælg så mange du vil</span><div class="moods" id="moods"></div>
+<div class="ci-reply" id="ciReply" hidden><span class="mtag">Mentor</span><span id="ciReplyTxt"></span></div></div></section>
 <div class="ainote" id="aiNote" hidden><div class="ainote-h"><b>Meal Mentor AI siger</b><button class="link" id="aiRefresh">Opdatér</button></div><div id="aiNoteTxt"></div></div>
 <div class="sleepask" id="sleepAsk" hidden><div class="sa-t"><b>Hvordan har du sovet?</b><span>Log nattens søvn med to tryk, så kan Mentoren tage højde for den i dag.</span></div><div class="sa-b"><button type="button" class="go" id="saLog">Log søvn</button><button type="button" class="td-x" id="saX" aria-label="Skjul"><svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M6 6l12 12M18 6L6 18"/></svg></button></div></div>
 <div class="lift" id="lift" hidden></div>
@@ -824,9 +827,7 @@ details.trust>summary::after{content:"›";margin-left:8px;transition:transform 
 </section>
 <ul class="recs" id="recs" aria-live="polite"></ul>
 <details class="morerecs" id="moreRecs" hidden><summary id="moreRecsSum"></summary><ul class="recs" id="recs2"></ul></details>
-<section class="ci" id="checkin" hidden><div class="sec-h"><span class="sq">🌙</span><b>AFTENENS CHECK-IN</b><span id="ciWhen"></span></div>
-<div class="ci-card"><b class="ci-q">Hvordan er dagen gået?</b><span class="small">Vælg så mange du vil</span><div class="moods" id="moods"></div>
-<div class="ci-reply" id="ciReply" hidden><span class="mtag">Mentor</span><span id="ciReplyTxt"></span></div></div></section>
+
 <section class="anl" id="anlSec" hidden><div class="sec-h"><span class="sq">📊</span><b>ANALYSER</b><span>Sidste 8 uger · tryk for mere</span></div><div class="anl-list" id="anl"></div></section>
 
 </section>
