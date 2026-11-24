@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,viewport-fit=cover">
-<title>Meal Mentor AI</title><meta name="mm-version" content="8d742080cb"><link rel="manifest" href="/manifest.webmanifest"><link rel="apple-touch-icon" href="/apple-touch-icon.png"><link rel="icon" href="/icon-192.png"><meta name="theme-color" content="#F1F1F4"><link rel="stylesheet" href="/mm.css"><script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script><script src="/mm.js"></script>
+<title>Meal Mentor AI</title><meta name="mm-version" content="8a0e195b10"><link rel="manifest" href="/manifest.webmanifest"><link rel="apple-touch-icon" href="/apple-touch-icon.png"><link rel="icon" href="/icon-192.png"><meta name="theme-color" content="#F1F1F4"><link rel="stylesheet" href="/mm.css"><script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script><script src="/mm.js"></script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Inter+Tight:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <style>
@@ -712,6 +712,10 @@ body.kb .tabs,body.kb #botFab{display:none!important}
 .tr-h{display:flex;justify-content:space-between;align-items:center;gap:10px}.tr-bar{height:6px;border-radius:99px;background:var(--soft);overflow:hidden}.tr-bar i{display:block;height:100%;background:var(--acc,var(--tomato));border-radius:99px}
 .tr small{opacity:.75}.wd{list-style:none;margin:8px 0 0;padding:0;display:grid;gap:6px;text-align:left}.wd li{display:grid;grid-template-columns:1fr auto;gap:2px 10px}.wd small{grid-column:1/-1;opacity:.7}
 #fOA .tl{display:block;margin:12px 0 6px;font-weight:700;font-size:14px}#fOA .chk{display:flex;gap:10px;align-items:center;margin-top:12px;font-weight:600}
+details.trust{margin-top:26px}details.trust>summary{list-style:none;cursor:pointer}details.trust>summary::-webkit-details-marker{display:none}
+details.trust>summary::after{content:"›";margin-left:8px;transition:transform .2s;display:inline-block}details.trust[open]>summary::after{transform:rotate(90deg)}
+.tr-sum{margin-left:auto;font-size:12px;opacity:.7;font-weight:600}details.trust .tr-list{margin-top:10px}
+.oatip{background:var(--card);border-radius:18px;padding:14px 16px}.oatip ul{margin:8px 0 0;padding-left:18px;display:grid;gap:6px;font-size:14px}
 </style>
 </head>
 <body>
@@ -822,7 +826,6 @@ body.kb .tabs,body.kb #botFab{display:none!important}
 <section class="ci" id="checkin" hidden><div class="sec-h"><span class="sq">🌙</span><b>AFTENENS CHECK-IN</b><span id="ciWhen"></span></div>
 <div class="ci-card"><b class="ci-q">Hvordan er dagen gået?</b><span class="small">Vælg så mange du vil</span><div class="moods" id="moods"></div>
 <div class="ci-reply" id="ciReply" hidden><span class="mtag">Mentor</span><span id="ciReplyTxt"></span></div></div></section>
-<section class="trust" id="trust" hidden></section>
 <section class="anl" id="anlSec" hidden><div class="sec-h"><span class="sq">📊</span><b>ANALYSER</b><span>Sidste 8 uger · tryk for mere</span></div><div class="anl-list" id="anl"></div></section>
 
 </section>
@@ -866,7 +869,7 @@ body.kb .tabs,body.kb #botFab{display:none!important}
 <div class="fbtn"><button class="go">Gem</button><span class="ok-msg"></span></div></form>
 
 <form class="form" id="fOA" hidden><h3>Krop og hormoner</h3>
-<p class="small" style="margin:0 0 8px">Log hvordan kroppen har det i dag. Efter 2–3 måneder kan Mentoren se, hvad der hænger sammen med, at vægten stiger.</p>
+<p class="small" style="margin:0 0 8px">Log hvordan kroppen har det i dag, også på gode dage. Efter 2–3 måneder kan Mentoren se, hvad der hænger sammen med, at vægten stiger. Vej dig også 2–3 gange om ugen.</p>
 <label>Dato<input class="t" type="date" name="d" required></label>
 <span class="tl">Blødning i dag</span>
 <div class="qual" role="radiogroup" aria-label="Blødning i dag"><label><input type="radio" name="bleed" value="0" checked><span>Ingen</span></label><label><input type="radio" name="bleed" value="1"><span>Pletblødning</span></label><label><input type="radio" name="bleed" value="2"><span>Let</span></label><label><input type="radio" name="bleed" value="3"><span>Normal</span></label><label><input type="radio" name="bleed" value="4"><span>Kraftig</span></label></div>
@@ -906,6 +909,7 @@ body.kb .tabs,body.kb #botFab{display:none!important}
 <div class="legend"><span style="--c:var(--tomato)">Kcal</span><span style="--c:color-mix(in srgb,var(--tomato) 45%,#000)">heraf i spisepausen</span><span style="--c:var(--prot)">Protein</span><span style="--c:var(--carb)">Søvn</span><span style="--c:var(--fat)">Under 6½ t søvn</span><span style="--c:var(--ink)">Vægt</span></div>
 <p class="insight" id="sleepLate"></p>
 </section>
+<details class="trust" id="trust" hidden></details>
 </div></main>
 
 <section class="band vsec"><div class="wrap">
@@ -1846,7 +1850,14 @@ function trust(){const d90=range(90),food=logged(range(28)).length,wWeeks=[0,1,2
   if(isOA())rows.push({k:'oa',t:'Overgangsalder og hormoner',p:Math.min(1,Math.min(oaDays/60,span/75)),need:'2–3 måneder med "Krop og hormoner" de fleste dage',say:'sammenhæng mellem cyklus, hedeture, gener og vægt',have:`${oaDays} logninger over ${span} dage`});
   return rows.map(r=>({...r,lvl:lvl(r.p)}));}
 function drawTrust(){const el=$('trust');if(!el)return;const R=trust();el.hidden=!D.meals.length;
-  el.innerHTML=`<div class="sec-h"><span class="sq">🎯</span><b>HVOR SIKRE ER ANALYSERNE?</b></div><div class="tr-list">${R.map(r=>`<div class="tr"><div class="tr-h"><b>${r.t}</b><span class="badge2 ${r.p>=1?'b-ok':r.p>=0.5?'b-pat':'b-rel'}">${r.lvl}</span></div><div class="tr-bar"><i style="width:${Math.round(r.p*100)}%"></i></div><small>${r.p>=1?`Nok data til at sige noget om ${r.say}.`:`Kræver ${r.need}. Du har ${r.have}.`}</small></div>`).join('')}</div>`;}
+  const op=el.open;el.innerHTML=`<summary class="sec-h"><span class="sq">🎯</span><b>HVOR SIKRE ER ANALYSERNE?</b><span class="tr-sum">${R.map(r=>r.lvl).join(' · ')}</span></summary><div class="tr-list">${R.map(r=>`<div class="tr"><div class="tr-h"><b>${r.t}</b><span class="badge2 ${r.p>=1?'b-ok':r.p>=0.5?'b-pat':'b-rel'}">${r.lvl}</span></div><div class="tr-bar"><i style="width:${Math.round(r.p*100)}%"></i></div><small>${r.p>=1?`Nok data til at sige noget om ${r.say}.`:`Kræver ${r.need}. Du har ${r.have}.`}</small></div>`).join('')}${isOA()?`<div class="oatip"><b>Vigtigt at logge i overgangsalderen</b><ul>
+<li><b>Vægt 2–3 gange om ugen</b>, om morgenen før morgenmad. Så kan appen se, hvornår vægten stiger.</li>
+<li><b>"Krop og hormoner" hver dag</b>, også på gode dage. Dage uden gener er lige så vigtige at sammenligne med.</li>
+<li><b>Blødning</b>, også pletblødning. Det viser din cyklus, og dagene op til en blødning giver ofte væske og vægt.</li>
+<li><b>Søvn og hedeture om natten</b>. Dårlig søvn giver ofte mere sult dagen efter.</li>
+<li><b>Alle måltider, også de sene</b>, og alkohol. Det er tit her, de skjulte kalorier ligger.</li>
+<li><b>Styrketræning</b>. Musklerne svinder hurtigere i overgangsalderen, og træning hjælper på vægten.</li>
+<li><b>Taljemål en gang om måneden</b>. Fedt flytter ofte til maven, selvom vægten står stille.</li></ul></div>`:''}</div>`;el.open=op;}
 function correlations(){
   const L=logged(range(56)),out=[];
   const grp=(label,pred)=>{const a=L.filter(pred),b=L.filter(d=>!pred(d));if(a.length>=3&&b.length>=3){const x=avg(a,d=>d.kcal),y=avg(b,d=>d.kcal);
