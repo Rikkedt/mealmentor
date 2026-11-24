@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,viewport-fit=cover">
-<title>Meal Mentor AI</title><meta name="mm-version" content="806752e57a"><link rel="manifest" href="/manifest.webmanifest"><link rel="apple-touch-icon" href="/apple-touch-icon.png"><link rel="icon" href="/icon-192.png"><meta name="theme-color" content="#F1F1F4"><link rel="stylesheet" href="/mm.css"><script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script><script src="/mm.en.js"></script>
+<title>Meal Mentor AI</title><meta name="mm-version" content="87d0b594f6"><link rel="manifest" href="/manifest.webmanifest"><link rel="apple-touch-icon" href="/apple-touch-icon.png"><link rel="icon" href="/icon-192.png"><meta name="theme-color" content="#F1F1F4"><link rel="stylesheet" href="/mm.css"><script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script><script src="/mm.en.js"></script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Inter+Tight:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <style>
@@ -921,7 +921,7 @@ details.trust>summary::after{content:"›";margin-left:8px;transition:transform 
 
 <div id="v-prof" hidden>
 <main class="band"><div class="wrap profile">
-<section class="pcard" id="pAccount"><h2>My profile</h2><p id="syncInfo2" class="small"></p><div class="pprot" id="pProt" hidden></div><div class="pstats" id="pStats"></div><div class="langrow"><small>Appearance</small><div class="seg" id="themeSeg"><button type="button" data-th="light">Light</button><button type="button" data-th="dark">Dark</button><button type="button" data-th="auto">Automatic</button></div></div><div class="langrow"><small>Sprog · Language</small><div class="seg" id="langSeg"><button type="button" data-lang="da">Dansk</button><button type="button" data-lang="en">English</button></div></div></section>
+<section class="pcard" id="pAccount"><h2>My profile</h2><p id="syncInfo2" class="small"></p><div class="pprot" id="pKcal" hidden></div><div class="pprot" id="pProt" hidden></div><div class="pstats" id="pStats"></div><div class="langrow"><small>Appearance</small><div class="seg" id="themeSeg"><button type="button" data-th="light">Light</button><button type="button" data-th="dark">Dark</button><button type="button" data-th="auto">Automatic</button></div></div><div class="langrow"><small>Sprog · Language</small><div class="seg" id="langSeg"><button type="button" data-lang="da">Dansk</button><button type="button" data-lang="en">English</button></div></div></section>
 
 <section class="pcard"><h2>Goals and body</h2><form class="form plain" id="fSet">
 <label>Your goal<select name="goal"><option value="stabil">Keep my weight stable on GLP-1</option><option value="ned">Taper off GLP-1 without regaining weight</option><option value="tab">Lose weight</option><option value="styrke">Get stronger and more toned, but keep the weight</option></select></label>
@@ -1544,7 +1544,7 @@ function recs(){
   const wNow=lastWeightBefore(today),wThen=lastWeightBefore(addDays(today,-7)),dw=wNow!=null&&wThen!=null?wNow-wThen:null;
   if(dw!=null&&dw>=0.8)r.push(['bad',`Weight has gone up ${nf(dw,1)} kg in a week`,taper?'This is common during tapering. Keep the portions as in the stable period, and talk to your doctor if it continues.':'Check whether evening eating or bigger portions have crept in.']);
   if(taper&&b&&k7>b*1.1)r.push(['bad',`${nf((k7/b-1)*100)} % more food than in the stable period`,`${nf(k7)} kcal vs. ${nf(b)} on average. Start the day with protein and plan a snack at 3 pm.`]);
-  else if(t&&k7>t.v*1.1&&S().goal!=='styrke')r.push(['warn',`${nf(k7-t.v)} kcal over the goal on average`,`You are at ${nf(k7)} kcal a day vs. ${nf(t.v)}.`]);
+  else if(t&&k7>t.v*1.1&&S().goal!=='styrke')r.push(['warn',`${nf(k7-t.v)} kcal over target on average`,`You are at ${nf(k7)} kcal a day vs ${nf(t.v)}.`]);
   const lateShare=avg(L7,d=>d.kcal?d.lateKcal/d.kcal:0);
   if(lateShare>0.25)r.push(['warn',`${nf(lateShare*100)} % of the food is eaten during the evening eating break`,`Your eating break starts at ${lateH()}. Move some of the food to lunch and the afternoon, so the evening gets easier.`]);
   if(pt&&p7<pt*0.85)r.push(['warn',`Average protein: ${nf(p7)} of ${nf(pt)} g a day`,'Average for the last 7 days. Get 25–30 g in every meal, e.g. skyr, eggs, chicken, fish or beans.']);
@@ -1665,7 +1665,7 @@ $('saLog').onclick=()=>openForm('fSleep',today,true);
 $('saX').onclick=()=>{store.set('mm-saX-'+today,true);drawSleepAsk();drawTodo();};
 function drawRecs(){drawSleepAsk();drawTodo();drawLeft();drawCheckin();drawAnl();
   const h=new Date().getHours();$('hello').textContent=h<10?'Good morning':h<12?'Good morning':h<17?'Good afternoon':'Good evening';
-  const ALL=recs(),R=ALL.filter(([c,t])=>!/^Usikre tal|^Protein i snit/.test(t));drawRecs.unsure=ALL.find(([c,t])=>/^Usikre tal/.test(t))||null;try{drawTrust();}catch(e){}
+  const ALL=recs(),R=ALL.filter(([c,t])=>!/^Usikre tal|^Protein i snit|kcal over målet i snit/.test(t));drawRecs.unsure=ALL.find(([c,t])=>/^Usikre tal/.test(t))||null;try{drawTrust();}catch(e){}
   const li=([c,t,s])=>`<li class="${c}" tabindex="0" role="button" aria-expanded="false"><b>${esc(t)}</b><span>${esc(s)}</span></li>`;
   $('recs').innerHTML=R.slice(0,2).map(li).join('');$('recs2').innerHTML=R.slice(2).map(li).join('');
   $('moreRecs').hidden=R.length<=2;$('moreRecsSum').textContent=`More tips (${R.length-2})`;
@@ -2125,6 +2125,8 @@ function drawProfile(){
   fillSettings();drawEntries();
   const n=k=>D[k].length,days=new Set(D.meals.map(m=>m.t.slice(0,10))).size;
   $('pStats').innerHTML=[[n('meals'),'meals'],[days,'days with food'],[n('sleep'),'nights'],[n('weights'),'weigh-ins'],[n('workouts'),'workouts'],[n('doses'),'doses']].map(([v,l])=>`<div><b>${nf(v)}</b><small>${l}</small></div>`).join('');
+  {const L7=logged(range(7)),k7=avg(L7,d=>d.kcal),t=target(),el=$('pKcal');el.hidden=!(L7.length&&t);
+    if(L7.length&&t){const diff=Math.round(k7-t.v),over=diff>t.v*0.1;el.innerHTML=`<div class="tr-h"><b>${over?`${nf(diff)} kcal over target on average`:`Average calories: ${nf(k7)} of ${nf(t.v)} kcal a day`}</b></div><div class="tr-bar"><i style="width:${Math.min(100,Math.round(k7/t.v*100))}%;${over?'background:#e0a43a':''}"></i></div><small>Average for the last 7 days${over?`: you are at ${nf(k7)} kcal a day vs ${nf(t.v)}.`:'.'}</small>`;}}
   {const L7=logged(range(7)),p7=avg(L7,d=>d.protein),pt=protTarget(),el=$('pProt');el.hidden=!(L7.length&&pt);
     if(L7.length&&pt){const ok=p7>=pt*0.85;el.innerHTML=`<div class="tr-h"><b>Average protein: ${nf(p7)} of ${nf(pt)} g a day</b></div><div class="tr-bar"><i style="width:${Math.min(100,Math.round(p7/pt*100))}%"></i></div><small>Average for the last 7 days. ${ok?'Great, you are close to your target.':'Get 25–30 g in every meal, e.g. skyr, eggs, chicken, fish or beans.'}</small>`;}}
   const ds=[...D.doses].sort((a,b)=>b.d.localeCompare(a.d)),cur=ds.at(0);

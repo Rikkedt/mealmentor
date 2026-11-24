@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,viewport-fit=cover">
-<title>Meal Mentor AI</title><meta name="mm-version" content="806752e57a"><link rel="manifest" href="/manifest.webmanifest"><link rel="apple-touch-icon" href="/apple-touch-icon.png"><link rel="icon" href="/icon-192.png"><meta name="theme-color" content="#F1F1F4"><link rel="stylesheet" href="/mm.css"><script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script><script src="/mm.js"></script>
+<title>Meal Mentor AI</title><meta name="mm-version" content="87d0b594f6"><link rel="manifest" href="/manifest.webmanifest"><link rel="apple-touch-icon" href="/apple-touch-icon.png"><link rel="icon" href="/icon-192.png"><meta name="theme-color" content="#F1F1F4"><link rel="stylesheet" href="/mm.css"><script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script><script src="/mm.js"></script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Inter+Tight:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <style>
@@ -921,7 +921,7 @@ details.trust>summary::after{content:"›";margin-left:8px;transition:transform 
 
 <div id="v-prof" hidden>
 <main class="band"><div class="wrap profile">
-<section class="pcard" id="pAccount"><h2>Min profil</h2><p id="syncInfo2" class="small"></p><div class="pprot" id="pProt" hidden></div><div class="pstats" id="pStats"></div><div class="langrow"><small>Visning</small><div class="seg" id="themeSeg"><button type="button" data-th="light">Lys</button><button type="button" data-th="dark">Mørk</button><button type="button" data-th="auto">Automatisk</button></div></div><div class="langrow"><small>Sprog · Language</small><div class="seg" id="langSeg"><button type="button" data-lang="da">Dansk</button><button type="button" data-lang="en">English</button></div></div></section>
+<section class="pcard" id="pAccount"><h2>Min profil</h2><p id="syncInfo2" class="small"></p><div class="pprot" id="pKcal" hidden></div><div class="pprot" id="pProt" hidden></div><div class="pstats" id="pStats"></div><div class="langrow"><small>Visning</small><div class="seg" id="themeSeg"><button type="button" data-th="light">Lys</button><button type="button" data-th="dark">Mørk</button><button type="button" data-th="auto">Automatisk</button></div></div><div class="langrow"><small>Sprog · Language</small><div class="seg" id="langSeg"><button type="button" data-lang="da">Dansk</button><button type="button" data-lang="en">English</button></div></div></section>
 
 <section class="pcard"><h2>Mål og krop</h2><form class="form plain" id="fSet">
 <label>Dit mål<select name="goal"><option value="stabil">Holde vægten stabil på GLP-1</option><option value="ned">Trappe ud af GLP-1 uden at tage på</option><option value="tab">Tabe mig</option><option value="styrke">Blive stærkere og mere markeret, men holde vægten</option></select></label>
@@ -1665,7 +1665,7 @@ $('saLog').onclick=()=>openForm('fSleep',today,true);
 $('saX').onclick=()=>{store.set('mm-saX-'+today,true);drawSleepAsk();drawTodo();};
 function drawRecs(){drawSleepAsk();drawTodo();drawLeft();drawCheckin();drawAnl();
   const h=new Date().getHours();$('hello').textContent=h<10?'God morgen':h<12?'God formiddag':h<17?'God eftermiddag':'God aften';
-  const ALL=recs(),R=ALL.filter(([c,t])=>!/^Usikre tal|^Protein i snit/.test(t));drawRecs.unsure=ALL.find(([c,t])=>/^Usikre tal/.test(t))||null;try{drawTrust();}catch(e){}
+  const ALL=recs(),R=ALL.filter(([c,t])=>!/^Usikre tal|^Protein i snit|kcal over målet i snit/.test(t));drawRecs.unsure=ALL.find(([c,t])=>/^Usikre tal/.test(t))||null;try{drawTrust();}catch(e){}
   const li=([c,t,s])=>`<li class="${c}" tabindex="0" role="button" aria-expanded="false"><b>${esc(t)}</b><span>${esc(s)}</span></li>`;
   $('recs').innerHTML=R.slice(0,2).map(li).join('');$('recs2').innerHTML=R.slice(2).map(li).join('');
   $('moreRecs').hidden=R.length<=2;$('moreRecsSum').textContent=`Flere råd (${R.length-2})`;
@@ -2125,6 +2125,8 @@ function drawProfile(){
   fillSettings();drawEntries();
   const n=k=>D[k].length,days=new Set(D.meals.map(m=>m.t.slice(0,10))).size;
   $('pStats').innerHTML=[[n('meals'),'måltider'],[days,'dage med mad'],[n('sleep'),'nætter'],[n('weights'),'vejninger'],[n('workouts'),'træninger'],[n('doses'),'doser']].map(([v,l])=>`<div><b>${nf(v)}</b><small>${l}</small></div>`).join('');
+  {const L7=logged(range(7)),k7=avg(L7,d=>d.kcal),t=target(),el=$('pKcal');el.hidden=!(L7.length&&t);
+    if(L7.length&&t){const diff=Math.round(k7-t.v),over=diff>t.v*0.1;el.innerHTML=`<div class="tr-h"><b>${over?`${nf(diff)} kcal over målet i snit`:`Kalorier i snit: ${nf(k7)} af ${nf(t.v)} kcal om dagen`}</b></div><div class="tr-bar"><i style="width:${Math.min(100,Math.round(k7/t.v*100))}%;${over?'background:#e0a43a':''}"></i></div><small>Gennemsnit for de seneste 7 dage${over?`: du ligger på ${nf(k7)} kcal om dagen mod ${nf(t.v)}.`:'.'}</small>`;}}
   {const L7=logged(range(7)),p7=avg(L7,d=>d.protein),pt=protTarget(),el=$('pProt');el.hidden=!(L7.length&&pt);
     if(L7.length&&pt){const ok=p7>=pt*0.85;el.innerHTML=`<div class="tr-h"><b>Protein i snit: ${nf(p7)} af ${nf(pt)} g om dagen</b></div><div class="tr-bar"><i style="width:${Math.min(100,Math.round(p7/pt*100))}%"></i></div><small>Gennemsnit for de seneste 7 dage. ${ok?'Flot, du er tæt på dit mål.':'Få 25–30 g i hvert måltid, fx skyr, æg, kylling, fisk eller bønner.'}</small>`;}}
   const ds=[...D.doses].sort((a,b)=>b.d.localeCompare(a.d)),cur=ds.at(0);
