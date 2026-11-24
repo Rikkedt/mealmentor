@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,viewport-fit=cover">
-<title>Meal Mentor AI</title><meta name="mm-version" content="73672e8ee9"><link rel="manifest" href="/manifest.webmanifest"><link rel="apple-touch-icon" href="/apple-touch-icon.png"><link rel="icon" href="/icon-192.png"><meta name="theme-color" content="#F1F1F4"><link rel="stylesheet" href="/mm.css"><script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script><script src="/mm.en.js"></script>
+<title>Meal Mentor AI</title><meta name="mm-version" content="5e1b4ff93b"><link rel="manifest" href="/manifest.webmanifest"><link rel="apple-touch-icon" href="/apple-touch-icon.png"><link rel="icon" href="/icon-192.png"><meta name="theme-color" content="#F1F1F4"><link rel="stylesheet" href="/mm.css"><script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script><script src="/mm.en.js"></script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Inter+Tight:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <style>
@@ -704,6 +704,10 @@ body.kb .tabs,body.kb #botFab{display:none!important}
 .mpick{display:grid;gap:8px}.mpick button{display:grid;text-align:left;padding:10px 14px;min-height:52px}.mpick small{font-weight:400;opacity:.75}
 .mdel{color:#c0392b!important}
 .ainote.new{margin-bottom:14px}
+.pf-q{width:100%;min-height:44px;margin:4px 0 8px}
+.pf{list-style:none;margin:0;padding:0;max-height:55vh;overflow:auto}
+.pf li button{width:100%;display:flex;justify-content:space-between;align-items:center;gap:12px;background:none;border:0;border-bottom:1px solid var(--line);border-radius:0;min-height:48px;padding:6px 2px;text-align:left;color:inherit;font-weight:500}
+.pf li button span{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.pf li button small{flex:0 0 auto;opacity:.7}
 </style>
 </head>
 <body>
@@ -789,8 +793,8 @@ body.kb .tabs,body.kb #botFab{display:none!important}
 <div class="sheet" id="qSheet" hidden><div class="sheet-bg" data-close></div><div class="sheet-c" role="dialog" aria-modal="true" aria-labelledby="qH">
 <div class="sheet-h"><b id="qH">Quick log</b><span class="small" id="qDate"></span><button class="close" data-close aria-label="Close">×</button></div>
 <div class="sec-h"><span class="sq">🍽</span><b>FOOD</b></div>
-<div class="qtiles"><button class="qt dark" data-scan="photo"><span class="qi">📷</span>AI scan</button><button class="qt" data-scan="label"><span class="qi">▥</span>Barcode</button><button class="qt" data-f="fMeal"><span class="qi">🔍</span>Search / type</button></div>
-<small class="qsub">Earlier food · choose amount</small><div class="qfav" id="qFav"></div>
+<div class="qtiles"><button class="qt dark" data-scan="photo"><span class="qi">📷</span>AI scan</button><button class="qt" id="qPrev" type="button"><span class="qi">🕘</span>Earlier food</button><button class="qt" data-f="fMeal"><span class="qi">🔍</span>Search / type</button></div>
+<div id="qFav" hidden></div>
 <div class="sec-h"><span class="sq">＋</span><b>OTHER</b></div>
 <div class="qfav qother"><button data-hunger="1">😋 Hunger</button><button data-f="fSleep">😴 Sleep</button><button data-f="fWeight">⚖️ Weight</button><button data-f="fWork">🏃 Training</button><button data-f="fDose">💉 GLP-1 dose</button></div>
 </div></div>
@@ -2239,15 +2243,22 @@ setTimeout(drawLift,0);setInterval(drawLift,10*60*1000);
 /* ===== log hurtigt ===== */
 function toast(t){const el=$('toast');el.textContent=t;el.hidden=false;clearTimeout(toast.t);toast.t=setTimeout(()=>el.hidden=true,2600);}
 function favorites(){const m={};D.meals.forEach(x=>{const k=String(x.titel||'').trim().toLowerCase();if(!k||!x.kcal)return;(m[k]=m[k]||{n:0,last:x}).n++;if(x.t>m[k].last.t)m[k].last=x;});
-  return Object.values(m).sort((a,b)=>b.n-a.n||b.last.t.localeCompare(a.last.t)).slice(0,16).map(x=>x.last);}
+  return Object.values(m).sort((a,b)=>b.n-a.n||b.last.t.localeCompare(a.last.t)).slice(0,60).map(x=>x.last);}
 function openSheet(){const sh=$('qSheet');$('qDate').textContent=new Date().toLocaleDateString('en-GB',{weekday:'long',day:'numeric',month:'short'});
-  const F=favorites();$('qFav').innerHTML=F.length?F.map((x,i)=>`<button data-fav="${i}">${esc(x.titel.length>28?x.titel.slice(0,26)+'…':x.titel)}</button>`).join(''):'<span class="small">Food you have logged before shows up here. Tap and choose the amount.</span>';
-  $('qFav').querySelectorAll('[data-fav]').forEach(b=>b.onclick=()=>{closeSheet();openMealEdit(F[+b.dataset.fav],'add');});
+  $('qPrev').onclick=()=>{closeSheet();openPrevFood();};
   sh.hidden=false;$('regBtn').setAttribute('aria-expanded','true');setTimeout(()=>sh.querySelector('.qt').focus(),30);}
 /* ret, slet eller tilføj tidligere mad med valgfri mængde */
 function mealSheet(html){let el=$('mSheet');if(!el){el=document.createElement('div');el.className='sheet';el.id='mSheet';document.body.appendChild(el);}
   el.innerHTML=`<div class="sheet-bg" data-mclose></div><div class="sheet-c" role="dialog" aria-modal="true" aria-labelledby="mH">${html}</div>`;el.hidden=false;
   el.querySelectorAll('[data-mclose]').forEach(b=>b.onclick=()=>el.hidden=true);return el;}
+function openPrevFood(){const F=favorites();
+  const el=mealSheet(`<div class="sheet-h"><b id="mH">Earlier food</b><button class="close" data-mclose aria-label="Close">×</button></div>
+    ${F.length?`<input class="t pf-q" id="pfQ" type="search" placeholder="Search earlier food" aria-label="Search earlier food" autocomplete="off"><ul class="pf" id="pfL"></ul>`:'<p class="small">Food you have logged before shows up here.</p>'}`);
+  if(!F.length)return;
+  const draw=()=>{const q=$('pfQ').value.trim().toLowerCase(),L=F.map((x,i)=>[x,i]).filter(([x])=>!q||x.titel.toLowerCase().includes(q));
+    $('pfL').innerHTML=L.length?L.map(([x,i])=>`<li><button type="button" data-i="${i}"><span>${esc(x.titel)}</span><small>${nf(r0(x.kcal))} kcal</small></button></li>`).join(''):'<li class="small">No matches.</li>';
+    $('pfL').querySelectorAll('[data-i]').forEach(b=>b.onclick=()=>openMealEdit(F[+b.dataset.i],'add'));};
+  $('pfQ').oninput=draw;draw();}
 function openMealPick(ids){const ms=ids.map(id=>D.meals.find(m=>m.id===id)).filter(Boolean);if(!ms.length)return;if(ms.length===1)return openMealEdit(ms[0],'edit');
   const el=mealSheet(`<div class="sheet-h"><b id="mH">Which part do you want to edit?</b><button class="close" data-mclose aria-label="Close">×</button></div><div class="mpick">${ms.map((m,i)=>`<button class="ghost" data-i="${i}"><b>${esc(m.titel)}</b><small>at ${m.t.slice(11,16)} · ${nf(r0(m.kcal))} kcal</small></button>`).join('')}</div>`);
   el.querySelectorAll('[data-i]').forEach(b=>b.onclick=()=>openMealEdit(ms[+b.dataset.i],'edit'));}
