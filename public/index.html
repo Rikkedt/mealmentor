@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,viewport-fit=cover">
-<title>Meal Mentor AI</title><meta name="mm-version" content="0becea794d"><link rel="manifest" href="/manifest.webmanifest"><link rel="apple-touch-icon" href="/apple-touch-icon.png"><link rel="icon" href="/icon-192.png"><meta name="theme-color" content="#F1F1F4"><link rel="stylesheet" href="/mm.css"><script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script><script src="/mm.js"></script>
+<title>Meal Mentor AI</title><meta name="mm-version" content="acbfdfbfb2"><link rel="manifest" href="/manifest.webmanifest"><link rel="apple-touch-icon" href="/apple-touch-icon.png"><link rel="icon" href="/icon-192.png"><meta name="theme-color" content="#F1F1F4"><link rel="stylesheet" href="/mm.css"><script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script><script src="/mm.js"></script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Inter+Tight:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <style>
@@ -2204,9 +2204,9 @@ if(window.visualViewport){const vv=window.visualViewport,fit=()=>{const b=$('bot
 setInterval(()=>{if(!$('v-vej').hidden)drawLeft();},60000);
 
 
-/* profil: fold afsnit sammen (Min profil er åben; valget huskes) */
-(function(){const K='prof-open';let open;try{open=JSON.parse(localStorage.getItem(K)||'null')}catch(e){open=null}if(!Array.isArray(open))open=['Min profil'];
-  document.querySelectorAll('#v-prof .pcard').forEach(c=>{const h=c.querySelector(':scope>h2');if(!h)return;const n=h.textContent.trim();c.classList.toggle('fold',!open.includes(n));
+/* profil: alle afsnit er foldet sammen undtagen statistikken (Min profil); valget huskes */
+(function(){const K='prof-open2';let open;try{open=JSON.parse(localStorage.getItem(K)||'null')}catch(e){open=null}if(!Array.isArray(open))open=[];
+  document.querySelectorAll('#v-prof .pcard:not(#pAccount)').forEach(c=>{const h=c.querySelector(':scope>h2');if(!h)return;const n=h.textContent.trim();c.classList.toggle('fold',!open.includes(n));
     h.setAttribute('role','button');h.tabIndex=0;h.setAttribute('aria-expanded',String(!c.classList.contains('fold')));
     const t=()=>{c.classList.toggle('fold');const o=!c.classList.contains('fold');h.setAttribute('aria-expanded',String(o));open=o?[...new Set([...open,n])]:open.filter(x=>x!==n);try{localStorage.setItem(K,JSON.stringify(open))}catch(e){}};
     h.onclick=t;h.onkeydown=e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();t()}};});})();
