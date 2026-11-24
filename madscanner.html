@@ -722,6 +722,12 @@ details.trust>summary::after{content:"›";margin-left:8px;transition:transform 
 .dnav button{width:40px;height:40px;min-height:40px!important;padding:0!important;border:0!important;border-radius:50%!important;background:transparent!important;display:grid;place-items:center;color:var(--ink)}
 .dnav button:not(:disabled):active{background:var(--soft)!important}.dnav button:disabled{opacity:.25}
 .dnav b{min-width:7.5em!important;text-align:center;font-size:18px!important;letter-spacing:-.2px}
+/* profil: afsnit kan foldes sammen */
+#v-prof .pcard>h2{cursor:pointer;user-select:none;margin-bottom:0!important}
+#v-prof .pcard>h2::after{content:"";margin-left:auto;width:9px;height:9px;border-right:2.5px solid currentColor;border-bottom:2.5px solid currentColor;transform:rotate(45deg);transition:transform .2s;opacity:.7}
+#v-prof .pcard.fold>h2::after{transform:rotate(-45deg)}
+#v-prof .pcard:not(.fold)>h2{margin-bottom:12px!important}
+#v-prof .pcard.fold>:not(h2){display:none!important}
 </style>
 </head>
 <body>
@@ -2197,6 +2203,13 @@ if(window.visualViewport){const vv=window.visualViewport,fit=()=>{const b=$('bot
   vv.addEventListener('resize',fit);vv.addEventListener('scroll',fit);$('botQ').addEventListener('focus',()=>setTimeout(fit,300));}
 setInterval(()=>{if(!$('v-vej').hidden)drawLeft();},60000);
 
+
+/* profil: fold afsnit sammen (Min profil er åben; valget huskes) */
+(function(){const K='prof-open';let open;try{open=JSON.parse(localStorage.getItem(K)||'null')}catch(e){open=null}if(!Array.isArray(open))open=['Min profil'];
+  document.querySelectorAll('#v-prof .pcard').forEach(c=>{const h=c.querySelector(':scope>h2');if(!h)return;const n=h.textContent.trim();c.classList.toggle('fold',!open.includes(n));
+    h.setAttribute('role','button');h.tabIndex=0;h.setAttribute('aria-expanded',String(!c.classList.contains('fold')));
+    const t=()=>{c.classList.toggle('fold');const o=!c.classList.contains('fold');h.setAttribute('aria-expanded',String(o));open=o?[...new Set([...open,n])]:open.filter(x=>x!==n);try{localStorage.setItem(K,JSON.stringify(open))}catch(e){}};
+    h.onclick=t;h.onkeydown=e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();t()}};});})();
 resetDates();fillSettings();setSync('local');cloudInit();
 
 pick(store.get('tr-prog',suggest));
