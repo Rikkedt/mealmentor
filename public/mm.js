@@ -242,79 +242,177 @@ function daErr(e){const m=(e&&e.message)||'';let t;
   setTimeout(check, 3000); setInterval(check, 5 * 60 * 1000);
 })();
 
-/* Abonnement i iPhone-appen (Apple) + kun app, ikke web */
+/* Abonnement: 49 kr./md. i Danmark, 8 USD/md. i udlandet, via RevenueCat.
+   - iPhone og Android: RevenueCat-pluginet (App Store / Google Play). Ældre app-builds uden pluginet bruger stadig Apple direkte.
+   - Web: RevenueCat Web Billing (kort, Apple Pay, Google Pay). Slås til, når RC_WEB_PUBLIC_KEY er sat i Cloudflare.
+   Brugerens Supabase-id er RevenueCats app_user_id, så ét abonnement gælder overalt. */
 (function () {
   const cap = window.Capacitor, native = !!(cap && cap.isNativePlatform && cap.isNativePlatform());
+  const platform = native && cap.getPlatform ? cap.getPlatform() : 'web';
   const EN = document.documentElement.lang === 'en';
   const T = (da, en) => EN ? en : da;
-  const PRODUCT = 'mealmentor_monthly';
-
-  /* Web: appen kan kun bruges som app. ?web=1 slår web til på denne browser (til test). */
-  if (!native && location.protocol !== 'file:') {
-    try { if (/[?&]web=1/.test(location.search)) localStorage.setItem('mm-web', '1'); if (/[?&]web=0/.test(location.search)) localStorage.removeItem('mm-web'); } catch (e) {}
-    let ok = false; try { ok = localStorage.getItem('mm-web') === '1'; } catch (e) {}
-    if (!ok) {
-      const show = () => {
-        const d = document.createElement('div'); d.className = 'mm-gate';
-        d.innerHTML = `<div class="mm-gate-in"><img src="/icon-192.png" alt="" width="72" height="72"><h1>Meal Mentor AI</h1>
-          <p>${T('Meal Mentor AI er en mad-mentor med AI. Tag et billede af maden og få kalorier og protein, få forslag til hvornår og hvor meget du skal spise, log søvn og træn 10 minutter om dagen.', 'Meal Mentor AI is an AI food mentor. Snap a photo of your meal to get calories and protein, get suggestions for when and how much to eat, log sleep and train 10 minutes a day.')}</p>
-          <p>${T('Du logger ind med Apple, Google eller e-mail. Vi bruger kun dit navn og din e-mail til at oprette din konto. Læs mere i privatlivspolitikken.', 'You sign in with Apple, Google or email. We only use your name and email to create your account. Read more in the privacy policy.')}</p>
-          <p>${T('Meal Mentor AI er en app til iPhone og kommer snart i App Store.', 'Meal Mentor AI is an iPhone app and is coming soon to the App Store.')}</p>
-          <p class="mm-gate-small"><a href="/privatliv/">${T('Privatlivspolitik', 'Privacy policy')}</a> · <a href="/vilkaar/">${T('Vilkår', 'Terms')}</a> · <a href="mailto:info@mealmentorai.com">info@mealmentorai.com</a></p></div>`;
-        document.body.append(d); document.documentElement.classList.add('mm-locked');
-      };
-      if (document.body) show(); else document.addEventListener('DOMContentLoaded', show);
-      return;
-    }
-  }
-
-  /* iPhone: abonnement via Apple */
-  const ios = native && cap.getPlatform && cap.getPlatform() === 'ios';
-  if (!ios || !(cap.isPluginAvailable && cap.isPluginAvailable('NativePurchases'))) return;
-  const P = (cap.Plugins && cap.Plugins.NativePurchases) || cap.registerPlugin('NativePurchases');
+  const PRODUCT = 'mealmentor_monthly', ENTITLEMENT = 'premium';
   const CK = 'mm-sub-until';
   const cachedOk = () => { try { return +localStorage.getItem(CK) > Date.now(); } catch (e) { return false; } };
-  async function active() {
-    try {
-      const r = await P.getPurchases({ productType: 'subs', onlyCurrentEntitlements: true });
-      const now = Date.now();
-      const t = (r.purchases || []).filter(p => p.productIdentifier === PRODUCT && (p.isActive || (p.expirationDate && Date.parse(p.expirationDate) > now)));
-      const until = t.reduce((m, p) => Math.max(m, p.expirationDate ? Date.parse(p.expirationDate) : now + 3600e3), 0);
-      try { if (until) localStorage.setItem(CK, String(until)); else localStorage.removeItem(CK); } catch (e) {}
-      return !!until;
-    } catch (e) { return cachedOk(); }
+  const remember = until => { try { if (until) localStorage.setItem(CK, String(until)); else localStorage.removeItem(CK); } catch (e) {} };
+  const cfgP = fetch('/api/config').then(r => r.json()).catch(() => ({}));
+
+  /* ---- udbyder: iPhone/Android via RevenueCat ---- */
+  function rcNative(key) {
+    const P = cap.registerPlugin('Purchases');
+    let ready = null, pkg = null, info = null;
+    const init = () => ready || (ready = (async () => {
+      const u = window.mmAuth.user();
+      await P.configure({ apiKey: key, appUserID: u.id });
+    })());
+    const read = ci => {
+      info = ci;
+      const e = ci && ci.entitlements && ci.entitlements.active && ci.entitlements.active[ENTITLEMENT];
+      const until = e ? (e.expirationDate ? Date.parse(e.expirationDate) : Date.now() + 3600e3) : 0;
+      remember(until); return !!e;
+    };
+    return {
+      store: platform === 'android' ? 'google' : 'apple',
+      async active() { try { await init(); return read((await P.getCustomerInfo()).customerInfo); } catch (e) { return cachedOk(); } },
+      async offer() {
+        try {
+          await init();
+          const o = await P.getOfferings(), off = o.current || (o.all && o.all.default);
+          pkg = off && (off.availablePackages || []).find(x => x.packageType === 'MONTHLY') || (off && (off.availablePackages || [])[0]) || null;
+        } catch (e) { pkg = null; }
+        return pkg && { price: pkg.product.priceString, trial: !!pkg.product.introPrice };
+      },
+      async buy() { await init(); const r = await P.purchasePackage({ aPackage: pkg }); return read(r.customerInfo); },
+      async restore() { await init(); return read((await P.restorePurchases()).customerInfo); },
+      manage() { const u = info && info.managementURL; if (u) window.open(u, '_blank'); }
+    };
   }
-  let product = null;
-  async function loadProduct() {
-    if (product) return product;
-    try { const r = await P.getProducts({ productIdentifiers: [PRODUCT], productType: 'subs' }); product = (r.products || [])[0] || null; } catch (e) {}
-    return product;
+
+  /* ---- udbyder: web via RevenueCat Web Billing ---- */
+  function rcWeb(key) {
+    let rc = null, pkg = null, info = null;
+    const loadScript = src => new Promise((ok, bad) => { const s = document.createElement('script'); s.src = src; s.onload = ok; s.onerror = () => bad(new Error('rc')); document.head.append(s); });
+    const init = async () => {
+      if (rc) return rc;
+      if (!window.Purchases) await loadScript('/vendor/purchases-1.72.0.umd.js');
+      const u = window.mmAuth.user();
+      rc = window.Purchases.Purchases.configure({ apiKey: key, appUserId: u.id });
+      return rc;
+    };
+    const currency = () => { let tz = ''; try { tz = Intl.DateTimeFormat().resolvedOptions().timeZone; } catch (e) {} return (tz === 'Europe/Copenhagen' || /^da\b/i.test(navigator.language || '')) ? 'DKK' : 'USD'; };
+    const read = ci => {
+      info = ci;
+      const e = ci && ci.entitlements && ci.entitlements.active && ci.entitlements.active[ENTITLEMENT];
+      const until = e ? (e.expirationDate ? Date.parse(e.expirationDate) : Date.now() + 3600e3) : 0;
+      remember(until); return !!e;
+    };
+    return {
+      store: 'web',
+      async active() { try { return read(await (await init()).getCustomerInfo()); } catch (e) { return cachedOk(); } },
+      async offer() {
+        try {
+          const o = await (await init()).getOfferings({ currency: currency() }), off = o.current || (o.all && o.all.default);
+          pkg = off && (off.availablePackages || []).find(x => x.identifier === '$rc_monthly') || (off && (off.availablePackages || [])[0]) || null;
+        } catch (e) { pkg = null; }
+        const p = pkg && (pkg.webBillingProduct || pkg.rcBillingProduct);
+        return pkg && { price: (p && p.currentPrice && p.currentPrice.formattedPrice) || '', trial: false };
+      },
+      async buy() {
+        const u = window.mmAuth.user();
+        try { await (await init()).purchase({ rcPackage: pkg, customerEmail: u && u.email, selectedLocale: EN ? 'en' : 'da', defaultLocale: EN ? 'en' : 'da' }); }
+        catch (e) { if (e && (e.errorCode === 1 || /cancel/i.test(String(e.name) + String(e.message)))) return false; throw e; }
+        return this.active();
+      },
+      async restore() { return this.active(); },
+      manage() { const u = info && info.managementURL; if (u) window.open(u, '_blank'); }
+    };
   }
-  let wall = null;
-  async function showWall() {
+
+  /* ---- udbyder: ældre iPhone-builds (Apple direkte) ---- */
+  function appleLegacy() {
+    const P = (cap.Plugins && cap.Plugins.NativePurchases) || cap.registerPlugin('NativePurchases');
+    let product = null;
+    return {
+      store: 'apple',
+      async active() {
+        try {
+          const r = await P.getPurchases({ productType: 'subs', onlyCurrentEntitlements: true });
+          const now = Date.now();
+          const t = (r.purchases || []).filter(p => p.productIdentifier === PRODUCT && (p.isActive || (p.expirationDate && Date.parse(p.expirationDate) > now)));
+          const until = t.reduce((m, p) => Math.max(m, p.expirationDate ? Date.parse(p.expirationDate) : now + 3600e3), 0);
+          remember(until); return !!until;
+        } catch (e) { return cachedOk(); }
+      },
+      async offer() {
+        try { const r = await P.getProducts({ productIdentifiers: [PRODUCT], productType: 'subs' }); product = (r.products || [])[0] || null; } catch (e) {}
+        return product && { price: product.priceString, trial: !!(product.introductoryPrice && product.introEligibility === 2) };
+      },
+      async buy() {
+        const u = window.mmAuth && window.mmAuth.user();
+        await P.purchaseProduct({ productIdentifier: PRODUCT, productType: 'subs', quantity: 1, ...(u ? { appAccountToken: u.id } : {}) });
+        return this.active();
+      },
+      async restore() { try { await P.restorePurchases(); } catch (e) {} return this.active(); },
+      manage() { P.manageSubscriptions(); }
+    };
+  }
+
+  function lockPage() {
+    const show = () => {
+      const d = document.createElement('div'); d.className = 'mm-gate';
+      d.innerHTML = `<div class="mm-gate-in"><img src="/icon-192.png" alt="" width="72" height="72"><h1>Meal Mentor AI</h1>
+        <p>${T('Meal Mentor AI er en mad-mentor med AI. Tag et billede af maden og få kalorier og protein, få forslag til hvornår og hvor meget du skal spise, log søvn og træn 10 minutter om dagen.', 'Meal Mentor AI is an AI food mentor. Snap a photo of your meal to get calories and protein, get suggestions for when and how much to eat, log sleep and train 10 minutes a day.')}</p>
+        <p>${T('Du logger ind med Apple, Google eller e-mail. Vi bruger kun dit navn og din e-mail til at oprette din konto. Læs mere i privatlivspolitikken.', 'You sign in with Apple, Google or email. We only use your name and email to create your account. Read more in the privacy policy.')}</p>
+        <p>${T('Meal Mentor AI er en app til iPhone og kommer snart i App Store.', 'Meal Mentor AI is an iPhone app and is coming soon to the App Store.')}</p>
+        <p class="mm-gate-small"><a href="/privatliv/">${T('Privatlivspolitik', 'Privacy policy')}</a> · <a href="/vilkaar/">${T('Vilkår', 'Terms')}</a> · <a href="mailto:info@mealmentorai.com">info@mealmentorai.com</a></p></div>`;
+      document.body.append(d); document.documentElement.classList.add('mm-locked');
+    };
+    if (document.body) show(); else document.addEventListener('DOMContentLoaded', show);
+  }
+
+  async function pick() {
+    const cfg = await cfgP, rc = cfg.rc || {};
+    if (native) {
+      const key = platform === 'android' ? rc.android : rc.ios;
+      if (key && cap.isPluginAvailable && cap.isPluginAvailable('Purchases')) return rcNative(key);
+      if (platform === 'ios' && cap.isPluginAvailable && cap.isPluginAvailable('NativePurchases')) return appleLegacy();
+      return null;
+    }
+    if (location.protocol === 'file:') return null;
+    /* Web: kun hvis web-betaling er sat op. ?web=1 slår web til på denne browser (til test). */
+    try { if (/[?&]web=1/.test(location.search)) localStorage.setItem('mm-web', '1'); if (/[?&]web=0/.test(location.search)) localStorage.removeItem('mm-web'); } catch (e) {}
+    let test = false; try { test = localStorage.getItem('mm-web') === '1'; } catch (e) {}
+    if (rc.web) return rcWeb(rc.web);
+    if (!test) lockPage();
+    return null;
+  }
+
+  let wall = null, provider = null;
+  async function showWall(o) {
     if (wall) return;
+    const cancelHow = provider.store === 'apple' ? T('Du kan opsige når som helst i Indstillinger → Apple-konto → Abonnementer, senest 24 timer før næste periode.', 'Cancel any time in Settings → Apple Account → Subscriptions, at least 24 hours before the next period.')
+      : provider.store === 'google' ? T('Du kan opsige når som helst i Google Play → Betalinger og abonnementer → Abonnementer.', 'Cancel any time in Google Play → Payments & subscriptions → Subscriptions.')
+      : T('Du kan opsige når som helst under Administrér abonnement, senest 24 timer før næste periode.', 'Cancel any time under Manage subscription, at least 24 hours before the next period.');
     wall = document.createElement('div'); wall.className = 'mm-gate mm-pay';
     wall.innerHTML = `<div class="mm-gate-in"><img src="/icon-192.png" alt="" width="64" height="64"><h1>Meal Mentor AI</h1>
       <ul><li>${T('AI-scanning af din mad', 'AI scanning of your food')}</li><li>${T('Mentor med madforslag og påmindelser', 'Mentor with meal ideas and reminders')}</li><li>${T('Alle træningsprogrammer og lydguider', 'All training programmes and audio guides')}</li></ul>
       <p class="mm-price"></p>
       <button class="go mm-buy">${T('Fortsæt', 'Continue')}</button>
       <p class="mm-msg"></p>
-      <p class="mm-gate-small">${T('Abonnementet fornyes automatisk hver måned, indtil du opsiger det. Du kan opsige når som helst i Indstillinger → Apple-konto → Abonnementer, senest 24 timer før næste periode.', 'The subscription renews automatically every month until you cancel. Cancel any time in Settings → Apple Account → Subscriptions, at least 24 hours before the next period.')}</p>
+      <p class="mm-gate-small">${T('Abonnementet fornyes automatisk hver måned, indtil du opsiger det. ', 'The subscription renews automatically every month until you cancel. ')}${cancelHow}</p>
       <p class="mm-gate-small"><a href="#" class="mm-restore">${T('Gendan køb', 'Restore purchases')}</a> · <a href="https://mealmentorai.com/vilkaar/">${T('Vilkår', 'Terms of Use')}</a> · <a href="https://mealmentorai.com/privatliv/">${T('Privatliv', 'Privacy')}</a> · <a href="#" class="mm-out">${T('Log ud', 'Log out')}</a></p></div>`;
     document.body.append(wall); document.documentElement.classList.add('mm-locked');
     const msg = wall.querySelector('.mm-msg'), buy = wall.querySelector('.mm-buy'), price = wall.querySelector('.mm-price');
-    const p = await loadProduct();
-    const ps = p ? p.priceString : '49 kr.';
-    const trial = p && p.introductoryPrice && p.introEligibility === 2;
-    price.textContent = trial ? T(`7 dage gratis, derefter ${ps} om måneden`, `7 days free, then ${ps} per month`) : T(`${ps} om måneden`, `${ps} per month`);
-    buy.textContent = trial ? T('Start 7 dage gratis', 'Start 7 days free') : T('Start abonnement', 'Subscribe');
+    const ps = o.price || T('49 kr.', '$8');
+    price.textContent = o.trial ? T(`7 dage gratis, derefter ${ps} om måneden`, `7 days free, then ${ps} per month`) : T(`${ps} om måneden`, `${ps} per month`);
+    buy.textContent = o.trial ? T('Start 7 dage gratis', 'Start 7 days free') : T('Start abonnement', 'Subscribe');
     const done = () => { wall.remove(); wall = null; document.documentElement.classList.remove('mm-locked'); };
     buy.onclick = async () => {
       buy.disabled = true; msg.textContent = '';
       try {
-        const u = window.mmAuth && window.mmAuth.user();
-        await P.purchaseProduct({ productIdentifier: PRODUCT, productType: 'subs', quantity: 1, ...(u ? { appAccountToken: u.id } : {}) });
-        if (await active()) done(); else msg.textContent = T('Købet er ikke bekræftet endnu. Prøv "Gendan køb" om lidt.', 'The purchase is not confirmed yet. Try "Restore purchases" in a moment.');
+        if (await provider.buy()) done();
+        else if (await provider.active()) done();
+        else msg.textContent = T('Købet er ikke bekræftet endnu. Prøv "Gendan køb" om lidt.', 'The purchase is not confirmed yet. Try "Restore purchases" in a moment.');
       } catch (e) {
         if (!/cancel/i.test(String((e && (e.message || e.code)) || ''))) msg.textContent = T('Købet gik ikke igennem. Prøv igen.', 'The purchase did not go through. Please try again.');
       }
@@ -322,23 +420,28 @@ function daErr(e){const m=(e&&e.message)||'';let t;
     };
     wall.querySelector('.mm-restore').onclick = async e => {
       e.preventDefault(); msg.textContent = T('Gendanner …', 'Restoring …');
-      try { await P.restorePurchases(); } catch (err) {}
-      if (await active()) done(); else msg.textContent = T('Vi fandt intet aktivt abonnement på denne Apple-konto.', 'No active subscription was found on this Apple Account.');
+      if (await provider.restore()) done(); else msg.textContent = T('Vi fandt intet aktivt abonnement på denne konto.', 'No active subscription was found on this account.');
     };
     wall.querySelector('.mm-out').onclick = async e => { e.preventDefault(); if (window.mmAuth) await window.mmAuth.logout(); };
   }
   async function gate() {
-    if (!window.mmAuth) return;
+    if (!provider || !window.mmAuth) return;
     await window.mmAuth.ready.catch(() => {});
     if (!window.mmAuth.user()) return;
     const onb = document.getElementById('onb');
     if (onb && !onb.hidden) { new MutationObserver((m, o) => { if (onb.hidden) { o.disconnect(); gate(); } }).observe(onb, { attributes: true, attributeFilter: ['hidden'] }); return; }
-    if (await active()) return;
-    if (!(await loadProduct())) return; /* Apple-produktet er ikke klar endnu (fx aftale ikke aktiv): lad appen være åben */
-    showWall();
+    if (await provider.active()) return;
+    const o = await provider.offer();
+    if (!o) return; /* produktet er ikke klar endnu (fx ikke oprettet i RevenueCat): lad appen være åben */
+    showWall(o);
   }
-  window.mmPay = { manage: () => P.manageSubscriptions(), active };
-  const start = () => { gate(); try { cap.Plugins.App && cap.Plugins.App.addListener('resume', () => { if (!wall) gate(); }); } catch (e) {}
-    const b = document.querySelector('.plans .plan button.go'); if (b) { b.disabled = false; b.textContent = T('Administrér abonnement', 'Manage subscription'); b.onclick = () => P.manageSubscriptions(); } };
+  const start = async () => {
+    provider = await pick();
+    if (!provider) return;
+    window.mmPay = { manage: () => provider.manage(), active: () => provider.active() };
+    gate();
+    try { cap && cap.Plugins && cap.Plugins.App && cap.Plugins.App.addListener('resume', () => { if (!wall) gate(); }); } catch (e) {}
+    const b = document.querySelector('.plans .plan button.go'); if (b) { b.disabled = false; b.textContent = T('Administrér abonnement', 'Manage subscription'); b.onclick = () => provider.manage(); }
+  };
   if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', start); else start();
 })();
