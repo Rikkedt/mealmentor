@@ -61,7 +61,7 @@ export async function handleAI(request, env, ctx) {
   let r;
   try { r = await aiP; } catch (e) { return new Response('ai error', { status: 502 }); }
   if (r.status === 429) return new Response('rate', { status: 429 });
-  if (!r.ok) { const et = await r.text(); { const line = JSON.stringify({ ai: true, model, status: r.status, err: et.slice(0, 500), at: new Date().toISOString() }); console.log(line); if (env.LIMITS) ctx?.waitUntil?.(env.LIMITS.put('debug:ai', line, { expirationTtl: 86400 })); } return new Response(et, { status: 502 }); }
+  if (!r.ok) { const et = await r.text(); { const line = JSON.stringify({ ai: true, model, status: r.status, err: et.slice(0, 500), at: new Date().toISOString() }); console.log(line); } return new Response(et, { status: 502 }); }
   // Fejlsøgning: log hvad AI'en sender tilbage (typer af hændelser, tid til første tekst, evt. fejl).
   const t0 = Date.now(); let first = 0, head = '', types = {};
   const dec = new TextDecoder();
@@ -73,7 +73,7 @@ export async function handleAI(request, env, ctx) {
       if (!first && /text_delta/.test(txt)) first = Date.now() - t0;
       ctl.enqueue(chunk);
     },
-    flush() { const line = JSON.stringify({ ai: true, model, sys: (b.system || '').length, msgs: messages.length, firstTextMs: first, totalMs: Date.now() - t0, types, head: first ? undefined : head.slice(0, 600), at: new Date().toISOString() }); console.log(line); const pub = JSON.stringify({ ...JSON.parse(line), head: undefined }); if (env.LIMITS) ctx?.waitUntil?.(env.LIMITS.put('debug:ai', pub, { expirationTtl: 86400 })); }
+    flush() { const line = JSON.stringify({ ai: true, model, sys: (b.system || '').length, msgs: messages.length, firstTextMs: first, totalMs: Date.now() - t0, types, head: first ? undefined : head.slice(0, 600), at: new Date().toISOString() }); console.log(line); }
   });
   return new Response(r.body.pipeThrough(ts), { headers: { 'content-type': 'text/event-stream', 'cache-control': 'no-store' } });
 }
