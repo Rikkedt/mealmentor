@@ -23,3 +23,7 @@ html.mm-locked,html.mm-locked body{overflow:hidden}
 .mm-gate-in .mm-msg{min-height:1.4em;font-size:14px;color:var(--mute,#6B6E76)}
 .mm-gate-small{font-size:12.5px!important;color:var(--mute,#6B6E76)!important}
 .mm-gate-small a{color:inherit}
+
+/* iPhone: logo, "God morgen" og tilbage-knap må ikke ligge under uret/Dynamic Island */
+.band.top{padding-top:max(clamp(24px,4vw,56px),calc(env(safe-area-inset-top) + 14px))!important}
+.onb-c{padding-top:max(20px,calc(env(safe-area-inset-top) + 10px))!important}

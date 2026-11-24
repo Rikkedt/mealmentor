@@ -90,6 +90,8 @@ function daErr(e){const m=(e&&e.message)||'';let t;
   /* ---------- login i iPhone-appen ---------- */
   const cap = window.Capacitor, iosApp = !!(cap && cap.isNativePlatform && cap.isNativePlatform() && cap.getPlatform && cap.getPlatform() === 'ios');
   const plug = n => { try { if (!iosApp || !(cap.isPluginAvailable && cap.isPluginAvailable(n))) return null; return (cap.Plugins && cap.Plugins[n]) || (cap.registerPlugin && cap.registerPlugin(n)) || null; } catch (e) { return null; } };
+  // Fjern iOS' grå bjælke (pil op/ned + flueben) over tastaturet.
+  try { const kb = plug('Keyboard'); if (kb) { kb.setAccessoryBarVisible({ isVisible: false }).catch(() => {}); } } catch (e) {}
   const APP_CB = 'dk.sableandmons.mealmentor://auth';
   async function appleNative() {
     const raw = Array.from(crypto.getRandomValues(new Uint8Array(16)), b => b.toString(16).padStart(2, '0')).join('');
