@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,viewport-fit=cover">
-<title>Meal Mentor AI</title><meta name="mm-version" content="321ef65246"><link rel="manifest" href="/manifest.webmanifest"><link rel="apple-touch-icon" href="/apple-touch-icon.png"><link rel="icon" href="/icon-192.png"><meta name="theme-color" content="#F1F1F4"><link rel="stylesheet" href="/mm.css?v=fef60455"><script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script><script src="/mm.js?v=fef60455"></script>
+<title>Meal Mentor AI</title><meta name="mm-version" content="1930c3c853"><link rel="manifest" href="/manifest.webmanifest"><link rel="apple-touch-icon" href="/apple-touch-icon.png"><link rel="icon" href="/icon-192.png"><meta name="theme-color" content="#F1F1F4"><link rel="stylesheet" href="/mm.css?v=fceda588"><script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script><script src="/mm.js?v=fceda588"></script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Inter+Tight:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <style>
@@ -2500,7 +2500,7 @@ function drawOnb(){const S_=onbSteps(),i=onb.s,c=S_[i];
     $('onbOpts').querySelectorAll('[data-sex]').forEach(x=>x.onclick=()=>{onb.p.body.sex=x.dataset.sex;drawOnb();});
     $('onbConsent').hidden=true;$('onbSkip').hidden=false;$('onbOpts').classList.remove('locked');$('onbNext').classList.remove('locked');$('onbNext').textContent='Næste';return;}
   const val=c.multi?(onb.p.rem||c.def):(onb.p[c.key]??c.def);
-  const isIosApp=!!(window.Capacitor&&window.Capacitor.isNativePlatform&&window.Capacitor.isNativePlatform()&&window.Capacitor.getPlatform()==='ios');
+  const isIosApp=!!(window.Capacitor&&window.Capacitor.isNativePlatform&&window.Capacitor.isNativePlatform()&&window.Capacitor.getPlatform()==='ios')&&!!(window.mmAuth&&window.mmAuth.canApple&&window.mmAuth.canApple());
   $('onbOpts').innerHTML=c.o.filter(o=>!(c.acct&&o[3]==='apple'&&!isIosApp)).map(([ic,t,d,v],oi)=>{const on=c.multi?!!val[v]:c.acct?false:String(val)===v;return `<button data-v="${v||''}" data-i="${oi}" class="" ${c.acct?'':`aria-pressed="${on}"`}><span class="oi">${ic}</span><span><b>${t}</b><small>${d}</small></span><span class="om">${c.multi?(on?'●':'○'):on?'✓':''}</span></button>`;}).join('');
   $('onbOpts').querySelectorAll('button').forEach(b=>b.onclick=()=>{if(c.acct&&!$('onbOk').checked){$('onbConsent').classList.add('need');$('onbConsent').scrollIntoView({block:'center',behavior:'smooth'});return;}if(c.acct){D.settings={...S(),consent:new Date().toISOString()};save();if(window.mmAuth&&!window.mmAuth.user()){store.set('mm-onb',{s:1});return window.mmAuth.login(b.dataset.v||'email');}onb.s=1;return drawOnb();}
     if(c.multi)onb.p.rem={...val,[b.dataset.v]:!val[b.dataset.v]};else{onb.p[c.key]=b.dataset.v;if(c.key==='theme'){D.settings={...S(),theme:b.dataset.v};applyTheme();}}drawOnb();});

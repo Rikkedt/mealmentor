@@ -172,6 +172,7 @@ function daErr(e){const m=(e&&e.message)||'';let t;
   window.mmPush = mmPush;
   if ('serviceWorker' in navigator) navigator.serviceWorker.getRegistration('/').then(r => { if (r) r.update(); }).catch(() => {});
   window.mmAuth = { ready, login, logout: async () => { await ready; await sb.auth.signOut(); },
+    canApple: () => !!(window.Capacitor && window.Capacitor.Plugins && window.Capacitor.Plugins.SignInWithApple),
     deleteAccount: async () => { await ready; const { error } = await sb.rpc('delete_my_account'); if (error) throw error; try { await sb.auth.signOut({ scope: 'local' }); } catch (e) {} }, user: () => session && session.user };
 
   /* ---------- data ---------- */
