@@ -728,14 +728,41 @@ details.trust>summary::after{content:"›";margin-left:8px;transition:transform 
 #v-prof .pcard.fold>h2::after{transform:rotate(-45deg)}
 #v-prof .pcard:not(.fold)>h2{margin-bottom:12px!important}
 #v-prof .pcard.fold>:not(h2){display:none!important}
+#v-vej .ghost{min-height:44px}#progH{min-height:44px;display:flex;align-items:center}
+/* ===== UX-gennemgang nov. 2026 ===== */
+.tabs{grid-template-columns:repeat(5,minmax(0,1fr))!important}
+.ptitle{display:none;margin:4px 0 0;font-size:30px;font-weight:800;letter-spacing:-.5px}
+body:not([data-page="vejleder"]) h1.brand{display:none!important}
+body:not([data-page="vejleder"]) .ptitle{display:block}
+#botFab.offpage{display:none!important}
+.ind-lead{color:var(--mute);margin:0 0 14px}
+#v-ind .morerecs{margin:0 0 18px}
+#v-ind details.trust{margin-top:22px}
+/* trykflader mindst 44 px */
+#aiRefresh{min-height:44px;padding:0 8px;display:inline-flex;align-items:center}
+.lift-x{width:44px!important;height:44px!important}
+.lift-ok{min-height:44px;display:flex!important;align-items:center;margin-top:4px!important}
+#todo .td-x{width:44px!important;height:44px!important}
+#log .ghost,#v-mad .ghost[data-d]{min-height:44px}
+#v-prof .pcard:not(#pAccount)>h2{min-height:44px}
+/* små tekster */
+.ac-bars small,.badge2{font-size:12.5px!important}.wd small,.ac-h small{font-size:13px}
+.ac-bars i{background:color-mix(in srgb,var(--c,var(--acc)) 35%,transparent)!important}.ac-bars i.hi{background:var(--c,var(--acc))!important}
+/* mærker: kun to slags */
+.badge2.b-ok{background:light-dark(#E3F4EA,#1F3A2B)!important;color:light-dark(#1F7A44,#8FE0B0)!important}
+.badge2.b-pat,.badge2.b-rel{background:light-dark(#FFF1D6,#3A2F1A)!important;color:light-dark(#8A5A00,#F3C56B)!important}
+/* scan: skjul tom resultat-boks */
+#result:has(> .empty){display:none}
+/* fokus-ring kun ved tastatur */
+button:focus:not(:focus-visible),a:focus:not(:focus-visible),.qt:focus:not(:focus-visible){outline:none!important;box-shadow:none}
 </style>
 </head>
 <body>
 <header class="band top"><div class="wrap">
 <button class="backbtn" id="backBtn" hidden>‹ <span id="backLbl">Tilbage</span></button>
 <h1 class="brand" aria-label="Meal Mentor AI"><svg class="brand-ic" viewBox="0 0 1024 1024" aria-hidden="true"><defs><linearGradient id="mmg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#5E6168"/><stop offset=".55" stop-color="#34363C"/><stop offset="1" stop-color="#1C1D21"/></linearGradient></defs><rect width="1024" height="1024" rx="286.72" fill="url(#mmg)"/><g transform="translate(194.56 194.56) scale(6.3488)"><path d="M14 80 V34 a16 16 0 0 1 32 0 V62 M46 34 a16 16 0 0 1 32 0 V80" fill="none" stroke="#FFFFFF" stroke-width="13.7" stroke-linecap="round" stroke-linejoin="round"/><circle cx="80" cy="20" r="9" fill="#E8735A"/></g></svg><span class="brand-t">Meal Mentor</span><span class="brand-ai">AI</span></h1>
-<p id="lead">Tag et billede af din mad, så får du et estimat af kalorier, protein, fedt og kulhydrat. Ret portionerne, hvis AI'en har gættet forkert.</p>
-<nav class="tabs" aria-label="Menu"><a href="#vejleder" id="t-vej"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 10.5 12 3l9 7.5V20a1 1 0 0 1-1 1h-5v-6H9v6H4a1 1 0 0 1-1-1z"/></svg><span>Mentor</span></a><a href="#mad" id="t-mad"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 8h3l2-3h6l2 3h3a1 1 0 0 1 1 1v10a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V9a1 1 0 0 1 1-1z"/><circle cx="12" cy="13.5" r="3.5"/></svg><span>Scan</span></a><a href="#traening" id="t-tr"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="14" cy="4.5" r="1.8"/><path d="M8 21l3-6 3 2v5M6 12l3-4h5l2 4 3 1"/></svg><span>Træning</span></a><a href="#profil" id="t-prof"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="8" r="4"/><path d="M4 21c1.5-4 4.5-6 8-6s6.5 2 8 6"/></svg><span>Profil</span></a></nav>
+<h2 class="ptitle" id="ptitle"></h2><p id="lead">Tag et billede af din mad, så får du et estimat af kalorier, protein, fedt og kulhydrat. Ret portionerne, hvis AI'en har gættet forkert.</p>
+<nav class="tabs" aria-label="Menu"><a href="#vejleder" id="t-vej"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 10.5 12 3l9 7.5V20a1 1 0 0 1-1 1h-5v-6H9v6H4a1 1 0 0 1-1-1z"/></svg><span>Mentor</span></a><a href="#mad" id="t-mad"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 8h3l2-3h6l2 3h3a1 1 0 0 1 1 1v10a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V9a1 1 0 0 1 1-1z"/><circle cx="12" cy="13.5" r="3.5"/></svg><span>Scan</span></a><a href="#traening" id="t-tr"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="14" cy="4.5" r="1.8"/><path d="M8 21l3-6 3 2v5M6 12l3-4h5l2 4 3 1"/></svg><span>Træning</span></a><a href="#indsigt" id="t-ind"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 20V10M10 20V4M16 20v-7M22 20H2"/></svg><span>Indsigt</span></a><a href="#profil" id="t-prof"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="8" r="4"/><path d="M4 21c1.5-4 4.5-6 8-6s6.5 2 8 6"/></svg><span>Profil</span></a></nav>
 </div></header>
 
 <div id="v-mad">
@@ -837,9 +864,9 @@ details.trust>summary::after{content:"›";margin-left:8px;transition:transform 
 <section class="hero"><div class="left" id="left" aria-live="polite"></div>
 </section>
 <ul class="recs" id="recs" aria-live="polite"></ul>
-<details class="morerecs" id="moreRecs" hidden><summary id="moreRecsSum"></summary><ul class="recs" id="recs2"></ul></details>
 
-<section class="anl" id="anlSec" hidden><div class="sec-h"><span class="sq">📊</span><b>ANALYSER</b><span>Sidste 8 uger · tryk for mere</span></div><div class="anl-list" id="anl"></div></section>
+
+
 
 </section>
 
@@ -922,7 +949,7 @@ details.trust>summary::after{content:"›";margin-left:8px;transition:transform 
 <div class="legend"><span style="--c:var(--tomato)">Kcal</span><span style="--c:color-mix(in srgb,var(--tomato) 45%,#000)">heraf i spisepausen</span><span style="--c:var(--prot)">Protein</span><span style="--c:var(--carb)">Søvn</span><span style="--c:var(--fat)">Under 6½ t søvn</span><span style="--c:var(--ink)">Vægt</span></div>
 <p class="insight" id="sleepLate"></p>
 </section>
-<details class="trust" id="trust" hidden></details>
+
 </div></main>
 
 <section class="band vsec"><div class="wrap">
@@ -930,6 +957,15 @@ details.trust>summary::after{content:"›";margin-left:8px;transition:transform 
 </div></section>
 </div>
 
+<div id="v-ind" hidden>
+<main class="band"><div class="wrap">
+<p class="ind-lead">Det, appen har lært om dig: råd, mønstre og hvor sikre analyserne er.</p>
+<details class="morerecs" id="moreRecs" hidden open><summary id="moreRecsSum"></summary><ul class="recs" id="recs2"></ul></details>
+<section class="anl" id="anlSec" hidden><div class="sec-h"><span class="sq">📊</span><b>ANALYSER</b><span>Sidste 8 uger · tryk for mere</span></div><div class="anl-list" id="anl"></div></section>
+<p class="small ind-empty" id="indEmpty" hidden>Her kommer dine analyser, når du har logget i et par uger.</p>
+<details class="trust" id="trust" hidden></details>
+</div></main>
+</div>
 <div id="v-prof" hidden>
 <main class="band"><div class="wrap profile">
 <section class="pcard" id="pAccount"><h2>Min profil</h2><p id="syncInfo2" class="small"></p><div class="pprot" id="pKcal" hidden></div><div class="pprot" id="pProt" hidden></div><div class="pstats" id="pStats"></div><div class="langrow"><small>Visning</small><div class="seg" id="themeSeg"><button type="button" data-th="light">Lys</button><button type="button" data-th="dark">Mørk</button><button type="button" data-th="auto">Automatisk</button></div></div><div class="langrow"><small>Sprog · Language</small><div class="seg" id="langSeg"><button type="button" data-lang="da">Dansk</button><button type="button" data-lang="en">English</button></div></div></section>
@@ -1089,11 +1125,12 @@ async function cloudInit(){
 }
 
 /* ---------- faner ---------- */
+const PT={mad:"Scan",traening:"Træning",indsigt:"Indsigt",profil:"Profil"};
 const leads={mad:"Tag et billede af maden og få kalorier og protein.",traening:"10 minutter om dagen. Vælg et program og tryk start.",vejleder:"Din AI-mentor til hvornår, hvor tit og hvor meget du skal spise.",profil:"Dine data, mål, påmindelser og abonnement."};
-function route(){const h=location.hash.slice(1),v=['traening','mad','profil'].includes(h)?h:'vejleder';if(h==='mentor')location.replace('#vejleder');
-  $('v-mad').hidden=v!=='mad';$('v-tr').hidden=v!=='traening';$('v-vej').hidden=v!=='vejleder';$('v-prof').hidden=v!=='profil';$('lead').textContent=leads[v];
-  $('t-mad').toggleAttribute('aria-current',v==='mad');$('t-tr').toggleAttribute('aria-current',v==='traening');$('t-vej').toggleAttribute('aria-current',v==='vejleder');$('t-prof').toggleAttribute('aria-current',v==='profil');
-  if(v!=='traening'&&run.on)pause();if(v==='vejleder'||v==='profil')refreshVej();window.scrollTo({top:0,behavior:'instant'});}
+function route(){const h=location.hash.slice(1),v=['traening','mad','profil','indsigt'].includes(h)?h:'vejleder';if(h==='mentor')location.replace('#vejleder');
+  $('v-mad').hidden=v!=='mad';$('v-tr').hidden=v!=='traening';$('v-vej').hidden=v!=='vejleder';$('v-prof').hidden=v!=='profil';$('v-ind').hidden=v!=='indsigt';$('lead').textContent=leads[v];document.body.dataset.page=v;$('ptitle').textContent=PT[v]||'';$('botFab').classList.toggle('offpage',v!=='vejleder');
+  $('t-mad').toggleAttribute('aria-current',v==='mad');$('t-tr').toggleAttribute('aria-current',v==='traening');$('t-vej').toggleAttribute('aria-current',v==='vejleder');$('t-prof').toggleAttribute('aria-current',v==='profil');$('t-ind').toggleAttribute('aria-current',v==='indsigt');
+  if(v!=='traening'&&run.on)pause();if(v==='vejleder'||v==='profil'||v==='indsigt')refreshVej();if(v==='indsigt'){try{drawAnl();drawTrust();}catch(e){}$('indEmpty').hidden=!$('anlSec').hidden||!$('moreRecs').hidden;}window.scrollTo({top:0,behavior:'instant'});}
 addEventListener('hashchange',route);
 document.querySelectorAll('.tabs a').forEach(a=>a.addEventListener('click',()=>{if(a.getAttribute('href')===location.hash||(!location.hash&&a.id==='t-vej'))window.scrollTo({top:0,behavior:reduce?'instant':'smooth'});}));
 
@@ -1166,7 +1203,7 @@ function drawLog(){
   const log=D.meals.filter(m=>m.t.startsWith(today)).sort((a,b)=>b.t.localeCompare(a.t)).map(m=>({...m,tid:m.t.slice(11)}));
   const t=log.reduce((a,e)=>{a.kcal+=e.kcal;a.protein+=e.protein;a.fedt+=e.fedt;a.kulhydrat+=e.kulhydrat;return a;},{kcal:0,protein:0,fedt:0,kulhydrat:0});
   $('tot').innerHTML=`<div><b>${r0(t.kcal)}</b>kcal</div><div><b>${r0(t.protein)} g</b>protein</div><div><b>${r0(t.fedt)} g</b>fedt</div><div><b>${r0(t.kulhydrat)} g</b>kulhydrat</div>`;
-  $('log').innerHTML=log.length?log.map(e=>`<li><span><b>${esc(e.titel)}</b> <small>kl. ${esc(e.tid)} · ${r0(e.protein)} g protein · ${r0(e.fedt)} g fedt</small></span><span>${r0(e.kcal)} kcal <button class="ghost" data-d="${e.id}">Fjern</button></span></li>`).join(''):'<li><small>Ingen måltider endnu i dag.</small></li>';
+  $('log').innerHTML=log.length?log.map(e=>`<li><span><b>${esc(e.titel)}</b> <small>kl. ${esc(e.tid)} · ${r0(e.protein)} g protein${+e.fedt?` · ${r0(e.fedt)} g fedt`:''}</small></span><span>${r0(e.kcal)} kcal <button class="ghost" data-d="${e.id}">Fjern</button></span></li>`).join(''):'<li><small>Ingen måltider endnu i dag.</small></li>';
   $('log').querySelectorAll('[data-d]').forEach(b=>b.onclick=()=>{D.meals=D.meals.filter(m=>m.id!==b.dataset.d);save();drawLog();});
 }
 drawLog();
@@ -1449,7 +1486,7 @@ function drawPlayer(){
   $('steps').innerHTML=p.ex.map((k,i)=>{const e=X[k],A=pose[e[2]],B=pose[e[3]]||A,both=[...A,...B],xs=both.map(q=>e[4]?120-q[0]:q[0]),ys=both.map(q=>q[1]);
     let x0=Math.min(...xs)-9,x1=Math.max(...xs)+9,y0=Math.min(...ys)-9,y1=94;const w=Math.max(x1-x0,(y1-y0)*1.2),h=w/1.2;x0=(x0+x1)/2-w/2;y0=y1-h;
     return `<li class="${i===run.i&&!resting?'on':i<run.i||(i===run.i&&resting)?'done':''}"><button type="button" data-j="${i}" aria-label="Gå til ${esc(e[0])}"><span class="no">${i+1}</span><svg viewBox="${x0} ${y0} ${w} ${h}" aria-hidden="true">${figAnim(A,B,e[4],i*0.4)}</svg><span class="tx"><b>${esc(e[0])}</b><small>${esc(e[1])}</small></span></button></li>`;}).join('');
-  $('stepsH').textContent=`Øvelserne i ${p.navn} (${p.ex.length}) – se dem alle på én gang`;
+  $('stepsH').textContent=`Se alle ${p.ex.length} øvelser`;
   $('steps').querySelectorAll('[data-j]').forEach(b=>b.onclick=()=>{run.restart=false;run.i=+b.dataset.j;run.phase='work';run.left=dur();drawPlayer();document.querySelector('#v-tr .player').scrollIntoView({behavior:reduce?'auto':'smooth',block:'start'});});
   if(!run.on)drawFig(0);
 }
@@ -1495,7 +1532,7 @@ $('progH').onclick=()=>{const f=document.querySelector('#v-tr .progs').classList
 $('play').onclick=()=>run.on?pause():start();
 $('next').onclick=()=>{run.restart=false;if(run.i<run.prog.ex.length-1){run.i++;run.phase='work';run.left=dur();run.sw=false;run.beeped=null;drawPlayer();}};
 $('prev').onclick=()=>{run.restart=false;if(run.phase==='rest'){run.phase='work';}else if(run.i>0)run.i--;run.left=dur();run.sw=false;run.beeped=null;drawPlayer();};
-const snd=$('sound');const drawSnd=()=>{snd.textContent=run.sound?'🔔 Bip ved skift: til':'🔕 Bip ved skift: fra';snd.setAttribute('aria-pressed',run.sound);snd.classList.toggle('on',run.sound);};
+const snd=$('sound');const drawSnd=()=>{snd.textContent=run.sound?'🔔 Bip ved skift':'🔕 Ingen bip';snd.setAttribute('aria-pressed',run.sound);snd.classList.toggle('on',run.sound);};
 snd.onclick=()=>{run.sound=!run.sound;store.set('tr-sound',run.sound);drawSnd();};drawSnd();
 
 const suggest=PROGS[[6,0,1,2,3,4,5][new Date().getDay()]].id;
@@ -2432,7 +2469,7 @@ function drawAnl(){const L=logged(range(56)),cards=[];const open=drawAnl.open||{
   if(cy){cards.push({k:'cycle',sub:'Cyklus',h:cy.len.length?`Cyklus på ${nf(Math.min(...cy.len))}–${nf(Math.max(...cy.len))} dage`:`Sidste blødning for ${cy.since} dage siden`,badge:cy.len.some(l=>l<21||l>35)?['Uregelmæssig','b-pat']:['Logget','b-ok'],body:'',
     more:`${cy.starts.length} blødninger logget. Sidste startede for ${cy.since} dage siden. Uregelmæssige cyklusser er almindelige op til overgangsalderen. Har du spørgsmål om blødninger, så tal med din læge.`});}
   $('anlSec').hidden=!cards.length;drawTrust();
-  $('anl').innerHTML=cards.map(c=>`<button class="ac" data-k="${c.k}" aria-expanded="${!!open[c.k]}"><div class="ac-h"><div><small>${c.sub}</small><b>${esc(c.h)}</b></div><span class="badge2 ${c.badge[1]}">${c.badge[0]}</span></div>${c.body}${open[c.k]?`<p>${esc(c.more)}</p>`:''}</button>`).join('');
+  $('anl').innerHTML=cards.map(c=>`<button class="ac" data-k="${c.k}" aria-expanded="${!!open[c.k]}"><div class="ac-h"><div><small>${c.sub}</small><b>${esc(c.h)}</b></div><span class="badge2 ${c.badge[1]}">${c.badge[1]==='b-ok'?'Godt':'Hold øje'}</span></div>${c.body}${open[c.k]?`<p>${esc(c.more)}</p>`:''}</button>`).join('');
   $('anl').querySelectorAll('.ac').forEach(b=>b.onclick=()=>{drawAnl.open={...open,[b.dataset.k]:!open[b.dataset.k]};drawAnl();});}
 
 
