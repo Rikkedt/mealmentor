@@ -40,6 +40,13 @@ function daErr(e){const m=(e&&e.message)||'';let t;
     f.onsubmit = async e => {
       if (e.submitter && e.submitter.value === 'cancel') { d.close(); return; }
       e.preventDefault();
+      if (inp.value.trim().toLowerCase() === 'appreview@mealmentorai.com') {
+        if (code.hidden || !code.value) { sent = true; inp.readOnly = true; code.hidden = false; code.required = true; go.textContent = 'Log ind'; lead.textContent = 'Skriv koden til testkontoen.'; msg.textContent = ''; code.focus(); return; }
+        msg.textContent = 'Logger ind …';
+        const r = await sb.auth.signInWithPassword({ email: 'appreview@mealmentorai.com', password: code.value.trim() });
+        msg.textContent = r.error ? 'Koden passer ikke.' : 'Du er logget ind.';
+        return;
+      }
       if (!sent && !(code.value && !code.hidden)) {
         msg.textContent = 'Sender …';
         const { error } = await sb.auth.signInWithOtp({ email: inp.value.trim(), options: { emailRedirectTo: location.origin + (document.documentElement.lang === 'en' ? '/en/' : '/'), data: { lang: document.documentElement.lang === 'en' ? 'en' : 'da' } } });
