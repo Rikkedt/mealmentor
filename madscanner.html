@@ -1715,8 +1715,9 @@ function drawRecs(){drawSleepAsk();drawTodo();drawLeft();drawCheckin();drawAnl()
   const h=new Date().getHours();$('hello').textContent=h<10?'God morgen':h<12?'God formiddag':h<17?'God eftermiddag':'God aften';
   const ALL=recs(),R=ALL.filter(([c,t])=>!/^Usikre tal|^Protein i snit|kcal over målet i snit/.test(t));drawRecs.unsure=ALL.find(([c,t])=>/^Usikre tal/.test(t))||null;try{drawTrust();}catch(e){}
   const li=([c,t,s])=>`<li class="${c}" tabindex="0" role="button" aria-expanded="false"><b>${esc(t)}</b><span>${esc(s)}</span></li>`;
-  $('recs').innerHTML=R.slice(0,2).map(li).join('');$('recs2').innerHTML=R.slice(2).map(li).join('');
-  $('moreRecs').hidden=R.length<=2;$('moreRecsSum').textContent=`Flere råd (${R.length-2})`;
+  const NOW=/^Kort nat i nat|^Dag \d+ efter dosis|^Ingen træning i/,T=R.filter(([c,t])=>NOW.test(t)).slice(0,2),M=R.filter(r=>!T.includes(r));
+  $('recs').innerHTML=T.map(li).join('');$('recs').hidden=!T.length;$('recs2').innerHTML=M.map(li).join('');
+  $('moreRecs').hidden=!M.length;$('moreRecsSum').textContent=`Råd (${M.length})`;
 }
 
 /* chips */

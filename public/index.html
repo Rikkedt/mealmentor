@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,viewport-fit=cover">
-<title>Meal Mentor AI</title><meta name="mm-version" content="1b024db84e"><link rel="manifest" href="/manifest.webmanifest"><link rel="apple-touch-icon" href="/apple-touch-icon.png"><link rel="icon" href="/icon-192.png"><meta name="theme-color" content="#F1F1F4"><link rel="stylesheet" href="/mm.css?v=9474bc01"><script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script><script src="/mm.js?v=9474bc01"></script>
+<title>Meal Mentor AI</title><meta name="mm-version" content="8b77b924ea"><link rel="manifest" href="/manifest.webmanifest"><link rel="apple-touch-icon" href="/apple-touch-icon.png"><link rel="icon" href="/icon-192.png"><meta name="theme-color" content="#F1F1F4"><link rel="stylesheet" href="/mm.css?v=9474bc01"><script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script><script src="/mm.js?v=9474bc01"></script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Inter+Tight:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <style>
@@ -1715,8 +1715,9 @@ function drawRecs(){drawSleepAsk();drawTodo();drawLeft();drawCheckin();drawAnl()
   const h=new Date().getHours();$('hello').textContent=h<10?'God morgen':h<12?'God formiddag':h<17?'God eftermiddag':'God aften';
   const ALL=recs(),R=ALL.filter(([c,t])=>!/^Usikre tal|^Protein i snit|kcal over målet i snit/.test(t));drawRecs.unsure=ALL.find(([c,t])=>/^Usikre tal/.test(t))||null;try{drawTrust();}catch(e){}
   const li=([c,t,s])=>`<li class="${c}" tabindex="0" role="button" aria-expanded="false"><b>${esc(t)}</b><span>${esc(s)}</span></li>`;
-  $('recs').innerHTML=R.slice(0,2).map(li).join('');$('recs2').innerHTML=R.slice(2).map(li).join('');
-  $('moreRecs').hidden=R.length<=2;$('moreRecsSum').textContent=`Flere råd (${R.length-2})`;
+  const NOW=/^Kort nat i nat|^Dag \d+ efter dosis|^Ingen træning i/,T=R.filter(([c,t])=>NOW.test(t)).slice(0,2),M=R.filter(r=>!T.includes(r));
+  $('recs').innerHTML=T.map(li).join('');$('recs').hidden=!T.length;$('recs2').innerHTML=M.map(li).join('');
+  $('moreRecs').hidden=!M.length;$('moreRecsSum').textContent=`Råd (${M.length})`;
 }
 
 /* chips */
