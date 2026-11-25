@@ -80,8 +80,15 @@ function daErr(e){const m=(e&&e.message)||'';let t;
     const on = await providers();
     if (!on[provider]) return emailDialog(`Login with ${provider === 'apple' ? 'Apple' : 'Google'} is coming soon. Until then: log in with your email.`);
     if (iosApp) {
-      try { if (provider === 'apple' && plug('SignInWithApple')) return await appleNative(); if (provider === 'google' && plug('Browser')) return await googleNative(); }
-      catch (e) { if (!/cancel|1001/i.test(String((e && (e.message || e.code)) || ''))) emailDialog('That didn\'t work. Log in with your email instead.'); return; }
+      // I iPhone-appen bruges altid Apples eget login på telefonen – aldrig web-login (det kræver en web-opsætning hos Apple).
+      try { if (provider === 'apple') return await appleNative(); if (provider === 'google' && plug('Browser')) return await googleNative(); }
+      catch (e) {
+        const msg = String((e && (e.message || e.code || e.errorMessage)) || e || '');
+        if (/cancel|1001/i.test(msg)) return;
+        console.warn('Login fejlede', provider, msg);
+        emailDialog(`Login with ${provider === 'apple' ? 'Apple' : 'Google'} didn't work right now${msg ? ' (' + msg.slice(0, 80) + ')' : ''}. Sign in with your email instead.`);
+        return;
+      }
     }
     const { error } = await sb.auth.signInWithOAuth({ provider, options: { redirectTo: location.origin } });
     if (error) emailDialog('That didn\'t work. Log in with your email instead.');
@@ -96,7 +103,9 @@ function daErr(e){const m=(e&&e.message)||'';let t;
   async function appleNative() {
     const raw = Array.from(crypto.getRandomValues(new Uint8Array(16)), b => b.toString(16).padStart(2, '0')).join('');
     const hash = Array.from(new Uint8Array(await crypto.subtle.digest('SHA-256', new TextEncoder().encode(raw))), b => b.toString(16).padStart(2, '0')).join('');
-    const r = await plug('SignInWithApple').authorize({ clientId: 'dk.sableandmons.mealmentor', redirectURI: location.origin, scopes: 'email name', nonce: hash });
+    const apple = (cap.Plugins && cap.Plugins.SignInWithApple) || (cap.registerPlugin && cap.registerPlugin('SignInWithApple'));
+    if (!apple) throw new Error('Apple sign-in is not available in this version of the app');
+    const r = await apple.authorize({ clientId: 'dk.sableandmons.mealmentor', redirectURI: location.origin, scopes: 'email name', nonce: hash });
     const tok = r && r.response && r.response.identityToken;
     if (!tok) throw new Error('no token');
     const { error } = await sb.auth.signInWithIdToken({ provider: 'apple', token: tok, nonce: raw });
