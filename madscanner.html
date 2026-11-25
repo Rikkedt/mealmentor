@@ -2076,7 +2076,7 @@ Svar KUN med JSON: {"kcal":0,"protein":0,"fedt":0,"kulhydrat":0,"maengde":0,"enh
 };
 $('fMeal').elements.titel.oninput=()=>{if(mealBase){mealBase=null;$('mealAIMsg').textContent='';}};
 $('fSleep').onsubmit=e=>{e.preventDefault();const f=e.target;
-  D.sleep=D.sleep.filter(s=>s.d!==nightKey);D.sleep.push({id:uid(),d:nightKey,from:val(f,'from'),to:val(f,'to'),hot:isOA()&&f.elements.hot.checked,q:+(f.querySelector('[name=q]:checked')||{value:3}).value});save();$('sleepSave').textContent='Opdatér søvn';flash(f,'Gemt');};
+  D.sleep=D.sleep.filter(s=>s.d!==nightKey);D.sleep.push({id:uid(),d:nightKey,from:val(f,'from'),to:val(f,'to'),hot:isOA()&&f.elements.hot.checked,q:+(f.querySelector('[name=q]:checked')||{value:3}).value});save();$('sleepSave').textContent='Opdatér søvn';flash(f,'Gemt');if(nightKey===today)store.set('mm-saX-'+today,true);try{drawSleepAsk();drawTodo();drawLeft();}catch(x){}setTimeout(()=>{if(!panel.hidden&&!$('fSleep').hidden)$('panelClose').click()},900);};
 $('fWeight').onsubmit=e=>{e.preventDefault();const f=e.target;
   D.weights=D.weights.filter(w=>w.d!==val(f,'d'));D.weights.push({id:uid(),d:val(f,'d'),kg:+val(f,'kg'),...(isOA()&&+val(f,'waist')?{waist:+val(f,'waist')}:{})});f.elements.kg.value='';f.elements.waist.value='';save();flash(f,'Gemt');};
 $('fWork').onsubmit=e=>{e.preventDefault();const f=e.target;

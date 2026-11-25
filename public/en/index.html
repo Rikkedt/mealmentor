@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,viewport-fit=cover">
-<title>Meal Mentor AI</title><meta name="mm-version" content="223581ddd2"><link rel="manifest" href="/manifest.webmanifest"><link rel="apple-touch-icon" href="/apple-touch-icon.png"><link rel="icon" href="/icon-192.png"><meta name="theme-color" content="#F1F1F4"><link rel="stylesheet" href="/mm.css"><script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script><script src="/mm.en.js"></script>
+<title>Meal Mentor AI</title><meta name="mm-version" content="407f9052be"><link rel="manifest" href="/manifest.webmanifest"><link rel="apple-touch-icon" href="/apple-touch-icon.png"><link rel="icon" href="/icon-192.png"><meta name="theme-color" content="#F1F1F4"><link rel="stylesheet" href="/mm.css"><script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script><script src="/mm.en.js"></script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Inter+Tight:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <style>
@@ -2076,7 +2076,7 @@ Reply ONLY with JSON: {"kcal":0,"protein":0,"fedt":0,"kulhydrat":0,"maengde":0,"
 };
 $('fMeal').elements.titel.oninput=()=>{if(mealBase){mealBase=null;$('mealAIMsg').textContent='';}};
 $('fSleep').onsubmit=e=>{e.preventDefault();const f=e.target;
-  D.sleep=D.sleep.filter(s=>s.d!==nightKey);D.sleep.push({id:uid(),d:nightKey,from:val(f,'from'),to:val(f,'to'),hot:isOA()&&f.elements.hot.checked,q:+(f.querySelector('[name=q]:checked')||{value:3}).value});save();$('sleepSave').textContent='Update sleep';flash(f,'Saved');};
+  D.sleep=D.sleep.filter(s=>s.d!==nightKey);D.sleep.push({id:uid(),d:nightKey,from:val(f,'from'),to:val(f,'to'),hot:isOA()&&f.elements.hot.checked,q:+(f.querySelector('[name=q]:checked')||{value:3}).value});save();$('sleepSave').textContent='Update sleep';flash(f,'Saved');if(nightKey===today)store.set('mm-saX-'+today,true);try{drawSleepAsk();drawTodo();drawLeft();}catch(x){}setTimeout(()=>{if(!panel.hidden&&!$('fSleep').hidden)$('panelClose').click()},900);};
 $('fWeight').onsubmit=e=>{e.preventDefault();const f=e.target;
   D.weights=D.weights.filter(w=>w.d!==val(f,'d'));D.weights.push({id:uid(),d:val(f,'d'),kg:+val(f,'kg'),...(isOA()&&+val(f,'waist')?{waist:+val(f,'waist')}:{})});f.elements.kg.value='';f.elements.waist.value='';save();flash(f,'Saved');};
 $('fWork').onsubmit=e=>{e.preventDefault();const f=e.target;
