@@ -67,3 +67,58 @@ https://mealmentorai.com
 4. Støtte, når du trapper ud af vægttabsmedicin
 5. Spørg din mentor når som helst
 6. Log maden på få sekunder
+
+---
+
+# Meal Mentor AI – App Store texts (English, U.K. + U.S.)
+
+## Subtitle (max 30)
+Mentor for food and weight
+
+## Promotional text (max 170)
+Your personal mentor for food, weight and habits. Made for women in menopause and for anyone tapering off weight-loss medication.
+
+## Description
+Meal Mentor AI is your personal mentor for food, weight and habits. Log your day in seconds, and your mentor gives you concrete advice based on what you have actually eaten, how you slept and how you feel.
+
+MADE FOR MENOPAUSE
+- Log hot flushes, bleeding, sleep, stress and symptoms in a few taps
+- See how your body, your food and your weight are connected
+- Get advice that fits the phase you are in
+
+SUPPORT WHILE TAPERING OFF WEIGHT-LOSS MEDICATION
+- Keep an eye on appetite and weight while you taper
+- Get help with food and habits as your appetite returns
+- See how your appetite changes through the week
+
+LOG FOOD FAST
+- Take a photo of your meal, and the app suggests calories and protein
+- Scan barcodes and nutrition labels
+- Pick food you have had before and adjust the amount
+
+YOUR MENTOR – WHEN YOU NEED IT
+- Ask about anything from dinner ideas to evening hunger
+- Answers based on your own day: what you ate, how you slept and what you have left
+- A short daily note with what matters most
+
+SEE THE PATTERNS
+- What usually happens before your weight goes up?
+- How many meals a day suit you best?
+- The analyses get more precise the longer you log
+
+10-MINUTE WORKOUTS
+- Short strength and movement routines you can do at home
+
+SUBSCRIPTION
+Full access requires a monthly subscription. It renews automatically until you cancel it in your Apple settings at least 24 hours before the next period.
+
+Meal Mentor AI gives general advice about food and habits and does not replace your doctor. Talk to your doctor before changing your medication.
+
+Terms: https://mealmentorai.com/vilkaar
+Privacy: https://mealmentorai.com/privatliv
+
+## Keywords
+calories,protein,food scanner,menopause,hot flushes,weight loss,food log,habits,hunger,tapering,diet
+
+## Support URL / Marketing URL
+https://mealmentorai.com/en/
