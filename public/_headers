@@ -16,3 +16,9 @@
   Cache-Control: no-cache
 /en/index.html
   Cache-Control: no-cache
+/mm.js
+  Cache-Control: no-cache
+/mm.en.js
+  Cache-Control: no-cache
+/mm.css
+  Cache-Control: no-cache

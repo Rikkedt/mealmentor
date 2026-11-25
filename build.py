@@ -4,7 +4,9 @@ src = pathlib.Path(sys.argv[1] if len(sys.argv) > 1 else 'madscanner.html').read
 head = ('<link rel="manifest" href="/manifest.webmanifest"><link rel="apple-touch-icon" href="/apple-touch-icon.png">'
         '<link rel="icon" href="/icon-192.png"><meta name="theme-color" content="#F1F1F4"><link rel="stylesheet" href="/mm.css">'
         '<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script><script src="/mm.js"></script>')
-ver = hashlib.sha1(src.encode()).hexdigest()[:10]
+js_ver = hashlib.sha1((pathlib.Path('public/mm.js').read_text() + pathlib.Path('public/mm.css').read_text()).encode()).hexdigest()[:8]
+head = head.replace('/mm.js"', f'/mm.js?v={js_ver}"').replace('/mm.css"', f'/mm.css?v={js_ver}"')
+ver = hashlib.sha1((src + js_ver).encode()).hexdigest()[:10]
 head = f'<meta name="mm-version" content="{ver}">' + head
 pathlib.Path('public/version.txt').write_text(ver)
 assert '</title>' in src
