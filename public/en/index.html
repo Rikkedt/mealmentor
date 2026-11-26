@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,viewport-fit=cover">
-<title>Meal Mentor AI</title><meta name="mm-version" content="e2252c12d8"><link rel="manifest" href="/manifest.webmanifest"><link rel="apple-touch-icon" href="/apple-touch-icon.png"><link rel="icon" href="/icon-192.png"><meta name="theme-color" content="#F1F1F4"><link rel="stylesheet" href="/mm.css?v=9474bc01"><script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script><script src="/mm.en.js?v=9474bc01"></script>
+<title>Meal Mentor AI</title><meta name="mm-version" content="5eb8f9f619"><link rel="manifest" href="/manifest.webmanifest"><link rel="apple-touch-icon" href="/apple-touch-icon.png"><link rel="icon" href="/icon-192.png"><meta name="theme-color" content="#F1F1F4"><link rel="stylesheet" href="/mm.css?v=9474bc01"><script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script><script src="/mm.en.js?v=9474bc01"></script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Inter+Tight:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <style>
@@ -764,6 +764,8 @@ button:focus:not(:focus-visible),a:focus:not(:focus-visible),.qt:focus:not(:focu
 #v-tr .ctrl .prog{background:rgba(255,255,255,.18)}#v-tr .ctrl .prog i{background:#fff}
 #v-tr .ctrl .ghost{background:rgba(255,255,255,.1)!important;border-color:rgba(255,255,255,.25)!important;color:#fff!important}
 #v-tr .ctrl .go{background:#fff!important;color:#14512F!important}
+#v-tr .ctrl .stepsd{margin-top:4px;border-top:1px solid rgba(255,255,255,.18);padding-top:12px}#v-tr .ctrl .stepsd>summary{color:#fff;font-size:16px}
+#v-tr .ctrl .steps li button{background:rgba(255,255,255,.1)!important;color:#fff;box-shadow:none!important}#v-tr .ctrl .steps li button small{color:rgba(255,255,255,.75)}#v-tr .ctrl .steps li.on button{background:rgba(255,255,255,.24)!important;box-shadow:0 0 0 2px #fff!important}#v-tr .ctrl .steps svg{background:rgba(0,0,0,.18)!important;border-radius:12px}
 #v-tr .card.sel{border-color:#2E8B5A!important;box-shadow:0 0 0 2px #2E8B5A inset}
 </style>
 </head>
@@ -827,10 +829,10 @@ button:focus:not(:focus-visible),a:focus:not(:focus-visible),.qt:focus:not(:focu
 <button class="ghost" id="next" aria-label="Next exercise">Next</button>
 <button class="ghost" id="sound" aria-pressed="true">Sound on</button>
 </div>
+<details class="more stepsd"><summary id="stepsH">Exercises in the program</summary><ol class="steps" id="steps"></ol></details>
 </div>
 </div></main>
 <section class="band" style="padding-top:0"><div class="wrap">
-<details class="more stepsd"><summary id="stepsH">Exercises in the program</summary><ol class="steps" id="steps"></ol></details>
 <section class="lg" id="lg"><div class="sec-h"><b>AUDIO GUIDES</b><span>5 min · put your headphones on</span></div>
 <div class="lg-row lg-m" data-g="morgenloeft"><button class="lg-play" type="button" aria-label="Play Morning Lift">▶</button><div class="lg-t"><b>Morning Lift</b><small>Energy and confidence for the day</small><div class="lg-bar"><i></i></div></div><span class="lg-time">5:17</span></div>
 <div class="lg-row lg-a" data-g="aftenro"><button class="lg-play" type="button" aria-label="Play Evening Calm">▶</button><div class="lg-t"><b>Evening Calm</b><small>Let go of the day and sleep well</small><div class="lg-bar"><i></i></div></div><span class="lg-time">5:00</span></div>
@@ -1480,8 +1482,11 @@ const clockTxt=s=>{const c=Math.ceil(s);return Math.floor(c/60)+':'+String(c%60)
 
 function beep(f=880,len=.15){if(!run.sound)return;try{ac=ac||new (window.AudioContext||window.webkitAudioContext)();const o=ac.createOscillator(),g=ac.createGain();o.frequency.value=f;g.gain.setValueAtTime(.15,ac.currentTime);g.gain.exponentialRampToValueAtTime(.001,ac.currentTime+len);o.connect(g).connect(ac.destination);o.start();o.stop(ac.currentTime+len);}catch(e){}}
 
+function say(t){if(!run.sound||!t)return;try{const ss=window.speechSynthesis;if(!ss)return;ss.cancel();const u=new SpeechSynthesisUtterance(t),en=document.documentElement.lang==='en';u.lang=en?'en-GB':'en-GB';const v=ss.getVoices().find(x=>x.lang&&x.lang.toLowerCase().startsWith(en?'en':'da'));if(v)u.voice=v;u.rate=.95;ss.speak(u);}catch(e){}}
+function showPlayer(){const el=document.querySelector('#v-tr .player');if(!el)return;const y=el.getBoundingClientRect().top+scrollY-12;window.scrollTo({top:Math.max(0,y),behavior:reduce?'auto':'smooth'});}
+function savePos(){try{store.set('tr-pos',{d:today,id:run.prog.id,i:run.i});}catch(e){}}
 function pick(id){
-  pause();run.prog=PROGS.find(p=>p.id===id)||PROGS[0];run.i=0;run.phase='work';run.left=dur();store.set('tr-prog',id);
+  pause();run.prog=PROGS.find(p=>p.id===id)||PROGS[0];const ps=store.get('tr-pos',null);run.i=ps&&ps.d===today&&ps.id===run.prog.id&&ps.i<run.prog.ex.length?ps.i:0;run.phase='work';run.left=dur();store.set('tr-prog',id);
   drawCards();drawPlayer();
 }
 function curEx(){return X[run.prog.ex[run.i]];}
@@ -1505,7 +1510,7 @@ function drawPlayer(){
     let x0=Math.min(...xs)-9,x1=Math.max(...xs)+9,y0=Math.min(...ys)-9,y1=94;const w=Math.max(x1-x0,(y1-y0)*1.2),h=w/1.2;x0=(x0+x1)/2-w/2;y0=y1-h;
     return `<li class="${i===run.i&&!resting?'on':i<run.i||(i===run.i&&resting)?'done':''}"><button type="button" data-j="${i}" aria-label="Go to ${esc(e[0])}"><span class="no">${i+1}</span><svg viewBox="${x0} ${y0} ${w} ${h}" aria-hidden="true">${figAnim(A,B,e[4],i*0.4)}</svg><span class="tx"><b>${esc(e[0])}</b><small>${esc(e[1])}</small></span></button></li>`;}).join('');
   $('stepsH').textContent=`See all ${p.ex.length} exercises`;
-  $('steps').querySelectorAll('[data-j]').forEach(b=>b.onclick=()=>{run.restart=false;run.i=+b.dataset.j;run.phase='work';run.left=dur();drawPlayer();document.querySelector('#v-tr .player').scrollIntoView({behavior:reduce?'auto':'smooth',block:'start'});});
+  $('steps').querySelectorAll('[data-j]').forEach(b=>b.onclick=()=>{run.restart=false;run.i=+b.dataset.j;run.phase='work';run.left=dur();drawPlayer();savePos();showPlayer();say(X[run.prog.ex[run.i]][0]);});
   if(!run.on)drawFig(0);
 }
 function drawFig(t){
@@ -1526,7 +1531,7 @@ function advance(){
   if(run.phase==='work'&&last){finish();return;}
   if(run.phase==='work'&&!p.scan){run.phase='rest';}
   else{run.phase='work';run.i++;}
-  run.left=dur();run.beeped=null;run.sw=false;beep(run.phase==='work'?990:520,.25);drawPlayer();
+  run.left=dur();run.beeped=null;run.sw=false;beep(run.phase==='work'?990:520,.25);drawPlayer();savePos();{const nx=X[p.ex[run.phase==='rest'?run.i+1:run.i]];if(nx)setTimeout(()=>say(run.phase==='rest'?'Pause. Next: '+nx[0]:nx[0]),350);}
 }
 function finish(){
   pause();progFold(false);beep(990,.2);setTimeout(()=>beep(1320,.35),220);
@@ -1535,13 +1540,13 @@ function finish(){
   $('exname').textContent='Well done!';$('extip').textContent=`You have completed ${run.prog.navn.toLowerCase()} today. Choose a new program or do the same one again tomorrow.`;
   $('clock').textContent='0:00';$('bar').style.width='100%';$('tag').textContent='Done';$('play').textContent='Start over';
   $('steps').querySelectorAll('li').forEach(l=>l.className='done');
-  run.i=0;run.phase='work';run.left=dur();run.restart=true;drawCards();
+  run.i=0;run.phase='work';run.left=dur();run.restart=true;drawCards();try{store.set('tr-pos',null)}catch(e){}say('Well done!');
 }
 function start(){
   progFold(true);
   if(run.restart){run.restart=false;drawPlayer();}
   try{ac=ac||new (window.AudioContext||window.webkitAudioContext)();if(ac.state==='suspended')ac.resume();}catch(e){}
-  run.on=true;run.last=performance.now();beep(990,.15);timer=setInterval(tick,200);cancelAnimationFrame(raf);raf=requestAnimationFrame(loop);drawPlayer();
+  run.on=true;run.last=performance.now();beep(990,.15);timer=setInterval(tick,200);cancelAnimationFrame(raf);raf=requestAnimationFrame(loop);drawPlayer();savePos();setTimeout(showPlayer,60);{const e=run.phase==='rest'?X[run.prog.ex[run.i+1]]:curEx();if(e)say(e[0]);}
 }
 function pause(){run.on=false;clearInterval(timer);cancelAnimationFrame(raf);if(run.prog&&!run.restart)drawPlayer();}
 
@@ -1550,7 +1555,7 @@ $('progH').onclick=()=>{const f=document.querySelector('#v-tr .progs').classList
 $('play').onclick=()=>run.on?pause():start();
 $('next').onclick=()=>{run.restart=false;if(run.i<run.prog.ex.length-1){run.i++;run.phase='work';run.left=dur();run.sw=false;run.beeped=null;drawPlayer();}};
 $('prev').onclick=()=>{run.restart=false;if(run.phase==='rest'){run.phase='work';}else if(run.i>0)run.i--;run.left=dur();run.sw=false;run.beeped=null;drawPlayer();};
-const snd=$('sound');const drawSnd=()=>{snd.textContent=run.sound?'🔔 Bip ved skift':'🔕 Ingen bip';snd.setAttribute('aria-pressed',run.sound);snd.classList.toggle('on',run.sound);};
+const snd=$('sound');const drawSnd=()=>{snd.textContent=run.sound?'🔊 Voice and beep':'🔕 No sound';snd.setAttribute('aria-pressed',run.sound);snd.classList.toggle('on',run.sound);};
 snd.onclick=()=>{run.sound=!run.sound;store.set('tr-sound',run.sound);drawSnd();};drawSnd();
 
 const suggest=PROGS[[6,0,1,2,3,4,5][new Date().getDay()]].id;
@@ -1559,7 +1564,7 @@ function drawCards(){
     const both=[...A,...B],xs=both.map(q=>ex[4]?120-q[0]:q[0]),ys=both.map(q=>q[1]);let x0=Math.min(...xs)-8,x1=Math.max(...xs)+8,y0=Math.min(...ys)-8,y1=94;const vw=Math.max(x1-x0,y1-y0),vh=vw;x0=(x0+x1)/2-vw/2;y0=y1-vh;
     return `<button class="card${run.prog&&run.prog.id===p.id?' sel':''}" data-p="${p.id}"><div class="th"><svg viewBox="${x0} ${y0} ${vw} ${vh}" aria-hidden="true">${figAnim(A,B,ex[4])}</svg></div>
     <b>${esc(p.navn)}${p.id===suggest?'<span class="badge">Today\'s suggestion</span>':''}</b><small>${esc(p.sub)}</small>${done.includes(p.id)?'<small class="ok">✓ Completed today</small>':''}</button>`;}).join('');
-  $('cards').querySelectorAll('[data-p]').forEach(b=>b.onclick=()=>{pick(b.dataset.p);document.querySelector('#v-tr .player').scrollIntoView({behavior:reduce?'auto':'smooth',block:'start'});});
+  $('cards').querySelectorAll('[data-p]').forEach(b=>b.onclick=()=>{pick(b.dataset.p);progFold(true);setTimeout(showPlayer,60);});
 }
 /* ---------- vejleder ---------- */
 const PH={op:'Titration',stabil:'Stable',ned:'Tapering',stop:'Stopped'};
