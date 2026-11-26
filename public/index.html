@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,viewport-fit=cover">
-<title>Meal Mentor AI</title><meta name="mm-version" content="e893b85990"><link rel="manifest" href="/manifest.webmanifest"><link rel="apple-touch-icon" href="/apple-touch-icon.png"><link rel="icon" href="/icon-192.png"><meta name="theme-color" content="#F1F1F4"><link rel="stylesheet" href="/mm.css?v=9474bc01"><script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script><script src="/mm.js?v=9474bc01"></script>
+<title>Meal Mentor AI</title><meta name="mm-version" content="4400e6b0b2"><link rel="manifest" href="/manifest.webmanifest"><link rel="apple-touch-icon" href="/apple-touch-icon.png"><link rel="icon" href="/icon-192.png"><meta name="theme-color" content="#F1F1F4"><link rel="stylesheet" href="/mm.css?v=9474bc01"><script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script><script src="/mm.js?v=9474bc01"></script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Inter+Tight:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <style>
@@ -1167,7 +1167,7 @@ const leads={mad:"Tag et billede af maden og få kalorier og protein.",traening:
 function route(){const h=location.hash.slice(1),v=['traening','mad','profil','indsigt'].includes(h)?h:'vejleder';if(h==='mentor')location.replace('#vejleder');
   $('v-mad').hidden=v!=='mad';$('v-tr').hidden=v!=='traening';$('v-vej').hidden=v!=='vejleder';$('v-prof').hidden=v!=='profil';$('v-ind').hidden=v!=='indsigt';$('lead').textContent=leads[v];document.body.dataset.page=v;$('ptitle').textContent=PT[v]||'';$('botFab').classList.toggle('offpage',v!=='vejleder');
   $('t-mad').toggleAttribute('aria-current',v==='mad');$('t-tr').toggleAttribute('aria-current',v==='traening');$('t-vej').toggleAttribute('aria-current',v==='vejleder');$('t-prof').toggleAttribute('aria-current',v==='profil');$('t-ind').toggleAttribute('aria-current',v==='indsigt');
-  if(v!=='traening'&&run.on)pause();if(v==='vejleder'||v==='profil'||v==='indsigt')refreshVej();if(v==='indsigt'){try{drawAnl();drawTrust();drawStats();if(vMode==='day')drawDay();else drawWeek();}catch(e){console.error(e)}}window.scrollTo({top:0,behavior:'instant'});if(v==='traening'&&run.prog&&run.prog.id!=='bodyscan'&&(p=>p&&p.d===today)(store.get('tr-pos',null))){progFold(true);drawPlayer();setTimeout(showPlayer,80);}}
+  if(v!=='traening'&&run.on)pause();if(v==='vejleder'||v==='profil'||v==='indsigt')refreshVej();if(v==='indsigt'){try{drawAnl();drawTrust();drawStats();if(vMode==='day')drawDay();else drawWeek();}catch(e){console.error(e)}}window.scrollTo({top:0,behavior:'instant'});if(v==='traening'&&run.prog&&run.prog.id!=='bodyscan'&&(p=>p&&p.d===today)(store.get('tr-pos',null))){progFold(true);drawPlayer();setTimeout(showPlayer,80);}if(v==='traening'&&run.prog)figStart();}
 addEventListener('hashchange',route);
 document.querySelectorAll('.tabs a').forEach(a=>a.addEventListener('click',()=>{if(a.getAttribute('href')===location.hash||(!location.hash&&a.id==='t-vej'))window.scrollTo({top:0,behavior:reduce?'instant':'smooth'});}));
 
@@ -1500,7 +1500,7 @@ const clockTxt=s=>{const c=Math.ceil(s);return Math.floor(c/60)+':'+String(c%60)
 
 function beep(f=880,len=.15){if(!run.sound)return;try{ac=ac||new (window.AudioContext||window.webkitAudioContext)();const o=ac.createOscillator(),g=ac.createGain();o.frequency.value=f;g.gain.setValueAtTime(.15,ac.currentTime);g.gain.exponentialRampToValueAtTime(.001,ac.currentTime+len);o.connect(g).connect(ac.destination);o.start();o.stop(ac.currentTime+len);}catch(e){}}
 
-const VO_ON=false,VO_KEYS=new Set(["fold", "catcow", "child", "cobra", "seatTw", "shoulder", "sideB", "quadB", "ham", "butterfly", "hipB", "calfS", "dog", "spineTw", "neck", "chest", "circles", "kpush", "tap", "plank", "push", "superman", "spL", "spR", "roll", "standTwist", "crunch", "bug", "bridge", "bear", "spB", "boat", "bike", "twist", "legs", "revCrunch", "flutter", "jackknife", "pullIn", "squat", "lungeL", "lungeR", "rdl", "sideLunge", "wallsit", "scissor", "calf", "pushHold", "row", "ytRaise", "dips", "bird", "jjack", "lungeAlt", "climb", "highKnees", "burpee", "starjump", "meditate", "hlunge", "triangle", "mountain", "hero", "camel", "bfold", "kneeChest", "corpse", "hipcirc", "thread", "lungeTw", "deep", "pigeonB"]);let vo=null;
+const VO_ON=true,VO_KEYS=new Set(["_pause", "_next", "_done", "fold", "catcow", "child", "cobra", "seatTw", "shoulder", "sideB", "quadB", "ham", "butterfly", "hipB", "calfS", "dog", "spineTw", "neck", "chest", "circles", "kpush", "tap", "plank"]);let vo=null;
 function voPlay(list,fallback){if(!run.sound)return;try{vo=vo||new Audio();const lang=document.documentElement.lang==='en'?'en':'da';let n=0;const next=()=>{if(n>=list.length)return;const k=list[n++];vo.onended=next;vo.onerror=()=>{vo.onerror=null;sayTTS(fallback);};vo.src=`/audio/ex/${lang}/${k}.mp3`;const pr=vo.play();if(pr&&pr.catch)pr.catch(()=>sayTTS(fallback));};next();}catch(e){sayTTS(fallback);}}
 function sayEx(k,pre){const e=X[k];if(!e)return;if(!VO_ON||!VO_KEYS.has(k)){sayTTS((pre==='next'?'Pause. Næste: ':'')+e[0]);return;}voPlay(pre==='next'?['_pause','_next',k]:[k],(pre==='next'?'Pause. Næste: ':'')+e[0]);}
 function say(t){return sayTTS(t)}
@@ -1533,15 +1533,19 @@ function drawPlayer(){
     return `<li class="${i===run.i&&!resting?'on':i<run.i||(i===run.i&&resting)?'done':''}"><button type="button" data-j="${i}" aria-label="Gå til ${esc(e[0])}"><span class="no">${i+1}</span><svg viewBox="${x0} ${y0} ${w} ${h}" aria-hidden="true">${figAnim(A,B,e[4],i*0.4)}</svg><span class="tx"><b>${esc(e[0])}</b><small>${esc(e[1])}</small></span></button></li>`;}).join('');
   $('stepsH').textContent=`Se alle ${p.ex.length} øvelser`;
   $('steps').querySelectorAll('[data-j]').forEach(b=>b.onclick=()=>{run.restart=false;run.i=+b.dataset.j;run.phase='work';run.left=dur();drawPlayer();savePos();showPlayer();sayEx(run.prog.ex[run.i]);});
-  if(!run.on)drawFig(0);
+  if(!run.on){drawFig(0);if(figVisible())figStart();}
 }
 function drawFig(t){
-  const resting=run.phase==='rest',ex=resting?X[run.prog.ex[run.i+1]]:curEx();
-  const A=pose[ex[2]],B=pose[ex[3]]||A;
-  const k=(!run.on||resting||reduce||B===A)?0:(1-Math.cos(t/3200*2*Math.PI))/2;
-  $('fig').innerHTML=figure(lerp(A,B,k),(ex[4]?1:0)^(run.sw&&!resting?1:0));
+  const resting=run.phase==='rest',ex=resting?X[run.prog.ex[run.i+1]]:curEx();if(!ex)return;
+  const A=pose[ex[2]],B=pose[ex[3]]||A,still=reduce||resting;
+  const k=(still||B===A)?0:(1-Math.cos(t/3200*2*Math.PI))/2;
+  let g=figure(lerp(A,B,k),(ex[4]?1:0)^(run.sw&&!resting?1:0));
+  if(!still&&B===A){const b=Math.sin(t/4200*2*Math.PI);g=`<g transform="translate(60 92) scale(${1+0.025*b} ${1+0.035*b}) translate(-60 -92)">${g}</g>`;} // rolig vejrtrækning i stræk og hold
+  $('fig').innerHTML=g;
 }
-function loop(t){drawFig(t);if(run.on)raf=requestAnimationFrame(loop);}
+function figVisible(){const v=$('v-tr');return v&&!v.hidden&&document.visibilityState!=='hidden';}
+function loop(t){drawFig(t);if(run.on||figVisible())raf=requestAnimationFrame(loop);}
+function figStart(){cancelAnimationFrame(raf);if(!reduce)raf=requestAnimationFrame(loop);else drawFig(0);}
 function tick(){
   const now=performance.now(),dt=(now-run.last)/1000;run.left-=dt;run.last=now;if(run.phase==='work')run.el=(run.el||0)+dt;
   if(run.left<=3.05&&run.left>0&&Math.ceil(run.left)!==run.beeped){run.beeped=Math.ceil(run.left);beep(660,.08);}
@@ -1570,7 +1574,7 @@ function start(){
   try{ac=ac||new (window.AudioContext||window.webkitAudioContext)();if(ac.state==='suspended')ac.resume();}catch(e){}
   run.on=true;run.last=performance.now();beep(990,.15);timer=setInterval(tick,200);cancelAnimationFrame(raf);raf=requestAnimationFrame(loop);drawPlayer();savePos();setTimeout(showPlayer,60);{const k=run.prog.ex[run.phase==='rest'?run.i+1:run.i];if(k)sayEx(k);}
 }
-function pause(){run.on=false;clearInterval(timer);cancelAnimationFrame(raf);if(run.prog&&!run.restart)drawPlayer();}
+function pause(){run.on=false;clearInterval(timer);cancelAnimationFrame(raf);if(run.prog&&!run.restart)drawPlayer();if(figVisible())figStart();}
 
 function progFold(on){const sec=document.querySelector('#v-tr .progs');if(!sec)return;sec.classList.toggle('folded',on);$('progH').setAttribute('aria-expanded',!on);$('progCur').textContent=on&&run.prog?run.prog.navn+' · skift':'';}
 $('progH').onclick=()=>{const f=document.querySelector('#v-tr .progs').classList.contains('folded');progFold(!f);};
