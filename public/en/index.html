@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,viewport-fit=cover">
-<title>Meal Mentor AI</title><meta name="mm-version" content="5eb8f9f619"><link rel="manifest" href="/manifest.webmanifest"><link rel="apple-touch-icon" href="/apple-touch-icon.png"><link rel="icon" href="/icon-192.png"><meta name="theme-color" content="#F1F1F4"><link rel="stylesheet" href="/mm.css?v=9474bc01"><script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script><script src="/mm.en.js?v=9474bc01"></script>
+<title>Meal Mentor AI</title><meta name="mm-version" content="033884aa94"><link rel="manifest" href="/manifest.webmanifest"><link rel="apple-touch-icon" href="/apple-touch-icon.png"><link rel="icon" href="/icon-192.png"><meta name="theme-color" content="#F1F1F4"><link rel="stylesheet" href="/mm.css?v=9474bc01"><script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script><script src="/mm.en.js?v=9474bc01"></script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Inter+Tight:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <style>
@@ -828,6 +828,7 @@ button:focus:not(:focus-visible),a:focus:not(:focus-visible),.qt:focus:not(:focu
 <button class="ghost" id="prev" aria-label="Previous exercise">Previous</button>
 <button class="ghost" id="next" aria-label="Next exercise">Next</button>
 <button class="ghost" id="sound" aria-pressed="true">Sound on</button>
+<button class="ghost" id="stopTr" type="button" hidden>Stop workout</button>
 </div>
 <details class="more stepsd"><summary id="stepsH">Exercises in the program</summary><ol class="steps" id="steps"></ol></details>
 </div>
@@ -1149,7 +1150,7 @@ const leads={mad:"Take a picture of the food and get calories and protein.",trae
 function route(){const h=location.hash.slice(1),v=['traening','mad','profil','indsigt'].includes(h)?h:'vejleder';if(h==='mentor')location.replace('#vejleder');
   $('v-mad').hidden=v!=='mad';$('v-tr').hidden=v!=='traening';$('v-vej').hidden=v!=='vejleder';$('v-prof').hidden=v!=='profil';$('v-ind').hidden=v!=='indsigt';$('lead').textContent=leads[v];document.body.dataset.page=v;$('ptitle').textContent=PT[v]||'';$('botFab').classList.toggle('offpage',v!=='vejleder');
   $('t-mad').toggleAttribute('aria-current',v==='mad');$('t-tr').toggleAttribute('aria-current',v==='traening');$('t-vej').toggleAttribute('aria-current',v==='vejleder');$('t-prof').toggleAttribute('aria-current',v==='profil');$('t-ind').toggleAttribute('aria-current',v==='indsigt');
-  if(v!=='traening'&&run.on)pause();if(v==='vejleder'||v==='profil'||v==='indsigt')refreshVej();if(v==='indsigt'){try{drawAnl();drawTrust();drawStats();if(vMode==='day')drawDay();else drawWeek();}catch(e){console.error(e)}}window.scrollTo({top:0,behavior:'instant'});}
+  if(v!=='traening'&&run.on)pause();if(v==='vejleder'||v==='profil'||v==='indsigt')refreshVej();if(v==='indsigt'){try{drawAnl();drawTrust();drawStats();if(vMode==='day')drawDay();else drawWeek();}catch(e){console.error(e)}}window.scrollTo({top:0,behavior:'instant'});if(v==='traening'&&run.prog&&run.prog.id!=='bodyscan'&&(p=>p&&p.d===today)(store.get('tr-pos',null))){progFold(true);drawPlayer();setTimeout(showPlayer,80);}}
 addEventListener('hashchange',route);
 document.querySelectorAll('.tabs a').forEach(a=>a.addEventListener('click',()=>{if(a.getAttribute('href')===location.hash||(!location.hash&&a.id==='t-vej'))window.scrollTo({top:0,behavior:reduce?'instant':'smooth'});}));
 
@@ -1482,7 +1483,11 @@ const clockTxt=s=>{const c=Math.ceil(s);return Math.floor(c/60)+':'+String(c%60)
 
 function beep(f=880,len=.15){if(!run.sound)return;try{ac=ac||new (window.AudioContext||window.webkitAudioContext)();const o=ac.createOscillator(),g=ac.createGain();o.frequency.value=f;g.gain.setValueAtTime(.15,ac.currentTime);g.gain.exponentialRampToValueAtTime(.001,ac.currentTime+len);o.connect(g).connect(ac.destination);o.start();o.stop(ac.currentTime+len);}catch(e){}}
 
-function say(t){if(!run.sound||!t)return;try{const ss=window.speechSynthesis;if(!ss)return;ss.cancel();const u=new SpeechSynthesisUtterance(t),en=document.documentElement.lang==='en';u.lang=en?'en-GB':'en-GB';const v=ss.getVoices().find(x=>x.lang&&x.lang.toLowerCase().startsWith(en?'en':'da'));if(v)u.voice=v;u.rate=.95;ss.speak(u);}catch(e){}}
+const VO_ON=false,VO_KEYS=new Set(["fold", "catcow", "child", "cobra", "seatTw", "shoulder", "sideB", "quadB", "ham", "butterfly", "hipB", "calfS", "dog", "spineTw", "neck", "chest", "circles", "kpush", "tap", "plank", "push", "superman", "spL", "spR", "roll", "standTwist", "crunch", "bug", "bridge", "bear", "spB", "boat", "bike", "twist", "legs", "revCrunch", "flutter", "jackknife", "pullIn", "squat", "lungeL", "lungeR", "rdl", "sideLunge", "wallsit", "scissor", "calf", "pushHold", "row", "ytRaise", "dips", "bird", "jjack", "lungeAlt", "climb", "highKnees", "burpee", "starjump", "meditate", "hlunge", "triangle", "mountain", "hero", "camel", "bfold", "kneeChest", "corpse", "hipcirc", "thread", "lungeTw", "deep", "pigeonB"]);let vo=null;
+function voPlay(list,fallback){if(!run.sound)return;try{vo=vo||new Audio();const lang=document.documentElement.lang==='en'?'en':'da';let n=0;const next=()=>{if(n>=list.length)return;const k=list[n++];vo.onended=next;vo.onerror=()=>{vo.onerror=null;sayTTS(fallback);};vo.src=`/audio/ex/${lang}/${k}.mp3`;const pr=vo.play();if(pr&&pr.catch)pr.catch(()=>sayTTS(fallback));};next();}catch(e){sayTTS(fallback);}}
+function sayEx(k,pre){const e=X[k];if(!e)return;if(!VO_ON||!VO_KEYS.has(k)){sayTTS((pre==='next'?'Pause. Next: ':'')+e[0]);return;}voPlay(pre==='next'?['_pause','_next',k]:[k],(pre==='next'?'Pause. Next: ':'')+e[0]);}
+function say(t){return sayTTS(t)}
+function sayTTS(t){if(!run.sound||!t)return;try{const ss=window.speechSynthesis;if(!ss)return;ss.cancel();const u=new SpeechSynthesisUtterance(t),en=document.documentElement.lang==='en';u.lang=en?'en-GB':'en-GB';const v=ss.getVoices().find(x=>x.lang&&x.lang.toLowerCase().startsWith(en?'en':'da'));if(v)u.voice=v;u.rate=.95;ss.speak(u);}catch(e){}}
 function showPlayer(){const el=document.querySelector('#v-tr .player');if(!el)return;const y=el.getBoundingClientRect().top+scrollY-12;window.scrollTo({top:Math.max(0,y),behavior:reduce?'auto':'smooth'});}
 function savePos(){try{store.set('tr-pos',{d:today,id:run.prog.id,i:run.i});}catch(e){}}
 function pick(id){
@@ -1505,12 +1510,12 @@ function drawPlayer(){
   const total=p.ex.length,doneSteps=run.i+(resting?1:(1-run.left/dur()));
   $('bar').style.width=(doneSteps/total*100)+'%';
   $('count').textContent=`Exercise ${Math.min(run.i+1,total)} of ${total}`;
-  $('play').textContent=run.on?'Pause':(run.i||run.left<dur()?'Continue':'Start');
+  $('play').textContent=run.on?'Pause':(run.i||run.left<dur()?'Continue':'Start');$('stopTr').hidden=!(run.on||run.i>0||run.left<dur()-0.5);
   $('steps').innerHTML=p.ex.map((k,i)=>{const e=X[k],A=pose[e[2]],B=pose[e[3]]||A,both=[...A,...B],xs=both.map(q=>e[4]?120-q[0]:q[0]),ys=both.map(q=>q[1]);
     let x0=Math.min(...xs)-9,x1=Math.max(...xs)+9,y0=Math.min(...ys)-9,y1=94;const w=Math.max(x1-x0,(y1-y0)*1.2),h=w/1.2;x0=(x0+x1)/2-w/2;y0=y1-h;
     return `<li class="${i===run.i&&!resting?'on':i<run.i||(i===run.i&&resting)?'done':''}"><button type="button" data-j="${i}" aria-label="Go to ${esc(e[0])}"><span class="no">${i+1}</span><svg viewBox="${x0} ${y0} ${w} ${h}" aria-hidden="true">${figAnim(A,B,e[4],i*0.4)}</svg><span class="tx"><b>${esc(e[0])}</b><small>${esc(e[1])}</small></span></button></li>`;}).join('');
   $('stepsH').textContent=`See all ${p.ex.length} exercises`;
-  $('steps').querySelectorAll('[data-j]').forEach(b=>b.onclick=()=>{run.restart=false;run.i=+b.dataset.j;run.phase='work';run.left=dur();drawPlayer();savePos();showPlayer();say(X[run.prog.ex[run.i]][0]);});
+  $('steps').querySelectorAll('[data-j]').forEach(b=>b.onclick=()=>{run.restart=false;run.i=+b.dataset.j;run.phase='work';run.left=dur();drawPlayer();savePos();showPlayer();sayEx(run.prog.ex[run.i]);});
   if(!run.on)drawFig(0);
 }
 function drawFig(t){
@@ -1521,7 +1526,7 @@ function drawFig(t){
 }
 function loop(t){drawFig(t);if(run.on)raf=requestAnimationFrame(loop);}
 function tick(){
-  const now=performance.now();run.left-=(now-run.last)/1000;run.last=now;
+  const now=performance.now(),dt=(now-run.last)/1000;run.left-=dt;run.last=now;if(run.phase==='work')run.el=(run.el||0)+dt;
   if(run.left<=3.05&&run.left>0&&Math.ceil(run.left)!==run.beeped){run.beeped=Math.ceil(run.left);beep(660,.08);}
   {const e=X[run.prog.ex[run.i]];if(run.phase==='work'&&e&&e[6]&&!run.sw&&run.left<=dur()/2){run.sw=true;beep(880,.18);setTimeout(()=>beep(880,.18),260);$('tag').textContent='Switch sides';drawFig(0);}}
   if(run.left<=0)advance();else{$('clock').textContent=clockTxt(run.left);const p=run.prog,doneSteps=run.i+(run.phase==='rest'?1:(1-run.left/dur()));$('bar').style.width=(doneSteps/p.ex.length*100)+'%';}
@@ -1531,7 +1536,7 @@ function advance(){
   if(run.phase==='work'&&last){finish();return;}
   if(run.phase==='work'&&!p.scan){run.phase='rest';}
   else{run.phase='work';run.i++;}
-  run.left=dur();run.beeped=null;run.sw=false;beep(run.phase==='work'?990:520,.25);drawPlayer();savePos();{const nx=X[p.ex[run.phase==='rest'?run.i+1:run.i]];if(nx)setTimeout(()=>say(run.phase==='rest'?'Pause. Next: '+nx[0]:nx[0]),350);}
+  run.left=dur();run.beeped=null;run.sw=false;beep(run.phase==='work'?990:520,.25);drawPlayer();savePos();{const nk=p.ex[run.phase==='rest'?run.i+1:run.i];if(nk)setTimeout(()=>sayEx(nk,run.phase==='rest'?'next':''),350);}
 }
 function finish(){
   pause();progFold(false);beep(990,.2);setTimeout(()=>beep(1320,.35),220);
@@ -1540,19 +1545,23 @@ function finish(){
   $('exname').textContent='Well done!';$('extip').textContent=`You have completed ${run.prog.navn.toLowerCase()} today. Choose a new program or do the same one again tomorrow.`;
   $('clock').textContent='0:00';$('bar').style.width='100%';$('tag').textContent='Done';$('play').textContent='Start over';
   $('steps').querySelectorAll('li').forEach(l=>l.className='done');
-  run.i=0;run.phase='work';run.left=dur();run.restart=true;drawCards();try{store.set('tr-pos',null)}catch(e){}say('Well done!');
+  run.i=0;run.el=0;run.phase='work';run.left=dur();run.restart=true;drawCards();$('stopTr').hidden=true;try{store.set('tr-pos',null)}catch(e){}if(run.sound&&!VO_ON)sayTTS('Well done!');else if(run.sound){try{vo=vo||new Audio();vo.onerror=()=>sayTTS('Well done!');vo.onended=null;vo.src=`/audio/ex/${document.documentElement.lang==='en'?'en':'da'}/_done.mp3`;const pr=vo.play();if(pr&&pr.catch)pr.catch(()=>sayTTS('Well done!'));}catch(e){sayTTS('Well done!')}}
 }
 function start(){
   progFold(true);
   if(run.restart){run.restart=false;drawPlayer();}
   try{ac=ac||new (window.AudioContext||window.webkitAudioContext)();if(ac.state==='suspended')ac.resume();}catch(e){}
-  run.on=true;run.last=performance.now();beep(990,.15);timer=setInterval(tick,200);cancelAnimationFrame(raf);raf=requestAnimationFrame(loop);drawPlayer();savePos();setTimeout(showPlayer,60);{const e=run.phase==='rest'?X[run.prog.ex[run.i+1]]:curEx();if(e)say(e[0]);}
+  run.on=true;run.last=performance.now();beep(990,.15);timer=setInterval(tick,200);cancelAnimationFrame(raf);raf=requestAnimationFrame(loop);drawPlayer();savePos();setTimeout(showPlayer,60);{const k=run.prog.ex[run.phase==='rest'?run.i+1:run.i];if(k)sayEx(k);}
 }
 function pause(){run.on=false;clearInterval(timer);cancelAnimationFrame(raf);if(run.prog&&!run.restart)drawPlayer();}
 
 function progFold(on){const sec=document.querySelector('#v-tr .progs');if(!sec)return;sec.classList.toggle('folded',on);$('progH').setAttribute('aria-expanded',!on);$('progCur').textContent=on&&run.prog?run.prog.navn+' · switch':'';}
 $('progH').onclick=()=>{const f=document.querySelector('#v-tr .progs').classList.contains('folded');progFold(!f);};
 $('play').onclick=()=>run.on?pause():start();
+$('stopTr').onclick=()=>{const el=run.el||0;pause();try{window.speechSynthesis&&speechSynthesis.cancel();if(vo)vo.pause();}catch(e){}
+  if(el>=120){const m=Math.round(el/60);D.workouts.push({id:uid(),t:nowT(),navn:`${m} min ${run.prog.navn.toLowerCase()}`,min:m});save();toast(`Workout stopped. ${m} min saved.`);}else toast('Workout stopped.');
+  run.i=0;run.el=0;run.phase='work';run.left=dur();run.restart=false;run.sw=false;try{store.set('tr-pos',null)}catch(e){}
+  progFold(false);drawCards();drawPlayer();window.scrollTo({top:0,behavior:reduce?'auto':'smooth'});};
 $('next').onclick=()=>{run.restart=false;if(run.i<run.prog.ex.length-1){run.i++;run.phase='work';run.left=dur();run.sw=false;run.beeped=null;drawPlayer();}};
 $('prev').onclick=()=>{run.restart=false;if(run.phase==='rest'){run.phase='work';}else if(run.i>0)run.i--;run.left=dur();run.sw=false;run.beeped=null;drawPlayer();};
 const snd=$('sound');const drawSnd=()=>{snd.textContent=run.sound?'🔊 Voice and beep':'🔕 No sound';snd.setAttribute('aria-pressed',run.sound);snd.classList.toggle('on',run.sound);};
@@ -1784,6 +1793,7 @@ function drawStrip(){
   const d=day(vKey),isT=vKey===today,nowH=new Date().getHours()+new Date().getMinutes()/60,L=lateH(),rows=[];
   const add=(h,cls,ic,time,title,sub)=>rows.push({h,cls,ic,time,title,sub});
   if(d.sleep)add(-1,'sl','😴',`${d.sleep.from}–${d.sleep.to}`,`Sleep · ${nf(d.sleepH,1)} hours`,(q=>q?q[0].toUpperCase()+q.slice(1):'')(QUAL[d.sleep.q]||''));
+  (d.wo||[]).forEach(w=>add(hr(w.t),'wo','🏃',w.t.slice(11,16),esc(w.navn||'Training'),(+w.min||0)+' min'));
   [...d.meals].sort((p,q)=>p.t.localeCompare(q.t)).forEach(m=>{add(hr(m.t),'ml','🍽️',m.t.slice(11,16),esc(m.titel||'Meal'),[m.kcal!=null?nf(r0(m.kcal))+' kcal':'',m.protein!=null?nf(r0(m.protein))+' g protein':''].filter(Boolean).join(' · '));rows.at(-1).ids=(m.items||[]).map(x=>x.id).filter(Boolean).join(',');});
   (D.hunger||[]).filter(x=>x.t.startsWith(vKey)).forEach(x=>add(hr(x.t),'hu','😋',x.t.slice(11,16),['A little hungry','Hungry','Very hungry'][x.lvl-1]||'Hungry',(x.why||[]).join(', ')));
   d.wo.forEach(w=>add(hr(w.t),'wo','🏃',w.t.slice(11,16),esc(w.navn),/min/.test(w.navn)?'Training':w.min+' min training'));
