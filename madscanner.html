@@ -757,6 +757,14 @@ body:not([data-page="vejleder"]) .ptitle{display:block}
 #result:has(> .empty){display:none}
 /* fokus-ring kun ved tastatur */
 button:focus:not(:focus-visible),a:focus:not(:focus-visible),.qt:focus:not(:focus-visible){outline:none!important;box-shadow:none}
+
+/* aktiv træning: vinrød kort, så man kan se, hvad der kører */
+#v-tr .ctrl{background:linear-gradient(160deg,var(--wine) 0%,var(--wine2) 100%);border:1px solid rgba(255,255,255,.08);border-radius:24px;padding:20px 18px;color:#fff;box-shadow:0 14px 40px rgba(90,15,28,.35)}
+#v-tr .ctrl .small,#v-tr .ctrl .tip{color:rgba(255,255,255,.78)!important}
+#v-tr .ctrl .prog{background:rgba(255,255,255,.18)}#v-tr .ctrl .prog i{background:#fff}
+#v-tr .ctrl .ghost{background:rgba(255,255,255,.1)!important;border-color:rgba(255,255,255,.25)!important;color:#fff!important}
+#v-tr .ctrl .go{background:#fff!important;color:var(--wine2)!important}
+#v-tr .card.sel{border-color:var(--wine)!important;box-shadow:0 0 0 2px var(--wine) inset}
 </style>
 </head>
 <body>

@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,viewport-fit=cover">
-<title>Meal Mentor AI</title><meta name="mm-version" content="19f4654a5a"><link rel="manifest" href="/manifest.webmanifest"><link rel="apple-touch-icon" href="/apple-touch-icon.png"><link rel="icon" href="/icon-192.png"><meta name="theme-color" content="#F1F1F4"><link rel="stylesheet" href="/mm.css?v=9474bc01"><script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script><script src="/mm.js?v=9474bc01"></script>
+<title>Meal Mentor AI</title><meta name="mm-version" content="ede4c88ed4"><link rel="manifest" href="/manifest.webmanifest"><link rel="apple-touch-icon" href="/apple-touch-icon.png"><link rel="icon" href="/icon-192.png"><meta name="theme-color" content="#F1F1F4"><link rel="stylesheet" href="/mm.css?v=9474bc01"><script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script><script src="/mm.js?v=9474bc01"></script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Inter+Tight:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <style>
@@ -757,6 +757,14 @@ body:not([data-page="vejleder"]) .ptitle{display:block}
 #result:has(> .empty){display:none}
 /* fokus-ring kun ved tastatur */
 button:focus:not(:focus-visible),a:focus:not(:focus-visible),.qt:focus:not(:focus-visible){outline:none!important;box-shadow:none}
+
+/* aktiv træning: vinrød kort, så man kan se, hvad der kører */
+#v-tr .ctrl{background:linear-gradient(160deg,var(--wine) 0%,var(--wine2) 100%);border:1px solid rgba(255,255,255,.08);border-radius:24px;padding:20px 18px;color:#fff;box-shadow:0 14px 40px rgba(90,15,28,.35)}
+#v-tr .ctrl .small,#v-tr .ctrl .tip{color:rgba(255,255,255,.78)!important}
+#v-tr .ctrl .prog{background:rgba(255,255,255,.18)}#v-tr .ctrl .prog i{background:#fff}
+#v-tr .ctrl .ghost{background:rgba(255,255,255,.1)!important;border-color:rgba(255,255,255,.25)!important;color:#fff!important}
+#v-tr .ctrl .go{background:#fff!important;color:var(--wine2)!important}
+#v-tr .card.sel{border-color:var(--wine)!important;box-shadow:0 0 0 2px var(--wine) inset}
 </style>
 </head>
 <body>
