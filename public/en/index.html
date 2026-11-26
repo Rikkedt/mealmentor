@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,viewport-fit=cover">
-<title>Meal Mentor AI</title><meta name="mm-version" content="81687c5af8"><link rel="manifest" href="/manifest.webmanifest"><link rel="apple-touch-icon" href="/apple-touch-icon.png"><link rel="icon" href="/icon-192.png"><meta name="theme-color" content="#F1F1F4"><link rel="stylesheet" href="/mm.css?v=9474bc01"><script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script><script src="/mm.en.js?v=9474bc01"></script>
+<title>Meal Mentor AI</title><meta name="mm-version" content="e893b85990"><link rel="manifest" href="/manifest.webmanifest"><link rel="apple-touch-icon" href="/apple-touch-icon.png"><link rel="icon" href="/icon-192.png"><meta name="theme-color" content="#F1F1F4"><link rel="stylesheet" href="/mm.css?v=9474bc01"><script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script><script src="/mm.en.js?v=9474bc01"></script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Inter+Tight:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <style>
@@ -779,6 +779,11 @@ button:focus:not(:focus-visible),a:focus:not(:focus-visible),.qt:focus:not(:focu
 #recs2 li{background:linear-gradient(160deg,color-mix(in srgb,#5B7CFA 20%,var(--card)) 0%,color-mix(in srgb,#5B7CFA 9%,var(--card)) 100%)!important;border:1px solid color-mix(in srgb,#5B7CFA 28%,transparent)!important}
 #v-ind .sec-h b{font-size:14px;color:var(--ink)}
 #v-ind .ind-h .sq{background:color-mix(in srgb,var(--tomato) 45%,#2a2c33)}
+
+/* tændstikmanden står i det aktive kort, så den altid ses sammen med øvelsen */
+#v-tr .player{grid-template-columns:minmax(0,1fr)!important;max-width:640px}
+#v-tr .ctrl .mat{--ink:#fff;--line:rgba(255,255,255,.3);background:rgba(0,0,0,.2)!important;aspect-ratio:4/3;border-radius:18px;margin:2px 0}
+#v-tr .ctrl .mat .tag{background:rgba(255,255,255,.92)!important;color:#14512F!important}
 </style>
 </head>
 <body>
@@ -827,10 +832,10 @@ button:focus:not(:focus-visible),a:focus:not(:focus-visible),.qt:focus:not(:focu
 <div class="bsa" id="bsa" hidden><div class="bsa-ic">🌙</div><div class="bsa-b"><small>BODY SCAN · 5 MIN</small><h2>Calm and relaxation</h2><p>Lie or sit comfortably, close your eyes and listen. The voice guides you through your whole body.</p>
 <button class="bsa-play" id="bsaPlay" type="button"><span id="bsaPi">▶</span><span id="bsaT">Start body scan</span></button><div class="bsa-bar"><i id="bsaBar"></i></div><div class="small" id="bsaTime">0:00 of 4:52</div></div>
 <audio id="bsaAudio" preload="none"></audio></div>
-<div class="mat"><svg id="fig" viewBox="0 0 120 100" aria-hidden="true"></svg><span class="tag" id="tag">Ready</span></div>
 <div class="ctrl">
 <div class="small" id="pname"></div>
 <h2 class="ex" id="exname"></h2>
+<div class="mat"><svg id="fig" viewBox="0 0 120 100" aria-hidden="true"></svg><span class="tag" id="tag">Ready</span></div>
 <p class="tip" id="extip"></p>
 <div class="clock" id="clock" aria-live="off">0:50</div>
 <div class="prog"><i id="bar" style="width:0"></i></div>
