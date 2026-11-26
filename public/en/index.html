@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,viewport-fit=cover">
-<title>Meal Mentor AI</title><meta name="mm-version" content="ede4c88ed4"><link rel="manifest" href="/manifest.webmanifest"><link rel="apple-touch-icon" href="/apple-touch-icon.png"><link rel="icon" href="/icon-192.png"><meta name="theme-color" content="#F1F1F4"><link rel="stylesheet" href="/mm.css?v=9474bc01"><script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script><script src="/mm.en.js?v=9474bc01"></script>
+<title>Meal Mentor AI</title><meta name="mm-version" content="9ef13acf7a"><link rel="manifest" href="/manifest.webmanifest"><link rel="apple-touch-icon" href="/apple-touch-icon.png"><link rel="icon" href="/icon-192.png"><meta name="theme-color" content="#F1F1F4"><link rel="stylesheet" href="/mm.css?v=9474bc01"><script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script><script src="/mm.en.js?v=9474bc01"></script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Inter+Tight:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <style>
@@ -983,6 +983,10 @@ button:focus:not(:focus-visible),a:focus:not(:focus-visible),.qt:focus:not(:focu
 <div id="v-prof" hidden>
 <main class="band"><div class="wrap profile">
 
+<section class="pcard"><h2>My entries</h2>
+<div class="fchips" id="entFilter" role="group" aria-label="Filter"><button data-t="" aria-pressed="true">All</button><button data-t="meals" aria-pressed="false">Food</button><button data-t="sleep" aria-pressed="false">Sleep</button><button data-t="weights" aria-pressed="false">Weight</button><button data-t="workouts" aria-pressed="false">Training</button><button data-t="doses" aria-pressed="false">Dose</button></div>
+<ul class="entries" id="entries"></ul><button class="ghost" id="entMore" hidden>Show more</button></section>
+
 <section class="pcard"><h2>Goals and body</h2><form class="form plain" id="fSet">
 <label>Your goal<select name="goal"><option value="stabil">Keep my weight stable on GLP-1</option><option value="ned">Taper off GLP-1 without regaining weight</option><option value="tab">Lose weight</option><option value="styrke">Get stronger and more toned, but keep the weight</option></select></label>
 <label>Menopause<select name="oa"><option value="nej">Not relevant</option><option value="peri">Maybe / perimenopause</option><option value="ja">Yes, I'm in menopause</option><option value="efter">After menopause</option></select></label>
@@ -1020,9 +1024,7 @@ button:focus:not(:focus-visible),a:focus:not(:focus-visible),.qt:focus:not(:focu
 <section class="pcard"><h2>Subscription</h2>
 <div class="plans"><div class="plan cur"><b>Meal Mentor AI</b><span class="price">49 kr/mo</span><span class="trial">Try free for 7 days</span><ul><li>Unlimited AI food scanning</li><li>Mentor with food suggestions, push and analyses</li><li>Help with tapering off GLP-1</li><li>All training programs</li></ul><span class="small">Cancel anytime. You only pay after 7 days.</span><button class="go" disabled>Coming to the app</button></div></div></section>
 
-<section class="pcard"><h2>My entries</h2>
-<div class="fchips" id="entFilter" role="group" aria-label="Filter"><button data-t="" aria-pressed="true">All</button><button data-t="meals" aria-pressed="false">Food</button><button data-t="sleep" aria-pressed="false">Sleep</button><button data-t="weights" aria-pressed="false">Weight</button><button data-t="workouts" aria-pressed="false">Training</button><button data-t="doses" aria-pressed="false">Dose</button></div>
-<ul class="entries" id="entries"></ul><button class="ghost" id="entMore" hidden>Show more</button></section>
+
 
 <section class="pcard" id="pSetup"><h2>Settings</h2><p id="syncInfo2" class="small"></p><div class="langrow"><small>Appearance</small><div class="seg" id="themeSeg"><button type="button" data-th="light">Light</button><button type="button" data-th="dark">Dark</button><button type="button" data-th="auto">Automatic</button></div></div><div class="langrow"><small>Sprog · Language</small><div class="seg" id="langSeg"><button type="button" data-lang="da">Dansk</button><button type="button" data-lang="en">English</button></div></div></section>
 

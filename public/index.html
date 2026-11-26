@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,viewport-fit=cover">
-<title>Meal Mentor AI</title><meta name="mm-version" content="ede4c88ed4"><link rel="manifest" href="/manifest.webmanifest"><link rel="apple-touch-icon" href="/apple-touch-icon.png"><link rel="icon" href="/icon-192.png"><meta name="theme-color" content="#F1F1F4"><link rel="stylesheet" href="/mm.css?v=9474bc01"><script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script><script src="/mm.js?v=9474bc01"></script>
+<title>Meal Mentor AI</title><meta name="mm-version" content="9ef13acf7a"><link rel="manifest" href="/manifest.webmanifest"><link rel="apple-touch-icon" href="/apple-touch-icon.png"><link rel="icon" href="/icon-192.png"><meta name="theme-color" content="#F1F1F4"><link rel="stylesheet" href="/mm.css?v=9474bc01"><script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script><script src="/mm.js?v=9474bc01"></script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Inter+Tight:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <style>
@@ -983,6 +983,10 @@ button:focus:not(:focus-visible),a:focus:not(:focus-visible),.qt:focus:not(:focu
 <div id="v-prof" hidden>
 <main class="band"><div class="wrap profile">
 
+<section class="pcard"><h2>Mine registreringer</h2>
+<div class="fchips" id="entFilter" role="group" aria-label="Filtrér"><button data-t="" aria-pressed="true">Alt</button><button data-t="meals" aria-pressed="false">Mad</button><button data-t="sleep" aria-pressed="false">Søvn</button><button data-t="weights" aria-pressed="false">Vægt</button><button data-t="workouts" aria-pressed="false">Træning</button><button data-t="doses" aria-pressed="false">Dosis</button></div>
+<ul class="entries" id="entries"></ul><button class="ghost" id="entMore" hidden>Vis flere</button></section>
+
 <section class="pcard"><h2>Mål og krop</h2><form class="form plain" id="fSet">
 <label>Dit mål<select name="goal"><option value="stabil">Holde vægten stabil på GLP-1</option><option value="ned">Trappe ud af GLP-1 uden at tage på</option><option value="tab">Tabe mig</option><option value="styrke">Blive stærkere og mere markeret, men holde vægten</option></select></label>
 <label>Overgangsalder<select name="oa"><option value="nej">Ikke relevant</option><option value="peri">Måske / perimenopause</option><option value="ja">Ja, er i overgangsalderen</option><option value="efter">Efter overgangsalderen</option></select></label>
@@ -1020,9 +1024,7 @@ button:focus:not(:focus-visible),a:focus:not(:focus-visible),.qt:focus:not(:focu
 <section class="pcard"><h2>Abonnement</h2>
 <div class="plans"><div class="plan cur"><b>Meal Mentor AI</b><span class="price">49 kr./md</span><span class="trial">Prøv gratis i 7 dage</span><ul><li>Ubegrænset AI-scanning af mad</li><li>Mentor med madforslag, push og analyser</li><li>Hjælp til nedtrapning af GLP-1</li><li>Alle træningsprogrammer</li></ul><span class="small">Opsig når som helst. Du betaler først efter 7 dage.</span><button class="go" disabled>Kommer i appen</button></div></div></section>
 
-<section class="pcard"><h2>Mine registreringer</h2>
-<div class="fchips" id="entFilter" role="group" aria-label="Filtrér"><button data-t="" aria-pressed="true">Alt</button><button data-t="meals" aria-pressed="false">Mad</button><button data-t="sleep" aria-pressed="false">Søvn</button><button data-t="weights" aria-pressed="false">Vægt</button><button data-t="workouts" aria-pressed="false">Træning</button><button data-t="doses" aria-pressed="false">Dosis</button></div>
-<ul class="entries" id="entries"></ul><button class="ghost" id="entMore" hidden>Vis flere</button></section>
+
 
 <section class="pcard" id="pSetup"><h2>Opsætning</h2><p id="syncInfo2" class="small"></p><div class="langrow"><small>Visning</small><div class="seg" id="themeSeg"><button type="button" data-th="light">Lys</button><button type="button" data-th="dark">Mørk</button><button type="button" data-th="auto">Automatisk</button></div></div><div class="langrow"><small>Sprog · Language</small><div class="seg" id="langSeg"><button type="button" data-lang="da">Dansk</button><button type="button" data-lang="en">English</button></div></div></section>
 
