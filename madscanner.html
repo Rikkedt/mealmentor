@@ -767,6 +767,18 @@ button:focus:not(:focus-visible),a:focus:not(:focus-visible),.qt:focus:not(:focu
 #v-tr .ctrl .stepsd{margin-top:4px;border-top:1px solid rgba(255,255,255,.18);padding-top:12px}#v-tr .ctrl .stepsd>summary{color:#fff;font-size:16px}
 #v-tr .ctrl .steps li button{background:rgba(255,255,255,.1)!important;color:#fff;box-shadow:none!important}#v-tr .ctrl .steps li button small{color:rgba(255,255,255,.75)}#v-tr .ctrl .steps li.on button{background:rgba(255,255,255,.24)!important;box-shadow:0 0 0 2px #fff!important}#v-tr .ctrl .steps svg{background:rgba(0,0,0,.18)!important;border-radius:12px}
 #v-tr .card.sel{border-color:#2E8B5A!important;box-shadow:0 0 0 2px #2E8B5A inset}
+
+/* Indsigt: tydelige overskrifter og blålige råd */
+#moreRecs>summary{display:flex;align-items:center;gap:10px;margin:22px 0 10px;color:var(--ink);font-size:inherit}
+#moreRecs>summary::before{display:none}
+#moreRecs>summary b{font-size:14px;font-weight:800;letter-spacing:1.3px;flex:1}
+#moreRecs>summary .sq{width:28px;height:28px;border-radius:8px;background:color-mix(in srgb,#5B7CFA 55%,#1d2030);display:grid;place-items:center;font-size:14px}
+#moreRecs>summary .rc-n{min-width:24px;height:24px;padding:0 8px;border-radius:999px;background:color-mix(in srgb,#5B7CFA 25%,var(--card));color:var(--ink);font-size:12px;font-weight:700;display:grid;place-items:center}
+#moreRecs>summary::after{content:"";width:8px;height:8px;border-right:2.5px solid currentColor;border-bottom:2.5px solid currentColor;transform:rotate(45deg);opacity:.6;margin:0 6px 4px}
+#moreRecs:not([open])>summary::after{transform:rotate(-45deg);margin-bottom:0}
+#recs2 li{background:linear-gradient(160deg,color-mix(in srgb,#5B7CFA 20%,var(--card)) 0%,color-mix(in srgb,#5B7CFA 9%,var(--card)) 100%)!important;border:1px solid color-mix(in srgb,#5B7CFA 28%,transparent)!important}
+#v-ind .sec-h b{font-size:14px;color:var(--ink)}
+#v-ind .ind-h .sq{background:color-mix(in srgb,var(--tomato) 45%,#2a2c33)}
 </style>
 </head>
 <body>
@@ -1749,7 +1761,7 @@ function drawRecs(){drawSleepAsk();drawTodo();drawLeft();drawCheckin();drawAnl()
   const li=([c,t,s])=>`<li class="${c}" tabindex="0" role="button" aria-expanded="false"><b>${esc(t)}</b><span>${esc(s)}</span></li>`;
   const NOW=/^Kort nat i nat|^Dag \d+ efter dosis|^Ingen træning i/,T=R.filter(([c,t])=>NOW.test(t)).slice(0,2),M=R.filter(r=>!T.includes(r));
   $('recs').innerHTML=T.map(li).join('');$('recs').hidden=!T.length;$('recs2').innerHTML=M.map(li).join('');
-  $('moreRecs').hidden=!M.length;$('moreRecsSum').textContent=`Råd (${M.length})`;
+  $('moreRecs').hidden=!M.length;$('moreRecsSum').innerHTML=`<span class="sq">💡</span><b>RÅD</b><span class="rc-n">${M.length}</span>`;
 }
 
 /* chips */

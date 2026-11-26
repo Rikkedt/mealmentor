@@ -226,3 +226,4 @@ X.update({'Jo mere du logger, jo flere råd og analyser kommer der. Mønstre i s
 X.update({'Pakke':'Package','Skriv selv':'Type it'})
 X.update({'🔊 Tale og bip':'🔊 Voice and beep','🔕 Ingen lyd':'🔕 No sound','Pause. Næste:':'Pause. Next:'})
 X.update({'Træningen er stoppet.':'Workout stopped.','min er gemt.':'min saved.','Stop træning':'Stop workout'})
+X.update({'RÅD':'ADVICE'})
