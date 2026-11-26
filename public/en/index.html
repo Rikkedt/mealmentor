@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,viewport-fit=cover">
-<title>Meal Mentor AI</title><meta name="mm-version" content="868fd47179"><link rel="manifest" href="/manifest.webmanifest"><link rel="apple-touch-icon" href="/apple-touch-icon.png"><link rel="icon" href="/icon-192.png"><meta name="theme-color" content="#F1F1F4"><link rel="stylesheet" href="/mm.css?v=9474bc01"><script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script><script src="/mm.en.js?v=9474bc01"></script>
+<title>Meal Mentor AI</title><meta name="mm-version" content="19f4654a5a"><link rel="manifest" href="/manifest.webmanifest"><link rel="apple-touch-icon" href="/apple-touch-icon.png"><link rel="icon" href="/icon-192.png"><meta name="theme-color" content="#F1F1F4"><link rel="stylesheet" href="/mm.css?v=9474bc01"><script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script><script src="/mm.en.js?v=9474bc01"></script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Inter+Tight:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <style>
@@ -770,7 +770,7 @@ button:focus:not(:focus-visible),a:focus:not(:focus-visible),.qt:focus:not(:focu
 <div id="v-mad">
 <main class="band"><div class="wrap grid">
 <section>
-<div class="seg" id="scanMode" role="group" aria-label="What do you want to scan?" style="margin-bottom:12px"><button data-m="meal" aria-pressed="true">Plate</button><button data-m="label" aria-pressed="false">Package / label</button></div>
+<div class="seg" id="scanMode" role="group" aria-label="What do you want to scan?" style="margin-bottom:12px"><button data-m="meal" aria-pressed="true">Plate</button><button data-m="label" aria-pressed="false">Package</button><button type="button" id="scanWrite">Type it</button></div>
 <div class="drop" id="drop" tabindex="0" role="button" aria-label="Choose or take a picture">
 <div class="hint" id="hint"><div class="plate"></div><b>Take or choose a picture</b>On your phone you can open the camera directly. On a computer you can also drag a picture in here.</div>
 </div>
@@ -1162,6 +1162,7 @@ function load(f){
 let scanMode='meal';
 const hints={meal:'<div class="plate"></div><b>Take a picture of the plate</b>On your phone the camera opens directly. On a computer you can drag a picture in here.',
   label:'<div class="plate"></div><b>Photograph the nutrition label</b>The table with "Nutrition per 100 g" on the back of the package. The app then reads the exact numbers.'};
+$('scanWrite').onclick=()=>{backFrom={hash:'#mad'};location.hash='#vejleder';setTimeout(()=>{openForm('fMeal',null,true);$('panelBack').hidden=true;},300);};
 document.querySelectorAll('#scanMode [data-m]').forEach(b=>b.onclick=()=>{scanMode=b.dataset.m;document.querySelectorAll('#scanMode [data-m]').forEach(x=>x.setAttribute('aria-pressed',x===b));
   hintEl.innerHTML=hints[scanMode];go.textContent=scanMode==='label'?'Read the label':'Calculate nutrition';$('extra').placeholder=scanMode==='label'?'E.g.: I ate half the package':'E.g.: fried in butter, large portion, 2 slices of rye bread';});
 const labelPrompt=extra=>`The picture shows a food package, typically the nutrition label. Read the product name and the nutritional content per 100 g (or per 100 ml for drinks).

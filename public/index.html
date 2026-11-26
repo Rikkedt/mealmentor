@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,viewport-fit=cover">
-<title>Meal Mentor AI</title><meta name="mm-version" content="868fd47179"><link rel="manifest" href="/manifest.webmanifest"><link rel="apple-touch-icon" href="/apple-touch-icon.png"><link rel="icon" href="/icon-192.png"><meta name="theme-color" content="#F1F1F4"><link rel="stylesheet" href="/mm.css?v=9474bc01"><script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script><script src="/mm.js?v=9474bc01"></script>
+<title>Meal Mentor AI</title><meta name="mm-version" content="19f4654a5a"><link rel="manifest" href="/manifest.webmanifest"><link rel="apple-touch-icon" href="/apple-touch-icon.png"><link rel="icon" href="/icon-192.png"><meta name="theme-color" content="#F1F1F4"><link rel="stylesheet" href="/mm.css?v=9474bc01"><script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script><script src="/mm.js?v=9474bc01"></script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Inter+Tight:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <style>
@@ -770,7 +770,7 @@ button:focus:not(:focus-visible),a:focus:not(:focus-visible),.qt:focus:not(:focu
 <div id="v-mad">
 <main class="band"><div class="wrap grid">
 <section>
-<div class="seg" id="scanMode" role="group" aria-label="Hvad vil du scanne?" style="margin-bottom:12px"><button data-m="meal" aria-pressed="true">Tallerken</button><button data-m="label" aria-pressed="false">Pakke / deklaration</button></div>
+<div class="seg" id="scanMode" role="group" aria-label="Hvad vil du scanne?" style="margin-bottom:12px"><button data-m="meal" aria-pressed="true">Tallerken</button><button data-m="label" aria-pressed="false">Pakke</button><button type="button" id="scanWrite">Skriv selv</button></div>
 <div class="drop" id="drop" tabindex="0" role="button" aria-label="Vælg eller tag billede">
 <div class="hint" id="hint"><div class="plate"></div><b>Tag eller vælg et billede</b>På mobilen kan du åbne kameraet direkte. På computer kan du også trække et billede herind.</div>
 </div>
@@ -1162,6 +1162,7 @@ function load(f){
 let scanMode='meal';
 const hints={meal:'<div class="plate"></div><b>Tag et billede af tallerkenen</b>På mobilen åbner kameraet direkte. På computer kan du trække et billede herind.',
   label:'<div class="plate"></div><b>Fotografér næringsdeklarationen</b>Tabellen med "Næringsindhold pr. 100 g" på pakkens bagside. Så aflæser appen de præcise tal.'};
+$('scanWrite').onclick=()=>{backFrom={hash:'#mad'};location.hash='#vejleder';setTimeout(()=>{openForm('fMeal',null,true);$('panelBack').hidden=true;},300);};
 document.querySelectorAll('#scanMode [data-m]').forEach(b=>b.onclick=()=>{scanMode=b.dataset.m;document.querySelectorAll('#scanMode [data-m]').forEach(x=>x.setAttribute('aria-pressed',x===b));
   hintEl.innerHTML=hints[scanMode];go.textContent=scanMode==='label'?'Aflæs deklaration':'Beregn næringsindhold';$('extra').placeholder=scanMode==='label'?'Fx: jeg spiste halvdelen af pakken':'Fx: stegt i smør, stor portion, 2 skiver rugbrød';});
 const labelPrompt=extra=>`Billedet viser en fødevarepakke, typisk næringsdeklarationen. Aflæs produktnavnet og næringsindholdet pr. 100 g (eller pr. 100 ml for drikke).
