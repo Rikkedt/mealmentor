@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,viewport-fit=cover">
-<title>Meal Mentor AI</title><meta name="mm-version" content="b6a029d0cf"><link rel="manifest" href="/manifest.webmanifest"><link rel="apple-touch-icon" href="/apple-touch-icon.png"><link rel="icon" href="/icon-192.png"><meta name="theme-color" content="#F1F1F4"><link rel="stylesheet" href="/mm.css?v=9474bc01"><script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script><script src="/mm.en.js?v=9474bc01"></script>
+<title>Meal Mentor AI</title><meta name="mm-version" content="b0a2ca0c43"><link rel="manifest" href="/manifest.webmanifest"><link rel="apple-touch-icon" href="/apple-touch-icon.png"><link rel="icon" href="/icon-192.png"><meta name="theme-color" content="#F1F1F4"><link rel="stylesheet" href="/mm.css?v=9474bc01"><script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script><script src="/mm.en.js?v=9474bc01"></script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Inter+Tight:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <style>
@@ -784,6 +784,10 @@ button:focus:not(:focus-visible),a:focus:not(:focus-visible),.qt:focus:not(:focu
 #v-tr .player{grid-template-columns:minmax(0,1fr)!important;max-width:640px}
 #v-tr .ctrl .mat{--ink:#fff;--line:rgba(255,255,255,.3);background:rgba(0,0,0,.2)!important;aspect-ratio:4/3;border-radius:18px;margin:2px 0}
 #v-tr .ctrl .mat .tag{background:rgba(255,255,255,.92)!important;color:#14512F!important}
+
+/* forsiden skal ikke kunne scrolle, når indholdet kan være der */
+body[data-page=vejleder]{padding-bottom:calc(80px + env(safe-area-inset-bottom))!important}
+#v-vej>main.band{padding-bottom:8px}
 </style>
 </head>
 <body>
@@ -965,9 +969,6 @@ button:focus:not(:focus-visible),a:focus:not(:focus-visible),.qt:focus:not(:focu
 
 </div></main>
 
-<section class="band vsec"><div class="wrap">
-
-</div></section>
 </div>
 
 <div id="v-ind" hidden>

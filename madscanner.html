@@ -784,6 +784,10 @@ button:focus:not(:focus-visible),a:focus:not(:focus-visible),.qt:focus:not(:focu
 #v-tr .player{grid-template-columns:minmax(0,1fr)!important;max-width:640px}
 #v-tr .ctrl .mat{--ink:#fff;--line:rgba(255,255,255,.3);background:rgba(0,0,0,.2)!important;aspect-ratio:4/3;border-radius:18px;margin:2px 0}
 #v-tr .ctrl .mat .tag{background:rgba(255,255,255,.92)!important;color:#14512F!important}
+
+/* forsiden skal ikke kunne scrolle, når indholdet kan være der */
+body[data-page=vejleder]{padding-bottom:calc(80px + env(safe-area-inset-bottom))!important}
+#v-vej>main.band{padding-bottom:8px}
 </style>
 </head>
 <body>
@@ -965,9 +969,6 @@ button:focus:not(:focus-visible),a:focus:not(:focus-visible),.qt:focus:not(:focu
 
 </div></main>
 
-<section class="band vsec"><div class="wrap">
-
-</div></section>
 </div>
 
 <div id="v-ind" hidden>
