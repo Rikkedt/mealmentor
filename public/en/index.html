@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,viewport-fit=cover">
-<title>Meal Mentor AI</title><meta name="mm-version" content="8b77b924ea"><link rel="manifest" href="/manifest.webmanifest"><link rel="apple-touch-icon" href="/apple-touch-icon.png"><link rel="icon" href="/icon-192.png"><meta name="theme-color" content="#F1F1F4"><link rel="stylesheet" href="/mm.css?v=9474bc01"><script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script><script src="/mm.en.js?v=9474bc01"></script>
+<title>Meal Mentor AI</title><meta name="mm-version" content="c9f13bec68"><link rel="manifest" href="/manifest.webmanifest"><link rel="apple-touch-icon" href="/apple-touch-icon.png"><link rel="icon" href="/icon-192.png"><meta name="theme-color" content="#F1F1F4"><link rel="stylesheet" href="/mm.css?v=9474bc01"><script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script><script src="/mm.en.js?v=9474bc01"></script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Inter+Tight:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <style>
@@ -296,6 +296,7 @@ body{padding-bottom:84px}
 .mat svg{overflow:hidden}
 html,body{max-width:100%;overflow-x:hidden}
 .morerecs{margin-top:10px}
+.ind-more{margin:4px 0 14px}.indstat{margin:6px 0 22px}.indstat .pprot{margin-top:10px}.ind-h{margin:26px 0 4px}#v-ind .vtop{margin-top:4px}
 .morerecs>summary{cursor:pointer;color:var(--mute);font-size:14px;font-weight:600;min-height:40px;display:flex;align-items:center;gap:6px;list-style:none}
 .morerecs>summary::-webkit-details-marker{display:none}
 .morerecs>summary::before{content:"›";display:inline-block;transition:transform .15s}.morerecs[open]>summary::before{transform:rotate(90deg)}
@@ -931,7 +932,22 @@ button:focus:not(:focus-visible),a:focus:not(:focus-visible),.qt:focus:not(:focu
 </div>
 
 
-<div class="vtop" style="margin-top:26px">
+
+
+</div></main>
+
+<section class="band vsec"><div class="wrap">
+
+</div></section>
+</div>
+
+<div id="v-ind" hidden>
+<main class="band"><div class="wrap">
+<p class="ind-lead">What the app has learned about you: advice, patterns and how confident the analyses are.</p>
+<p class="small ind-more" id="indMore"></p>
+<section class="indstat" id="indStat"><div class="sec-h ind-h"><span class="sq">📈</span><b>THE LAST 7 DAYS</b></div><div class="pprot" id="pKcal" hidden></div><div class="pprot" id="pProt" hidden></div><div class="pprot" id="pSleep" hidden></div><div class="pstats" id="pStats"></div></section>
+<div class="sec-h ind-h"><span class="sq">🍽️</span><b>YOUR FOOD</b></div>
+<div class="vtop">
 <div class="dnav"><button class="ghost" id="dPrev" aria-label="Previous day"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M15 6l-6 6 6 6"/></svg></button><b id="dLabel"></b><button class="ghost" id="dNext" aria-label="Next day"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6l6 6-6 6"/></svg></button></div>
 <div class="seg" role="group" aria-label="Appearance"><button id="vDay" aria-pressed="true">Day</button><button id="vWeek" aria-pressed="false">Week</button></div></div>
 
@@ -950,25 +966,13 @@ button:focus:not(:focus-visible),a:focus:not(:focus-visible),.qt:focus:not(:focu
 <p class="insight" id="sleepLate"></p>
 </section>
 
-</div></main>
-
-<section class="band vsec"><div class="wrap">
-
-</div></section>
-</div>
-
-<div id="v-ind" hidden>
-<main class="band"><div class="wrap">
-<p class="ind-lead">What the app has learned about you: advice, patterns and how confident the analyses are.</p>
 <details class="morerecs" id="moreRecs" hidden open><summary id="moreRecsSum"></summary><ul class="recs" id="recs2"></ul></details>
 <section class="anl" id="anlSec" hidden><div class="sec-h"><span class="sq">📊</span><b>ANALYSES</b><span>Last 8 weeks · tap for more</span></div><div class="anl-list" id="anl"></div></section>
-<p class="small ind-empty" id="indEmpty" hidden>Your analyses appear here once you have logged for a couple of weeks.</p>
 <details class="trust" id="trust" hidden></details>
 </div></main>
 </div>
 <div id="v-prof" hidden>
 <main class="band"><div class="wrap profile">
-<section class="pcard" id="pAccount"><h2>My profile</h2><p id="syncInfo2" class="small"></p><div class="pprot" id="pKcal" hidden></div><div class="pprot" id="pProt" hidden></div><div class="pstats" id="pStats"></div><div class="langrow"><small>Appearance</small><div class="seg" id="themeSeg"><button type="button" data-th="light">Light</button><button type="button" data-th="dark">Dark</button><button type="button" data-th="auto">Automatic</button></div></div><div class="langrow"><small>Sprog · Language</small><div class="seg" id="langSeg"><button type="button" data-lang="da">Dansk</button><button type="button" data-lang="en">English</button></div></div></section>
 
 <section class="pcard"><h2>Goals and body</h2><form class="form plain" id="fSet">
 <label>Your goal<select name="goal"><option value="stabil">Keep my weight stable on GLP-1</option><option value="ned">Taper off GLP-1 without regaining weight</option><option value="tab">Lose weight</option><option value="styrke">Get stronger and more toned, but keep the weight</option></select></label>
@@ -1010,6 +1014,8 @@ button:focus:not(:focus-visible),a:focus:not(:focus-visible),.qt:focus:not(:focu
 <section class="pcard"><h2>My entries</h2>
 <div class="fchips" id="entFilter" role="group" aria-label="Filter"><button data-t="" aria-pressed="true">All</button><button data-t="meals" aria-pressed="false">Food</button><button data-t="sleep" aria-pressed="false">Sleep</button><button data-t="weights" aria-pressed="false">Weight</button><button data-t="workouts" aria-pressed="false">Training</button><button data-t="doses" aria-pressed="false">Dose</button></div>
 <ul class="entries" id="entries"></ul><button class="ghost" id="entMore" hidden>Show more</button></section>
+
+<section class="pcard" id="pSetup"><h2>Settings</h2><p id="syncInfo2" class="small"></p><div class="langrow"><small>Appearance</small><div class="seg" id="themeSeg"><button type="button" data-th="light">Light</button><button type="button" data-th="dark">Dark</button><button type="button" data-th="auto">Automatic</button></div></div><div class="langrow"><small>Sprog · Language</small><div class="seg" id="langSeg"><button type="button" data-lang="da">Dansk</button><button type="button" data-lang="en">English</button></div></div></section>
 
 <section class="pcard"><h2>Account and data</h2><p class="small" id="syncInfo">Only on this device.</p>
 <div class="btns"><button class="go" id="authBtn" hidden>Log in</button><button class="ghost" id="delAcc" hidden>Delete my account</button></div>
@@ -1130,7 +1136,7 @@ const leads={mad:"Take a picture of the food and get calories and protein.",trae
 function route(){const h=location.hash.slice(1),v=['traening','mad','profil','indsigt'].includes(h)?h:'vejleder';if(h==='mentor')location.replace('#vejleder');
   $('v-mad').hidden=v!=='mad';$('v-tr').hidden=v!=='traening';$('v-vej').hidden=v!=='vejleder';$('v-prof').hidden=v!=='profil';$('v-ind').hidden=v!=='indsigt';$('lead').textContent=leads[v];document.body.dataset.page=v;$('ptitle').textContent=PT[v]||'';$('botFab').classList.toggle('offpage',v!=='vejleder');
   $('t-mad').toggleAttribute('aria-current',v==='mad');$('t-tr').toggleAttribute('aria-current',v==='traening');$('t-vej').toggleAttribute('aria-current',v==='vejleder');$('t-prof').toggleAttribute('aria-current',v==='profil');$('t-ind').toggleAttribute('aria-current',v==='indsigt');
-  if(v!=='traening'&&run.on)pause();if(v==='vejleder'||v==='profil'||v==='indsigt')refreshVej();if(v==='indsigt'){try{drawAnl();drawTrust();}catch(e){}$('indEmpty').hidden=!$('anlSec').hidden||!$('moreRecs').hidden;}window.scrollTo({top:0,behavior:'instant'});}
+  if(v!=='traening'&&run.on)pause();if(v==='vejleder'||v==='profil'||v==='indsigt')refreshVej();if(v==='indsigt'){try{drawAnl();drawTrust();drawStats();if(vMode==='day')drawDay();else drawWeek();}catch(e){console.error(e)}}window.scrollTo({top:0,behavior:'instant'});}
 addEventListener('hashchange',route);
 document.querySelectorAll('.tabs a').forEach(a=>a.addEventListener('click',()=>{if(a.getAttribute('href')===location.hash||(!location.hash&&a.id==='t-vej'))window.scrollTo({top:0,behavior:reduce?'instant':'smooth'});}));
 
@@ -1713,7 +1719,7 @@ $('saLog').onclick=()=>openForm('fSleep',today,true);
 $('saX').onclick=()=>{store.set('mm-saX-'+today,true);drawSleepAsk();drawTodo();};
 function drawRecs(){drawSleepAsk();drawTodo();drawLeft();drawCheckin();drawAnl();
   const h=new Date().getHours();$('hello').textContent=h<10?'Good morning':h<12?'Good morning':h<17?'Good afternoon':'Good evening';
-  const ALL=recs(),R=ALL.filter(([c,t])=>!/^Usikre tal|^Protein i snit|kcal over målet i snit/.test(t));drawRecs.unsure=ALL.find(([c,t])=>/^Usikre tal/.test(t))||null;try{drawTrust();}catch(e){}
+  const ALL=recs(),R=ALL.filter(([c,t])=>!/^Usikre tal|^Protein i snit|kcal over målet i snit|timers søvn i snit|^Du sover /.test(t));drawRecs.unsure=ALL.find(([c,t])=>/^Usikre tal/.test(t))||null;try{drawTrust();}catch(e){}
   const li=([c,t,s])=>`<li class="${c}" tabindex="0" role="button" aria-expanded="false"><b>${esc(t)}</b><span>${esc(s)}</span></li>`;
   const NOW=/^Kort nat i nat|^Dag \d+ efter dosis|^Ingen træning i/,T=R.filter(([c,t])=>NOW.test(t)).slice(0,2),M=R.filter(r=>!T.includes(r));
   $('recs').innerHTML=T.map(li).join('');$('recs').hidden=!T.length;$('recs2').innerHTML=M.map(li).join('');
@@ -2170,14 +2176,19 @@ function drawEntries(){
     return head+`<li class="erow"><span class="edot t-${e.typ}" title="${TY[e.typ]}"></span><span class="etx"><b>${e.txt}</b>${sub?`<small>${sub}</small>`:''}</span><button class="edel" data-x="${e.typ}:${e.id}" aria-label="Delete ${TY[e.typ].toLowerCase()}">Delete</button></li>`;}).join(''):'<li class="eday">Nothing logged yet.</li>';
   $('entries').querySelectorAll('[data-x]').forEach(b=>b.onclick=()=>{const [typ,id]=b.dataset.x.split(':');D[typ]=D[typ].filter(x=>x.id!==id);save();drawLog();});
 }
-function drawProfile(){
-  fillSettings();drawEntries();
+function drawStats(){
   const n=k=>D[k].length,days=new Set(D.meals.map(m=>m.t.slice(0,10))).size;
   $('pStats').innerHTML=[[n('meals'),'meals'],[days,'days with food'],[n('sleep'),'nights'],[n('weights'),'weigh-ins'],[n('workouts'),'workouts'],[n('doses'),'doses']].map(([v,l])=>`<div><b>${nf(v)}</b><small>${l}</small></div>`).join('');
-  {const L7=logged(range(7)),k7=avg(L7,d=>d.kcal),t=target(),el=$('pKcal');el.hidden=!(L7.length&&t);
-    if(L7.length&&t){const diff=Math.round(k7-t.v),over=diff>t.v*0.1;el.innerHTML=`<div class="tr-h"><b>${over?`${nf(diff)} kcal over target on average`:`Average calories: ${nf(k7)} of ${nf(t.v)} kcal a day`}</b></div><div class="tr-bar"><i style="width:${Math.min(100,Math.round(k7/t.v*100))}%;${over?'background:#e0a43a':''}"></i></div><small>Average for the last 7 days${over?`: you are at ${nf(k7)} kcal a day vs ${nf(t.v)}.`:'.'}</small>`;}}
-  {const L7=logged(range(7)),p7=avg(L7,d=>d.protein),pt=protTarget(),el=$('pProt');el.hidden=!(L7.length&&pt);
-    if(L7.length&&pt){const ok=p7>=pt*0.85;el.innerHTML=`<div class="tr-h"><b>Average protein: ${nf(p7)} of ${nf(pt)} g a day</b></div><div class="tr-bar"><i style="width:${Math.min(100,Math.round(p7/pt*100))}%"></i></div><small>Average for the last 7 days. ${ok?'Great, you are close to your target.':'Get 25–30 g in every meal, e.g. skyr, eggs, chicken, fish or beans.'}</small>`;}}
+  {const L7=logged(range(7)),k7=avg(L7,d=>d.kcal),t=target(),el=$('pKcal');el.hidden=!(L7.length>=3&&t);
+    if(L7.length>=3&&t){const diff=Math.round(k7-t.v),over=diff>t.v*0.1;el.innerHTML=`<div class="tr-h"><b>${over?`${nf(diff)} kcal over target on average`:`Average calories: ${nf(k7)} of ${nf(t.v)} kcal a day`}</b></div><div class="tr-bar"><i style="width:${Math.min(100,Math.round(k7/t.v*100))}%;${over?'background:#e0a43a':''}"></i></div><small>Average for the last 7 days${over?`: you are at ${nf(k7)} kcal a day vs ${nf(t.v)}.`:'.'}</small>`;}}
+  {const L7=logged(range(7)),p7=avg(L7,d=>d.protein),pt=protTarget(),el=$('pProt');el.hidden=!(L7.length>=3&&pt);
+    if(L7.length>=3&&pt){const ok=p7>=pt*0.85;el.innerHTML=`<div class="tr-h"><b>Average protein: ${nf(p7)} of ${nf(pt)} g a day</b></div><div class="tr-bar"><i style="width:${Math.min(100,Math.round(p7/pt*100))}%"></i></div><small>Average for the last 7 days. ${ok?'Great, you are close to your target.':'Get 25–30 g in every meal, e.g. skyr, eggs, chicken, fish or beans.'}</small>`;}}
+  {const sl=range(7).filter(d=>d.sleepH!=null).map(d=>d.sleepH),el=$('pSleep');el.hidden=sl.length<3;
+    if(sl.length>=3){const h=sl.reduce((a,b)=>a+b,0)/sl.length,ok=h>=7;el.innerHTML=`<div class="tr-h"><b>Average sleep: ${nf(Math.round(h*10)/10)} hours a night</b></div><div class="tr-bar"><i style="width:${Math.min(100,Math.round(h/8*100))}%;${ok?'':'background:#e0a43a'}"></i></div><small>${sl.length} nights in the last 7 days. ${ok?'Good – 7 hours or more makes hunger easier to manage.':'Under 7 hours often means more hunger the next day. Try going to bed a little earlier.'}</small>`;}}
+  const L=logged(range(7)).length;$('indMore').textContent=L<3?`Log food and sleep for 3 days, and your first analyses of calories, protein and sleep appear here. You have logged ${L} ${L===1?'day':'days'}.`:'The more you log, the more advice and analyses you get. Patterns in sleep, dose week and weight need a couple of weeks of logging.';
+}
+function drawProfile(){
+  fillSettings();drawEntries();
   const ds=[...D.doses].sort((a,b)=>b.d.localeCompare(a.d)),cur=ds.at(0);
   $('pDose').innerHTML=cur?`<div class="dcur"><span class="edot t-doses"></span><div><b>${esc(cur.med||'GLP-1')} ${mgTxt(cur.mg)} mg</b><small>${PH[cur.phase]} · latest dose ${cur.d===today||cur.d===addDays(today,-1)?dLabel(cur.d).toLowerCase():new Date(cur.d+'T12:00').toLocaleDateString('en-GB',{day:'numeric',month:'short'})}</small></div></div>${ds.length>1?`<h3 class="dhist">Previous doses</h3>`:''}<ul class="entries dlist">${ds.slice(1,7).map(d=>`<li class="erow"><span class="edot t-doses"></span><span class="etx"><b>${mgTxt(d.mg)} mg</b><small>${PH[d.phase]}</small></span><span class="small">${d.d===today||d.d===addDays(today,-1)?dLabel(d.d):new Date(d.d+'T12:00').toLocaleDateString('en-GB',{day:'numeric',month:'short'})}</span></li>`).join('')}</ul>`:'<p class="small">No doses logged.</p>';
   const R=reminders();$('rem').querySelectorAll('[data-r]').forEach(c=>c.checked=!!R[c.dataset.r]);drawPush();
@@ -2185,7 +2196,7 @@ function drawProfile(){
 $('rem').onchange=e=>{const c=e.target.closest('[data-r]');if(!c)return;D.settings={...S(),reminders:{...reminders(),[c.dataset.r]:c.checked}};save();drawPush();};
 $('entFilter').querySelectorAll('[data-t]').forEach(b=>b.onclick=()=>{entFilter=b.dataset.t;entLimit=10;$('entFilter').querySelectorAll('[data-t]').forEach(x=>x.setAttribute('aria-pressed',x===b));drawEntries();});
 $('entMore').onclick=()=>{entLimit+=20;drawEntries();};
-function refreshVej(){if(!$('v-prof').hidden)drawProfile();if($('v-vej').hidden)return;drawRecs();drawChips();if(vMode==='day')drawDay();else drawWeek();drawCorr();drawEntries();autoNote();}
+function refreshVej(){if(!$('v-prof').hidden)drawProfile();if(!$('v-ind').hidden){try{drawStats()}catch(e){}}if($('v-vej').hidden&&$('v-ind').hidden)return;drawRecs();drawChips();if(vMode==='day')drawDay();else drawWeek();drawCorr();drawEntries();autoNote();}
 
 /* data */
 $('copyData').onclick=async()=>{try{await navigator.clipboard.writeText(JSON.stringify(D));$('dataMsg').textContent='Copied.';}catch(e){$('importData').value=JSON.stringify(D);$('dataMsg').textContent='Select and copy the text in the field.';}};
