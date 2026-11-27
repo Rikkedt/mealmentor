@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,viewport-fit=cover">
-<title>Meal Mentor AI</title><meta name="mm-version" content="19b7f71e5a"><link rel="manifest" href="/manifest.webmanifest"><link rel="apple-touch-icon" href="/apple-touch-icon.png"><link rel="icon" href="/icon-192.png"><meta name="theme-color" content="#F1F1F4"><link rel="stylesheet" href="/mm.css?v=2d20d138"><script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script><script src="/mm.en.js?v=2d20d138"></script>
+<title>Meal Mentor AI</title><meta name="mm-version" content="5fcaad33f3"><link rel="manifest" href="/manifest.webmanifest"><link rel="apple-touch-icon" href="/apple-touch-icon.png"><link rel="icon" href="/icon-192.png"><meta name="theme-color" content="#F1F1F4"><link rel="stylesheet" href="/mm.css?v=2d20d138"><script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script><script src="/mm.en.js?v=2d20d138"></script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Inter+Tight:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <style>
@@ -1662,7 +1662,7 @@ function recs(){
   const lastWo=[...D.workouts].sort((a,b)=>b.t.localeCompare(a.t))[0],woDays=range(7).filter(d=>d.woMin).length;
   if(L7.length>=4&&(!lastWo||lastWo.t.slice(0,10)<addDays(today,-3)))r.push(['warn','No training in 4 days','Ten minutes count. Try today\'s suggestion under Training.']);
   const strong=D.workouts.filter(w=>w.t.slice(0,10)>addDays(today,-7)&&/styrke|overkrop|core|ben|ryg|mave|squat|vægt/i.test(w.navn)).length;
-  if(isOA()&&S().goal!=='styrke'&&strong<2&&L7.length>=4)r.push(['warn','Strength training 2–3 times a week',`You have ${strong?'only had one':'not had any'} strength training in the past week. Muscles shrink faster during menopause, and strength training plus protein helps keep them.`]);
+  if(isOA()&&S().goal!=='styrke'&&strong<2&&L7.length>=4)r.push(['warn','Strength training 2–3 times a week',`${strong?'You have only done one strength workout':'You have not done any strength training'} in the past week. Muscle is lost faster during menopause, and strength training plus protein helps keep it.`]);
   if(S().goal==='styrke'&&woDays<2&&L7.length>=4)r.push(['warn','More strength training','To get stronger and more toned, your muscles need 2–4 workouts a week.']);
   const g=gaps();
   if(g.n)r.splice(r.filter(x=>x[0]==='bad').length,0,['warn',`Uncertain numbers: ${g.n} ${g.n===1?'day':'days'} missing or incomplete`,`${g.miss.length?`No food logged ${g.miss.map(d=>dLabel(d.k).toLowerCase()).join(', ')}. `:''}${g.thin.length?`Only one meal ${g.thin.map(d=>dLabel(d.k).toLowerCase()).join(', ')}. `:''}The advice is based on less data. If you forgot to log, there is still time.`]);

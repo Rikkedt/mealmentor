@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,viewport-fit=cover">
-<title>Meal Mentor AI</title><meta name="mm-version" content="19b7f71e5a"><link rel="manifest" href="/manifest.webmanifest"><link rel="apple-touch-icon" href="/apple-touch-icon.png"><link rel="icon" href="/icon-192.png"><meta name="theme-color" content="#F1F1F4"><link rel="stylesheet" href="/mm.css?v=2d20d138"><script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script><script src="/mm.es.js?v=2d20d138"></script>
+<title>Meal Mentor AI</title><meta name="mm-version" content="5fcaad33f3"><link rel="manifest" href="/manifest.webmanifest"><link rel="apple-touch-icon" href="/apple-touch-icon.png"><link rel="icon" href="/icon-192.png"><meta name="theme-color" content="#F1F1F4"><link rel="stylesheet" href="/mm.css?v=2d20d138"><script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script><script src="/mm.es.js?v=2d20d138"></script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Inter+Tight:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <style>
@@ -1242,7 +1242,7 @@ function drawLog(){
   const log=D.meals.filter(m=>m.t.startsWith(today)).sort((a,b)=>b.t.localeCompare(a.t)).map(m=>({...m,tid:m.t.slice(11)}));
   const t=log.reduce((a,e)=>{a.kcal+=e.kcal;a.protein+=e.protein;a.fedt+=e.fedt;a.kulhydrat+=e.kulhydrat;return a;},{kcal:0,protein:0,fedt:0,kulhydrat:0});
   $('tot').innerHTML=`<div><b>${r0(t.kcal)}</b>kcal</div><div><b>${r0(t.protein)} g</b>Proteína</div><div><b>${r0(t.fedt)} g</b>Grasa</div><div><b>${r0(t.kulhydrat)} g</b>Hidratos</div>`;
-  $('log').innerHTML=log.length?log.map(e=>`<li><span><b>${esc(e.titel)}</b> <small>a las ${esc(e.tid)} · ${r0(e.protein)} g protein${+e.fedt?` · ${r0(e.fedt)} g de grasa`:''}</small></span><span>${r0(e.kcal)} kcal <button class="ghost" data-d="${e.id}">Quitar</button></span></li>`).join(''):'<li><small>Aún no hay comidas hoy.</small></li>';
+  $('log').innerHTML=log.length?log.map(e=>`<li><span><b>${esc(e.titel)}</b> <small>a las ${esc(e.tid)} · ${r0(e.protein)} g de proteína${+e.fedt?` · ${r0(e.fedt)} g de grasa`:''}</small></span><span>${r0(e.kcal)} kcal <button class="ghost" data-d="${e.id}">Quitar</button></span></li>`).join(''):'<li><small>Aún no hay comidas hoy.</small></li>';
   $('log').querySelectorAll('[data-d]').forEach(b=>b.onclick=()=>{D.meals=D.meals.filter(m=>m.id!==b.dataset.d);save();drawLog();});
 }
 drawLog();
@@ -1662,7 +1662,7 @@ function recs(){
   const lastWo=[...D.workouts].sort((a,b)=>b.t.localeCompare(a.t))[0],woDays=range(7).filter(d=>d.woMin).length;
   if(L7.length>=4&&(!lastWo||lastWo.t.slice(0,10)<addDays(today,-3)))r.push(['warn','Sin entrenar en 4 días','Diez minutos cuentan. Prueba la sugerencia de hoy en Entrenamiento.']);
   const strong=D.workouts.filter(w=>w.t.slice(0,10)>addDays(today,-7)&&/styrke|overkrop|core|ben|ryg|mave|squat|vægt/i.test(w.navn)).length;
-  if(isOA()&&S().goal!=='styrke'&&strong<2&&L7.length>=4)r.push(['warn','Fuerza 2–3 veces por semana',`Tienes ${strong?'solo tuvo una':'no ha tenido ninguno'} entrenamiento de fuerza la última semana. Los músculos se pierden más rápido en la menopausia, y la fuerza más la proteína ayudan a conservarlos.`]);
+  if(isOA()&&S().goal!=='styrke'&&strong<2&&L7.length>=4)r.push(['warn','Fuerza 2–3 veces por semana',`${strong?'Solo has hecho un entrenamiento de fuerza':'No has hecho ningún entrenamiento de fuerza'} en la última semana. Los músculos se pierden más rápido en la menopausia, y la fuerza más la proteína ayudan a conservarlos.`]);
   if(S().goal==='styrke'&&woDays<2&&L7.length>=4)r.push(['warn','Más entrenamiento de fuerza','Para ponerte más fuerte y tonificada, tus músculos necesitan 2–4 entrenamientos por semana.']);
   const g=gaps();
   if(g.n)r.splice(r.filter(x=>x[0]==='bad').length,0,['warn',`Números inciertos: ${g.n} ${g.n===1?'día':'días'} faltan o están incompletos`,`${g.miss.length?`No hay comida registrada ${g.miss.map(d=>dLabel(d.k).toLowerCase()).join(', ')}. `:''}${g.thin.length?`Solo una comida ${g.thin.map(d=>dLabel(d.k).toLowerCase()).join(', ')}. `:''}Los consejos se basan en menos datos. Si se te olvidó registrar, aún estás a tiempo.`]);
@@ -1750,7 +1750,7 @@ function drawLeft(){
   else if(r.kLeft!=null&&r.kLeft<0)tip='Has alcanzado el objetivo de hoy. Si tienes hambre, elige algo ligero con proteína y verduras.';
   else if(r.pLeft!=null&&r.kLeft>0&&r.pLeft*4/r.kLeft>0.4)tip='Tienes muy poca proteína para las calorías: elige skyr, requesón, huevos, pollo, pescado o legumbres.';
   else if(r.nowH>=lateH()&&r.kLeft>300)tip=`Estás en la pausa de comidas nocturna. Mejor comer un poco ahora que una comida grande.`;
-  const pTxt=x=>x.prot!=null?` · ${isOA()?'al menos ':''}${nf(isOA()?Math.max(25,x.prot):x.prot)} g protein`:'';
+  const pTxt=x=>x.prot!=null?` · ${isOA()?'al menos ':''}${nf(isOA()?Math.max(25,x.prot):x.prot)} g de proteína`:'';
   el.innerHTML=(D.meals.length?'':startCard(true))+`<div class="lgrid">${big('Calorías restantes',r.kLeft,'',kp,r.d.kcal,r.t.v)}${r.pt?big('Proteína restante',r.pLeft,' g',pp,r.d.protein,r.pt):''}</div>
   <p class="lstatus">${parts.map(esc).join(' · ')}</p>
   ${next?`<div class="sec-h spis-h"><b>COME</b><span>${r.d.n} de ${r.pat.typ}</span></div><div class="lnext"><button class="lswap" id="lSwap" type="button" aria-label="Byt forslag" title="Byt forslag"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 3l4 4-4 4"/><path d="M3 11V9a2 2 0 0 1 2-2h16"/><path d="M7 21l-4-4 4-4"/><path d="M21 13v2a2 2 0 0 1-2 2H3"/></svg></button><small>Próxima comida · ${next.late?'lo antes posible':`sobre las ${kl(next.h)}`}</small><b>${next.name}: ${foodFor(next.name,next.kcal)}</b><div class="lbar"><i style="width:${kp}%"></i></div><div class="lrow"><span><b>${nf(Math.round(next.kcal/10)*10)} kcal</b>${pTxt(next)}</span><span class="lact"><button class="lcheck" id="lCheck" aria-label="Log ${next.name.toLowerCase()}">✓</button></span></div>${r.slots.length>1?`<span class="lthen">Después: ${r.slots.slice(1).map(x=>`${x.name.toLowerCase()} sobre las ${kl(x.h)}, ${nf(Math.round(x.kcal/10)*10)} kcal`).join(' · ')}</span>`:''}</div>`:''}
@@ -1816,7 +1816,7 @@ function drawStrip(){
   const add=(h,cls,ic,time,title,sub)=>rows.push({h,cls,ic,time,title,sub});
   if(d.sleep)add(-1,'sl','😴',`${d.sleep.from}–${d.sleep.to}`,`Sueño · ${nf(d.sleepH,1)} horas`,(q=>q?q[0].toUpperCase()+q.slice(1):'')(QUAL[d.sleep.q]||''));
   (d.wo||[]).forEach(w=>add(hr(w.t),'wo','🏃',w.t.slice(11,16),esc(w.navn||'Entrenamiento'),(+w.min||0)+' min'));
-  [...d.meals].sort((p,q)=>p.t.localeCompare(q.t)).forEach(m=>{add(hr(m.t),'ml','🍽️',m.t.slice(11,16),esc(m.titel||'Comida'),[m.kcal!=null?nf(r0(m.kcal))+' kcal':'',m.protein!=null?nf(r0(m.protein))+' g protein':''].filter(Boolean).join(' · '));rows.at(-1).ids=(m.items||[]).map(x=>x.id).filter(Boolean).join(',');});
+  [...d.meals].sort((p,q)=>p.t.localeCompare(q.t)).forEach(m=>{add(hr(m.t),'ml','🍽️',m.t.slice(11,16),esc(m.titel||'Comida'),[m.kcal!=null?nf(r0(m.kcal))+' kcal':'',m.protein!=null?nf(r0(m.protein))+' g de proteína':''].filter(Boolean).join(' · '));rows.at(-1).ids=(m.items||[]).map(x=>x.id).filter(Boolean).join(',');});
   (D.hunger||[]).filter(x=>x.t.startsWith(vKey)).forEach(x=>add(hr(x.t),'hu','😋',x.t.slice(11,16),['Un poco de hambre','Con hambre','Mucha hambre'][x.lvl-1]||'Con hambre',(x.why||[]).join(', ')));
   d.wo.forEach(w=>add(hr(w.t),'wo','🏃',w.t.slice(11,16),esc(w.navn),/min/.test(w.navn)?'Entrenamiento':w.min+' min de entrenamiento'));
   const lateDone=!isT||nowH>=L;add(L,'lt'+(isT&&nowH<L?' up':''),'🌙',pad(Math.floor(L))+':'+pad(Math.round((L%1)*60)),'Pausa de comidas',isT&&nowH<L?'empieza; después solo agua y té':'solo agua y té');
@@ -1858,7 +1858,7 @@ function drawChart(){
     const L7=logged(ds.slice(-7));label('kcal','Kcal',L7.length?`${nf(avg(L7,d=>d.kcal))} de media`:'');sep('kcal');}
   /* protein */
   {const l=L.prot,mx=Math.max(pt||0,...ds.map(d=>d.protein),60)*1.35,Yp=v=>l.y0+l.h-v/mx*(l.h-14);
-    ds.forEach((d,i)=>{if(!d.protein)return;o+=`<rect x="${X(i)-bar/2}" y="${Yp(d.protein)}" width="${bar}" height="${l.y0+l.h-Yp(d.protein)}" rx="2" fill="var(--prot)" opacity=".85"><title>${d.k}: ${r0(d.protein)} g protein</title></rect>`;});
+    ds.forEach((d,i)=>{if(!d.protein)return;o+=`<rect x="${X(i)-bar/2}" y="${Yp(d.protein)}" width="${bar}" height="${l.y0+l.h-Yp(d.protein)}" rx="2" fill="var(--prot)" opacity=".85"><title>${d.k}: ${r0(d.protein)} g de proteína</title></rect>`;});
     if(pt)o+=`<line x1="${pL}" x2="${W-pR}" y1="${Yp(pt)}" y2="${Yp(pt)}" stroke="var(--ink)" stroke-dasharray="4 4" opacity=".55"/><text x="${pL-6}" y="${Yp(pt)+4}" text-anchor="end" font-size="10.5" fill="var(--mute)">${nf(pt)} g</text>`;
     const L7=logged(ds.slice(-7));label('prot','Proteína',L7.length?`${nf(avg(L7,d=>d.protein))} g de media`:'');sep('prot');}
   /* søvn */
@@ -2034,7 +2034,7 @@ const aiErr=e=>e&&e.code==='login'?'Inicia sesión para usar la IA; se hace en P
 let noteBusy=false,noteTried=false,noteKeyTried='';
 function todayFacts(){const r=remaining(),d=r.d,hu=(D.hunger||[]).filter(x=>x.t.startsWith(today)),huTxt=hu.length?` HAMBRE HOY: ${hu.map(x=>`a las ${x.t.slice(11,16)} ${['un poco de hambre','con hambre','con mucha hambre'][x.lvl-1]}${x.why&&x.why.length?' – la usuaria cree: '+x.why.join(', '):''}`).join('; ')}. Última comida antes del último hambre: ${(()=>{const last=hu.at(-1);const m=D.meals.filter(z=>z.t<last.t&&z.t.startsWith(today)).sort((a,b)=>b.t.localeCompare(a.t))[0];return m?`a las ${m.t.slice(11,16)} (${m.titel}, ${r0(m.kcal)} kcal, ${r0(m.protein)} g de proteína)`:'nada registrado hoy';})()}.`:'';
   const k=r.t?(r.kLeft<0?`${nf(-r.kLeft)} kcal POR ENCIMA del objetivo (comido ${nf(d.kcal)} de ${nf(r.t.v)} kcal)`:`${nf(r.kLeft)} kcal restantes (comido ${nf(d.kcal)} de ${nf(r.t.v)} kcal)`):`comido ${nf(d.kcal)} kcal, sin objetivo de calorías`;
-  const pr=r.pt?(r.pLeft<=0?`objetivo de proteína alcanzado (${nf(d.protein)} de ${nf(r.pt)} g)`:`${nf(r.pLeft)} g de proteína faltan (comido ${nf(d.protein)} de ${nf(r.pt)} g)`):`${nf(d.protein)} g protein`;
+  const pr=r.pt?(r.pLeft<=0?`objetivo de proteína alcanzado (${nf(d.protein)} de ${nf(r.pt)} g)`:`${nf(r.pLeft)} g de proteína faltan (comido ${nf(d.protein)} de ${nf(r.pt)} g)`):`${nf(d.protein)} g de proteína`;
   return `DATOS DE HOY (a las ${fmtH(r.nowH)}) – usa estos números exactamente, no calcules tú: ${k}; ${pr}; ${d.n} comidas (${d.meals.map(m=>m.t.slice(11)+' '+m.titel+' '+r0(m.kcal)+' kcal').join('; ')||'ninguna'}); entrenamiento ${d.woMin} min; sueño de anoche ${d.sleepH!=null?nf(d.sleepH,1)+' t':'sin registrar'}.${huTxt}`;}
 /* Ny kommentar fra Mentor ligger øverst (før kcal-kortet), til den er set. Derefter ligger den over dagens måltider. */
 let noteKeyShown='';
@@ -2205,7 +2205,7 @@ $('calcBtn').onclick=()=>{
   const m=cm/100,bmi=kg/(m*m),ideal=25*m*m,ref=bmi>30?ideal+0.4*(kg-ideal):kg,st=goal==='styrke';
   const lo=Math.round(ref*(st?1.6:1.2)/5)*5,hi=Math.round(ref*(st?2.2:1.6)/5)*5,prot=Math.round(ref*(st?1.8:goal==='tab'||age>=65||isOA()?1.5:1.4)/5)*5;
   f.elements.kcal.value=kcal;f.elements.protein.value=prot;
-  out.innerHTML=`Quema aprox. <b>${nf(Math.round(tdee/50)*50)} kcal</b> al día. Sugerencia: <b>${nf(kcal)} kcal</b>${goal==='tab'?' (−500)':''} y <b>${prot} g protein</b> (${lo}–${hi} g).${st?' Combínalo con fuerza 2–4 veces por semana.':''}${isOA()&&!st?' Se tiene en cuenta la menopausia: un poco más de proteína y, si es posible, fuerza 2–3 veces por semana.':''} Toca Guardar.`;
+  out.innerHTML=`Quema aprox. <b>${nf(Math.round(tdee/50)*50)} kcal</b> al día. Sugerencia: <b>${nf(kcal)} kcal</b>${goal==='tab'?' (−500)':''} y <b>${prot} g de proteína</b> (${lo}–${hi} g).${st?' Combínalo con fuerza 2–4 veces por semana.':''}${isOA()&&!st?' Se tiene en cuenta la menopausia: un poco más de proteína y, si es posible, fuerza 2–3 veces por semana.':''} Toca Guardar.`;
 };
 function calcTargets({sex,age,cm,kg,act,goal}){if(!age||!cm||!kg||age<18)return null;const bmr=10*kg+6.25*cm-5*age+(sex==='m'?5:-161),tdee=bmr*act,floor=sex==='m'?1500:1200;
   let kcal=goal==='tab'?Math.max(tdee-500,floor):tdee;kcal=Math.round(kcal/50)*50;const m=cm/100,bmi=kg/(m*m),ideal=25*m*m,ref=bmi>30?ideal+0.4*(kg-ideal):kg,st=goal==='styrke';
@@ -2260,8 +2260,8 @@ let clearArm=false;$('clearAll').onclick=()=>{if(!clearArm){clearArm=true;$('cle
 const bot={msgs:[],busy:false,ctl:null};
 function statusNow(){const r=remaining();
   return todayFacts()+' '+`[Estado ahora mismo, a las ${fmtH(r.nowH)}: comido hoy ${nf(r.d.kcal)} kcal y ${nf(r.d.protein)} g de proteína en ${r.d.n} comidas (${r.d.meals.map(m=>m.t.slice(11)+' '+m.titel+' '+r0(m.kcal)+' kcal').join('; ')||'ninguna'}). `+
-  (r.t?`Quedan: ${nf(r.kLeft)} kcal${r.pt?` y ${nf(r.pLeft)} g protein`:''}. `:'No hay objetivo de calorías. ')+
-  `Suele comer ${r.pat.typ} veces (aprox. a las ${r.pat.slots.map(kl).join(', ')})${r.pat.known?'':' (supuesto)'}. Comidas restantes planificadas: ${r.slots.map(x=>`${x.name} ${x.late?'lo antes posible':'sobre las '+kl(x.h)} aprox. ${r0(x.kcal)} kcal/${r0(x.prot)} g protein`).join('; ')||'ninguna'}. `+
+  (r.t?`Quedan: ${nf(r.kLeft)} kcal${r.pt?` y ${nf(r.pLeft)} g de proteína`:''}. `:'No hay objetivo de calorías. ')+
+  `Suele comer ${r.pat.typ} veces (aprox. a las ${r.pat.slots.map(kl).join(', ')})${r.pat.known?'':' (supuesto)'}. Comidas restantes planificadas: ${r.slots.map(x=>`${x.name} ${x.late?'lo antes posible':'sobre las '+kl(x.h)} aprox. ${r0(x.kcal)} kcal/${r0(x.prot)} g de proteína`).join('; ')||'ninguna'}. `+
   `${r.bed?`Suele acostarse sobre las ${fmtH(r.bed%24)}. `:''}Entrenamiento hoy: ${r.d.woMin} min. Sueño de anoche: ${r.d.sleepH!=null?nf(r.d.sleepH,1)+' t':'sin registrar'}.]`;}
 function patterns(){
   const lines=range(8,addDays(today,-1)).map(d=>{const hu=(D.hunger||[]).filter(x=>x.t.startsWith(d.k));
@@ -2328,7 +2328,7 @@ function pushPlan(){
       if(s.prot!=null&&s.prot>=30)return `Te faltan ${nf(r.pLeft)} g de proteína hoy.`;
       return r.pat.known?`Sueles comer sobre las ${kl(s.h)}.`:'';};
     r.slots.forEach((s,i)=>{if(r.kLeft!=null&&r.kLeft<=150)return;const k=s.kcal!=null?Math.round(s.kcal/10)*10:null;
-      add(s.h,'meal'+i,`Hora de ${s.name.toLowerCase()} a las ${kl(s.h)}`,`P. ej. ${foodFor(s.name,k)}${k!=null?` (aprox. ${nf(k)} kcal${s.prot!=null?`, ${nf(s.prot)} g protein`:''})`:''}. ${why(s)}`.trim(),'fMeal');});
+      add(s.h,'meal'+i,`Hora de ${s.name.toLowerCase()} a las ${kl(s.h)}`,`P. ej. ${foodFor(s.name,k)}${k!=null?` (aprox. ${nf(k)} kcal${s.prot!=null?`, ${nf(s.prot)} g de proteína`:''})`:''}. ${why(s)}`.trim(),'fMeal');});
   }
   if(R.meal&&r.t&&t.sinceDose!=null&&t.sinceDose>=4&&t.sinceDose<=6&&r.kLeft>300&&!r.slots.some(x=>x.name==='Merienda')&&r.nowH<15)
     add(15,'snack','Tentempié a las 15 h',`P. ej. ${foodFor('Merienda',200)} (aprox. 200 kcal). Día ${t.sinceDose} tras la dosis sube el apetito: una comida pequeña ahora hace la noche más fácil.`,'fMeal');
@@ -2471,7 +2471,7 @@ function openMealEdit(m,mode){const add=mode==='add',now=nowT();let f=1;
     <p class="mres" id="mRes"></p>
     <label class="mrow">Hora <input class="t" type="time" id="mTime" value="${add?now.slice(11,16):m.t.slice(11,16)}"></label>
     <div class="btns" style="margin-top:14px"><button class="go" id="mSave" type="button">${add?'Añadir':'Guardar'}</button>${add?'':'<button class="ghost mdel" id="mDel" type="button">Eliminar comida</button>'}</div>`);
-  const res=()=>{$('mRes').textContent=`${nf(val('kcal'))} kcal · ${nf(val('protein'))} g protein`;};
+  const res=()=>{$('mRes').textContent=`${nf(val('kcal'))} kcal · ${nf(val('protein'))} g de proteína`;};
   const setF=v=>{f=Math.max(.05,Math.min(5,v));$('mPct').value=Math.round(f*100);el.querySelectorAll('.mamt [data-f]').forEach(b=>b.setAttribute('aria-pressed',+b.dataset.f===f));res();};
   el.querySelectorAll('.mamt [data-f]').forEach(b=>b.onclick=()=>setF(+b.dataset.f));
   $('mPct').oninput=()=>{const v=+$('mPct').value;if(v>0){f=Math.max(.05,Math.min(5,v/100));el.querySelectorAll('.mamt [data-f]').forEach(b=>b.setAttribute('aria-pressed',+b.dataset.f===f));res();}};

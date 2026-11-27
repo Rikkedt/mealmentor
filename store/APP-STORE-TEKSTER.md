@@ -122,3 +122,61 @@ calories,protein,food scanner,menopause,hot flushes,weight loss,food log,habits,
 
 ## Support URL / Marketing URL
 https://mealmentorai.com/en/
+
+---
+
+# Meal Mentor AI – textos para la App Store (español, España + México)
+
+## Subtítulo (máx. 30)
+Tu mentor de comida y peso
+
+## Texto promocional (máx. 170)
+Tu mentor personal de comida, peso y hábitos. Creado para mujeres en la menopausia y para quien está dejando la medicación para adelgazar.
+
+## Descripción
+Meal Mentor AI es tu mentor personal de comida, peso y hábitos. Registra tu día en segundos y tu mentor te da consejos concretos según lo que realmente has comido, cómo has dormido y cómo te sientes.
+
+CREADO PARA LA MENOPAUSIA
+- Registra sofocos, sangrado, sueño, estrés y síntomas en pocos toques
+- Descubre cómo se relacionan tu cuerpo, tu comida y tu peso
+- Recibe consejos adaptados a la etapa en la que estás
+
+APOYO AL DEJAR LA MEDICACIÓN PARA ADELGAZAR
+- Vigila el apetito y el peso mientras reduces la medicación
+- Recibe ayuda con la comida y los hábitos cuando vuelve el apetito
+- Mira cómo cambia tu apetito a lo largo de la semana
+
+REGISTRA LA COMIDA RÁPIDO
+- Haz una foto de tu plato y la app sugiere calorías y proteína
+- Escanea códigos de barras y tablas nutricionales
+- Elige comida que ya has comido antes y ajusta la cantidad
+
+TU MENTOR, CUANDO LO NECESITES
+- Pregunta lo que quieras, desde ideas para la cena hasta el hambre por la noche
+- Respuestas según tu propio día: lo que has comido, cómo has dormido y lo que te queda
+- Una nota breve cada día con lo más importante
+
+DESCUBRE TUS PATRONES
+- ¿Qué suele pasar antes de que suba tu peso?
+- ¿Cuántas comidas al día te van mejor?
+- Los análisis son más precisos cuanto más registras
+
+ENTRENAMIENTOS DE 10 MINUTOS
+- Programas cortos de fuerza y movimiento para hacer en casa
+
+SUSCRIPCIÓN
+El acceso completo requiere una suscripción mensual. Se renueva automáticamente hasta que la canceles en los ajustes de Apple, al menos 24 horas antes del siguiente periodo.
+
+Meal Mentor AI da consejos generales sobre alimentación y hábitos y no sustituye a tu médico. Habla con tu médico antes de cambiar tu medicación.
+
+Términos: https://mealmentorai.com/vilkaar
+Privacidad: https://mealmentorai.com/privatliv
+
+## Palabras clave (máx. 100)
+calorías,proteína,escáner comida,menopausia,sofocos,perder peso,diario,hábitos,hambre,dieta,salud
+
+## URL de soporte / marketing
+https://mealmentorai.com/es/
+
+## Capturas
+6 capturas en español (iPhone 6,3"): carpeta "meal-mentor-app-store-screenshots-es.zip"

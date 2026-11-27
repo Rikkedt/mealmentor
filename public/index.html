@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,viewport-fit=cover">
-<title>Meal Mentor AI</title><meta name="mm-version" content="19b7f71e5a"><link rel="manifest" href="/manifest.webmanifest"><link rel="apple-touch-icon" href="/apple-touch-icon.png"><link rel="icon" href="/icon-192.png"><meta name="theme-color" content="#F1F1F4"><link rel="stylesheet" href="/mm.css?v=2d20d138"><script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script><script src="/mm.js?v=2d20d138"></script>
+<title>Meal Mentor AI</title><meta name="mm-version" content="5fcaad33f3"><link rel="manifest" href="/manifest.webmanifest"><link rel="apple-touch-icon" href="/apple-touch-icon.png"><link rel="icon" href="/icon-192.png"><meta name="theme-color" content="#F1F1F4"><link rel="stylesheet" href="/mm.css?v=2d20d138"><script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script><script src="/mm.js?v=2d20d138"></script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Inter+Tight:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <style>
@@ -1662,7 +1662,7 @@ function recs(){
   const lastWo=[...D.workouts].sort((a,b)=>b.t.localeCompare(a.t))[0],woDays=range(7).filter(d=>d.woMin).length;
   if(L7.length>=4&&(!lastWo||lastWo.t.slice(0,10)<addDays(today,-3)))r.push(['warn','Ingen træning i 4 dage','Ti minutter tæller. Prøv dagens forslag under Træning.']);
   const strong=D.workouts.filter(w=>w.t.slice(0,10)>addDays(today,-7)&&/styrke|overkrop|core|ben|ryg|mave|squat|vægt/i.test(w.navn)).length;
-  if(isOA()&&S().goal!=='styrke'&&strong<2&&L7.length>=4)r.push(['warn','Styrketræning 2–3 gange om ugen',`Du har ${strong?'kun haft én':'ikke haft nogen'} styrketræning den seneste uge. Musklerne svinder hurtigere i overgangsalderen, og styrketræning plus protein holder på dem.`]);
+  if(isOA()&&S().goal!=='styrke'&&strong<2&&L7.length>=4)r.push(['warn','Styrketræning 2–3 gange om ugen',`${strong?'Du har kun haft én styrketræning':'Du har ikke haft nogen styrketræning'} den seneste uge. Musklerne svinder hurtigere i overgangsalderen, og styrketræning plus protein holder på dem.`]);
   if(S().goal==='styrke'&&woDays<2&&L7.length>=4)r.push(['warn','Mere styrketræning','For at blive stærkere og mere markeret skal musklerne have 2–4 træninger om ugen.']);
   const g=gaps();
   if(g.n)r.splice(r.filter(x=>x[0]==='bad').length,0,['warn',`Usikre tal: ${g.n} ${g.n===1?'dag':'dage'} mangler eller er ufuldstændige`,`${g.miss.length?`Ingen mad logget ${g.miss.map(d=>dLabel(d.k).toLowerCase()).join(', ')}. `:''}${g.thin.length?`Kun ét måltid ${g.thin.map(d=>dLabel(d.k).toLowerCase()).join(', ')}. `:''}Rådene bygger på færre data. Har du glemt at logge, kan du nå det endnu.`]);
