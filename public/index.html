@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,viewport-fit=cover">
-<title>Meal Mentor AI</title><meta name="mm-version" content="5fcaad33f3"><link rel="manifest" href="/manifest.webmanifest"><link rel="apple-touch-icon" href="/apple-touch-icon.png"><link rel="icon" href="/icon-192.png"><meta name="theme-color" content="#F1F1F4"><link rel="stylesheet" href="/mm.css?v=2d20d138"><script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script><script src="/mm.js?v=2d20d138"></script>
+<title>Meal Mentor AI</title><meta name="mm-version" content="6810ff5011"><link rel="manifest" href="/manifest.webmanifest"><link rel="apple-touch-icon" href="/apple-touch-icon.png"><link rel="icon" href="/icon-192.png"><meta name="theme-color" content="#F1F1F4"><link rel="stylesheet" href="/mm.css?v=2d20d138"><script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script><script src="/mm.js?v=2d20d138"></script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Inter+Tight:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <style>
@@ -1236,7 +1236,7 @@ function render(){
   </tbody></table>${c.note?`<p class="note">${esc(c.note)}</p>`:''}
   <div class="btns" style="align-items:center"><label class="small" for="mtime">Spist kl.</label><input class="t" type="time" id="mtime" value="${nowT().slice(11)}" style="width:8em"><button class="go" id="add">Læg til dagens log</button></div>`;
   res.querySelectorAll('td input').forEach(inp=>inp.onchange=()=>{c.emner[+inp.dataset.i].gram=Math.max(0,+inp.value||0);render();});
-  $('add').onclick=()=>{const s=sums(c.emner);D.meals.push({id:uid(),t:today+'T'+($('mtime').value||nowT().slice(11)),titel:c.titel,kcal:s.kcal,protein:s.protein,fedt:s.fedt,kulhydrat:s.kulhydrat});save();drawLog();toast(`${c.titel} er tilføjet · ${nf(r0(s.kcal))} kcal`);$('reset').click();window.scrollTo({top:0,behavior:'smooth'});};
+  $('add').onclick=()=>{const s=sums(c.emner);D.meals.push({id:uid(),t:today+'T'+($('mtime').value||nowT().slice(11)),titel:c.titel,kcal:s.kcal,protein:s.protein,fedt:s.fedt,kulhydrat:s.kulhydrat,...(s.gram>0?{gram:Math.round(s.gram)}:{})});save();drawLog();toast(`${c.titel} er tilføjet · ${nf(r0(s.kcal))} kcal`);$('reset').click();window.scrollTo({top:0,behavior:'smooth'});};
 }
 function drawLog(){
   const log=D.meals.filter(m=>m.t.startsWith(today)).sort((a,b)=>b.t.localeCompare(a.t)).map(m=>({...m,tid:m.t.slice(11)}));
@@ -2141,7 +2141,7 @@ $('nNext').onclick=()=>{if(nightKey<today)setNight(addDays(nightKey,1));};
 $('fSleep').querySelectorAll('[data-s]').forEach(b=>b.onclick=()=>{const [n,d]=b.dataset.s.split(':'),inp=$('fSleep').elements[n];let m=Math.round(hm(inp.value||'00:00')*60)+(+d);m=((m%1440)+1440)%1440;inp.value=pad(Math.floor(m/60))+':'+pad(m%60);updSleepLen();});
 const val=(f,n)=>f.elements[n].value;
 $('fMeal').onsubmit=e=>{e.preventDefault();const f=e.target;
-  const at=amtTxt(f);D.meals.push({id:uid(),t:val(f,'d')+'T'+val(f,'tm'),titel:val(f,'titel').trim()+(at?` (${at})`:''),kcal:+val(f,'kcal')||0,protein:+val(f,'protein')||0,fedt:+val(f,'fedt')||0,kulhydrat:0});
+  const at=amtTxt(f);D.meals.push({id:uid(),t:val(f,'d')+'T'+val(f,'tm'),titel:val(f,'titel').trim()+(at?` (${at})`:''),kcal:+val(f,'kcal')||0,protein:+val(f,'protein')||0,fedt:+val(f,'fedt')||0,kulhydrat:0,...(f.elements.unit&&f.elements.unit.value==='g'&&+val(f,'amt')>0?{gram:+val(f,'amt')}:{})});
   ['titel','kcal','protein','fedt','amt'].forEach(n=>f.elements[n].value='');f.elements.unit.value='portion';mealBase=null;f.querySelectorAll('[data-p]').forEach(x=>x.removeAttribute('aria-pressed'));$('mealAIMsg').textContent='';save();drawLog();flash(f,'Gemt');};
 let mealBase=null;
 const amtTxt=f=>{const a=+val(f,'amt'),u=val(f,'unit');return a?`${nf(a,a%1?1:0)} ${u==='g'?'g':u==='portion'?(a===1?'portion':'portioner'):u}`:'';};
@@ -2467,17 +2467,23 @@ function openMealEdit(m,mode){const add=mode==='add',now=nowT();let f=1;
   const val=k=>r0((+m[k]||0)*f);
   const el=mealSheet(`<div class="sheet-h"><b id="mH">${add?'Tilføj':'Ret måltid'}</b><span class="small">${esc(m.titel)}</span><button class="close" data-mclose aria-label="Luk">×</button></div>
     <small class="qsub">Mængde</small><div class="seg mamt" role="group" aria-label="Mængde">${[[.5,'½'],[1,'1'],[1.5,'1½'],[2,'2']].map(([v,l])=>`<button type="button" data-f="${v}" aria-pressed="${v===1}">${l} portion</button>`).join('')}</div>
+    <label class="mrow">Eller i gram <input class="t" type="number" inputmode="decimal" min="1" max="3000" step="any" id="mGram" placeholder="${m.gram?Math.round(m.gram):'Fx 150'}"> g</label>
+    <label class="mrow" id="mBaseRow"${m.gram?' hidden':''}>1 portion vejer ca. <input class="t" type="number" inputmode="decimal" min="1" max="3000" step="any" id="mBase" placeholder="Fx 200"> g</label>
     <label class="mrow">Eller i procent <input class="t" type="number" inputmode="numeric" min="5" max="500" step="5" id="mPct" value="100"> %</label>
     <p class="mres" id="mRes"></p>
     <label class="mrow">Tidspunkt <input class="t" type="time" id="mTime" value="${add?now.slice(11,16):m.t.slice(11,16)}"></label>
     <div class="btns" style="margin-top:14px"><button class="go" id="mSave" type="button">${add?'Tilføj':'Gem'}</button>${add?'':'<button class="ghost mdel" id="mDel" type="button">Slet måltid</button>'}</div>`);
   const res=()=>{$('mRes').textContent=`${nf(val('kcal'))} kcal · ${nf(val('protein'))} g protein`;};
-  const setF=v=>{f=Math.max(.05,Math.min(5,v));$('mPct').value=Math.round(f*100);el.querySelectorAll('.mamt [data-f]').forEach(b=>b.setAttribute('aria-pressed',+b.dataset.f===f));res();};
+  const setF=(v,keepG)=>{f=Math.max(.05,Math.min(5,v));$('mPct').value=Math.round(f*100);if(!keepG){const b=base();$('mGram').value=b?Math.round(b*f):'';}el.querySelectorAll('.mamt [data-f]').forEach(b=>b.setAttribute('aria-pressed',+b.dataset.f===f));res();};
+  const base=()=>+m.gram||+$('mBase').value||0;
+  const fromG=()=>{const g=+$('mGram').value,b=base();if(g>0&&b>0)setF(g/b,true);else if(g>0&&!b){$('mRes').textContent='Skriv også, hvad 1 portion vejer, så regner appen det om.';}};
+  $('mGram').oninput=fromG;$('mBase').oninput=fromG;
   el.querySelectorAll('.mamt [data-f]').forEach(b=>b.onclick=()=>setF(+b.dataset.f));
-  $('mPct').oninput=()=>{const v=+$('mPct').value;if(v>0){f=Math.max(.05,Math.min(5,v/100));el.querySelectorAll('.mamt [data-f]').forEach(b=>b.setAttribute('aria-pressed',+b.dataset.f===f));res();}};
-  res();
+  $('mPct').oninput=()=>{const v=+$('mPct').value;if(v>0){f=Math.max(.05,Math.min(5,v/100));{const b=base();$('mGram').value=b?Math.round(b*f):'';}el.querySelectorAll('.mamt [data-f]').forEach(b=>b.setAttribute('aria-pressed',+b.dataset.f===f));res();}};
+  res();if(m.gram)$('mGram').value=Math.round(m.gram);
   $('mSave').onclick=()=>{const tm=$('mTime').value||now.slice(11,16),nv={kcal:val('kcal'),protein:val('protein'),fedt:val('fedt'),kulhydrat:val('kulhydrat')},pct=Math.round(f*100);
-    const titel=String(m.titel||'Måltid').replace(/ \(\d+ %\)$/,'')+(pct!==100&&add?` (${pct} %)`:'');
+    const b=base(),g=b?Math.round(b*f):0;nv.gram=g||undefined;if(!g)delete nv.gram;
+    const titel=String(m.titel||'Måltid').replace(/ \(\d+ %\)$/,'').replace(/ \(\d+ g\)$/,'')+(add&&g&&pct!==100?` (${g} g)`:pct!==100&&add?` (${pct} %)`:'');
     if(add){D.meals.push({id:uid(),t:`${today}T${tm}`,titel,...nv});toast(`${titel} tilføjet · ${nf(nv.kcal)} kcal`);}
     else{Object.assign(m,nv,{t:m.t.slice(0,11)+tm});toast('Måltidet er rettet');}
     save();el.hidden=true;drawLog();};

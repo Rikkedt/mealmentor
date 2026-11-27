@@ -228,3 +228,4 @@ X.update({'🔊 Tale og bip':'🔊 Voice and beep','🔕 Ingen lyd':'🔕 No sou
 X.update({'Træningen er stoppet.':'Workout stopped.','min er gemt.':'min saved.','Stop træning':'Stop workout'})
 X.update({'RÅD':'ADVICE'})
 X.update({'Du har kun haft én styrketræning': 'You have only done one strength workout', 'Du har ikke haft nogen styrketræning': 'You have not done any strength training', 'den seneste uge. Musklerne svinder hurtigere i overgangsalderen, og styrketræning plus protein holder på dem.': 'in the past week. Muscle is lost faster during menopause, and strength training plus protein helps keep it.'})
+X.update({'Skriv også, hvad 1 portion vejer, så regner appen det om.': 'Also enter what 1 portion weighs, and the app recalculates it.', 'Eller i gram': 'Or in grams', '1 portion vejer ca.': '1 portion weighs about', 'Fx 150': 'E.g. 150', 'Fx 200': 'E.g. 200'})
