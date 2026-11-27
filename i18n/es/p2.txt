@@ -1,0 +1,300 @@
+205	Dormir bien hace más fácil controlar el hambre.
+206	Bien hecho: así se empieza un buen día.
+207	Tras noches de menos de 6,5 horas comes unas
+208	En tus horas de comida habituales, con sugerencias
+209	:'sin registrar'}.\nÚltimos 14 días:
+210	La IA no está disponible en esta vista.
+211	He hecho algo bueno por mí ✓
+212	Mentor con sugerencias de comida, avisos y análisis
+213	Sube de puntillas y baja despacio.
+214	Las cifras son estimaciones y pueden variar un 20–30 %.
+215	kcal. Tras al menos 7 horas de sueño son
+216	.
+Registros que faltan en los últimos 7 días:
+217	El apetito sube al final de la semana de dosis (+
+218	Guardado: las sugerencias lo tienen en cuenta.
+219	Suelta el día y prepárate para dormir
+220	Pregunta sobre comida, horarios y el resto de tu día
+221	comidas al día te van mejor
+222	P. ej. 2 tostadas de pan integral con paté y pepino
+223	¿Qué crees que lo causa? (opcional)
+224	Inicia sesión primero y podrás recibir notificaciones.
+225	El mentor no pudo responder. Inténtalo de nuevo.
+226	% más comida que en el periodo estable
+227	Después: ${r.slots.slice(1).map(x=>
+228	No ha funcionado. Inténtalo de nuevo en un momento.
+229	No se pudo guardar en la cuenta ahora mismo.
+230	Desde las 17 h, si no has entrenado
+231	Cambia la cantidad y los números se recalculan.
+232	Tras noches cortas comes más.
+233	Claro, oscuro o como tu móvil.
+234	Dejar el GLP-1 sin recuperar peso
+235	g de proteína al día. Sigue así.
+236	dejar el GLP-1 sin recuperar peso
+237	% comido durante la pausa de comidas nocturna.
+238	Comer por la noche acorta tu sueño.
+239	Varias comidas pequeñas o pocas grandes
+240	¿Cuándo podemos recordarte algo?
+241	20:30: ¿qué tal ha ido el día?
+242	Moderadamente activa (3–4 entrenamientos/semana)
+243	Preguntar al mentor qué puedo hacer
+244	empieza; después solo agua y té
+245	Tras noches cortas comes unas
+246	Aún no hay comidas registradas
+247	pudin de chía con yogur de coco y frutos rojos
+248	yogur griego con frutos secos y manzana
+249	pollo al curry con arroz y verduras
+250	ensalada de quinoa con garbanzos y feta
+251	: tus datos se guardan en tu cuenta.
+252	Día 0–2 frente a día 4–6 tras la dosis
+253	Tras noches cortas (menos de 6,5 h)
+254	Fotografía la tabla nutricional
+255	Fuerza 2–3 veces por semana
+256	\n\nEstado semanal. Últimos 28 días:
+257	Energía y confianza para el día
+258	Paseos o entrenamiento 1–2 veces
+259	Sofocos o sudores nocturnos anoche
+260	Ayuda para dejar el GLP-1
+261	El mentor está mirando tus datos …
+262	faltan o están incompletos
+263	5 min · ponte los auriculares
+264	¡Genial! Un buen comienzo del día 🌞
+265	P. ej. coles de Bruselas, frutos secos, requesón
+266	Bien hecho: escáner corporal completado 🌙
+267	Soy mayor de 18 años, acepto
+268	Últimas 8 semanas · toca para más
+269	Escaneo de comida con IA ilimitado
+270	un puñado de frutos secos y una manzana
+271	comidas te van mejor
+272	:'nada registrado hoy';})()}.
+273	Mantener el peso estable con GLP-1
+274	Entrenamiento intenso casi a diario
+275	A la cama 15 minutos antes
+276	Rellena edad, altura y peso.
+277	mantener el peso estable con GLP-1
+278	pan de centeno con requesón y salmón
+279	pan de centeno con pavo y hummus
+280	bacalao con patatas y verduras
+281	% más durante la reducción.
+282	% por encima de tu periodo estable.
+283	Buenos días, ¿qué tal has dormido?
+284	Aún no hay comidas hoy.
+285	No hay comidas registradas hoy
+286	No hay comidas registradas.
+287	El sueño de anoche no está registrado
+288	Que descanses, hasta mañana.
+289	Falta el sueño de la noche anterior
+290	hummus con palitos de verdura
+291	ternera, patatas y ensalada
+292	): mira todas a la vez
+293	Solo hay una comida registrada hoy
+294	¿Falta algo por registrar?
+295	Calma y relajación en el cuerpo
+296	El sueño no afecta a la comida
+297	Piensa en una semana normal.
+298	kcal más ese día${dl>=50?
+299	skyr con frutos rojos y un poco de muesli
+300	2 huevos sobre pan de centeno con tomate
+301	P. ej. paseo, fuerza, bici
+302	A la cama 15 minutos después
+303	Sí, estoy en la menopausia
+304	Estoy lista para dormir ✓
+305	¿Comidas pequeñas o grandes?
+306	Come suficiente, y lo adecuado
+307	Más fuerte y tonificada
+308	Haz o elige una foto
+309	Entrenar 3–4 veces por semana
+310	un puñadito de almendras
+311	gachas de avena con skyr y frutos rojos
+312	comidas haces de media
+313	revuelto de tofu con pan de centeno
+314	‹ Volver a Registro rápido
+315	2 huevos cocidos y una zanahoria
+316	Recibir notificaciones en el móvil
+317	Recibir un enlace de acceso por correo
+318	La mañana de tu día de dosis
+319	Levantarse 15 minutos antes
+320	HAMBRE HOY: ${hu.map(x=>
+321	Inclinación lateral, ambos lados
+322	un huevo cocido y una zanahoria
+323	).join('; ')||'ninguna'}.
+324	Todos los programas de entrenamiento
+325	Número de comidas al día
+326	Flexor de cadera, ambos lados
+327	¿Cuándo debo comer?
+328	Noches cortas → más comida
+329	Más proteína y entrenamiento
+330	\n\nLos últimos 14 días:
+331	kcal menos esos días.
+332	ensalada de atún con alubias
+333	semanas de calorías y peso.
+334	30 min antes de que empiece
+335	Después de la menopausia
+336	Información extra (opcional)
+337	¿Qué puedo comer ahora?
+338	¿Qué tal ha ido el día?
+339	Sin entrenar en 4 días
+340	La reducción va bien
+341	Vale, hasta mañana
+342	Enviado: mira tu móvil
+343	Suelta el día y duerme bien
+344	Pregunta para el mentor
+345	Elige o haz una foto
+346	kcal POR ENCIMA del objetivo (comido
+347	kcal por encima del objetivo de media
+348	wrap de pollo con verduras
+349	sopa de lentejas con pan de centeno
+350	guiso de solomillo de cerdo con verduras
+351	objetivo de proteína alcanzado (
+352	pan de centeno con huevo y salmón
+353	skyr con frutos rojos y linaza
+354	pita de atún con verduras
+355	Ejercicios del programa
+356	¿10 minutos de entrenamiento?
+357	Otra cosa que no comes
+358	Flexiones con rodillas
+359	Calcular nutrientes
+360	Las notificaciones están activadas
+361	Pecho y respiración
+362	Comes más el día
+363	O escanea con la cámara
+364	Ideas para la cena
+365	Oficina y algo de caminar
+366	Registra tu primera comida
+367	Estiramiento de cuádriceps, pierna izquierda
+368	Quizá / perimenopausia
+369	Por la mañana desde las 6
+370	Levantarse 15 minutos después
+371	El resultado aparece aquí
+372	kcal más esos días.
+373	kcal, sin objetivo de calorías
+374	pollo, arroz y verduras
+375	Favoritos · un toque
+376	Grafito, para la noche
+377	¿Has entrenado hoy?
+378	No hay objetivo de calorías.
+379	Solo hay una comida registrada
+380	Meal Mentor AI dice
+381	Prueba gratis 7 días
+382	Inclinación lateral, izquierda
+383	Escribe una pregunta …
+384	Pregunta a Meal Mentor AI
+385	Sin recuperar peso
+386	Elige todas las que quieras
+387	\n\nÚltimos 28 días:
+388	tras la dosis, de media
+389	la política de privacidad
+390	pan de centeno con requesón
+391	skyr natural con frutos rojos
+392	🔔 Pitido al cambiar: sí
+393	🔕 Pitido al cambiar: no
+394	No como esto
+395	Remo inclinado
+396	Flexor de cadera, izquierda
+397	¿Qué quieres escanear?
+398	Solo en este dispositivo.
+399	Articulaciones y movilidad
+400	Estiramiento de cuádriceps, ambas piernas
+401	Estiramiento de cuádriceps, pierna derecha
+402	Tentempié a las 15 h
+403	Sobre todo sentada
+404	Mis registros
+405	Envase / etiqueta
+406	La proteína va bien
+407	Medicación, p. ej. Wegovy
+408	En tu día de dosis
+409	Escanea la comida con la cámara
+410	Espalda fuerte y flexible
+411	de ello en la pausa de comidas
+412	comidas y tentempiés.
+413	. Sueño: ${d.sleep?
+414	:''}Entrenamiento hoy:
+415	Continuar con Google
+416	Continuar con correo
+417	Sigue a tu móvil
+418	Estiramiento de isquios sentada
+419	Recuperando tus datos …
+420	Lo más rápido en iPhone
+421	¿Qué prefieres?
+422	Añadir al registro de hoy
+423	IMPULSO MATINAL · 5 MIN
+424	Más entrenamiento de fuerza
+425	Inclinación lateral, derecha
+426	Pausa de comidas desde
+427	horas de sueño de media
+428	CHECK-IN DE LA NOCHE
+429	Leer la etiqueta
+430	Reproducir Impulso matinal
+431	Check-in de la noche
+432	Las últimas 4 semanas
+433	Has completado
+434	Continuar con Apple
+435	Flexor de cadera, derecha
+436	¿Cuánto te mueves?
+437	Pega aquí la copia de seguridad
+438	Muslos, glúteos, pantorrillas
+439	El mentor está pensando …
+440	Impulso matinal completado
+441	Tamaño de la porción
+442	Plancha lateral, derecha
+443	Hambre por la noche
+444	Despierta tu cuerpo
+445	ESCÁNER CORPORAL · 5 MIN
+446	Calcula tus necesidades
+447	Elevación de piernas tumbada
+448	Estiramiento de gemelos contra la pared
+449	Perro boca abajo
+450	Calma y relajación
+451	Desactivar notificaciones
+452	Estírate hacia el techo
+453	Rotación de pie
+454	Sueño y alimentación
+455	El peso ha subido
+456	\n\nValora el día
+457	lasaña de verduras
+458	kcal por encima del objetivo.
+459	kcal en días con
+460	min. Sueño de anoche:
+461	– la usuaria cree:
+462	:''} Objetivo de calorías:
+463	CALMA NOCTURNA · 5 MIN
+464	Reproducir Escáner corporal
+465	¿Qué has comido?
+466	¿Qué tal has dormido?
+467	Suelta articulaciones y espalda
+468	Vale, que descanses
+469	Calma antes de dormir
+470	Peso muerto rumano
+471	Enviar notificación de prueba
+472	Menos de 6,5 h de sueño
+473	Piernas y rodillas
+474	Elevación en Y boca abajo
+475	min; sueño de anoche
+476	· última dosis
+477	.
+Relaciones:
+478	Reproducir Calma nocturna
+479	Cara y mandíbula
+480	Flexiones
+481	Calcular sugerencia
+482	Ejercicio anterior
+483	Manos y brazos
+484	Llega a la app
+485	Solo en el dispositivo
+486	Solo una comida.
+487	Borrar todos los datos
+488	Eliminar mi cuenta
+489	Empezar escáner corporal
+490	Valorar mi día
+491	Valorar mi semana
+492	\n\nPregunta:
+493	son los más difíciles
+494	comidas hechas
+495	. Objetivo de proteína:
+496	Codo a rodilla
+497	Flexión mantenida
+498	La línea de tiempo de hoy
+499	¿Tienes hambre?
+500	Flexión hacia delante
+501	Guardado en la cuenta
+502	No aplica

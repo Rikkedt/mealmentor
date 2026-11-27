@@ -1,0 +1,260 @@
+823	Selecciona y copia el texto del campo.
+824	. Última comida antes del último hambre:
+825	pechuga de pollo con ensalada y bulgur
+826	Con sugerencias de lo que puedes comer
+827	Tu nivel de mantenimiento es de unas
+828	. Comidas restantes planificadas:
+829	ensalada de pasta con pollo y pesto
+830	Según lo que habías registrado a las
+831	El apetito es estable toda la semana
+832	La noche antes de los sofocos comiste
+833	una taza de té y una pieza de fruta
+834	5 min de calma para el cuerpo y la mente
+835	kcal más tras una noche corta.
+836	Bienvenida a Meal Mentor AI
+837	bol de tofu con arroz y edamame
+838	falafel con ensalada y hummus
+839	Lunes: toca pesarse
+840	No se concedió acceso a la IA.
+841	tortilla con espinacas y tomate
+842	No se pudo reproducir el audio
+843	Al día siguiente comes unas
+844	Mirando tu plato …
+845	Hoy es tu día de dosis
+846	El almacenamiento de la cuenta está lleno.
+847	Leyendo la etiqueta …
+848	chili sin carne con arroz
+849	Toca de nuevo para borrar
+850	Plancha con toque de hombros
+851	ensalada grande con pollo
+852	una taza de té y un poco de skyr
+853	después de la menopausia
+854	Todos los datos se han borrado.
+855	Ritmo tranquilo y saludable
+856	pasta con salmón y espinacas
+857	Hoy es tu día de dosis
+858	Usa tu cuenta de Google
+859	Suele acostarse sobre las
+860	Estimación aproximada basada en
+861	pésate unas cuantas veces
+862	Estabilidad y fuerza
+863	tampoco come:
+864	salteado de tofu con fideos
+865	Zancada con rotación
+866	✓ Completado hoy
+867	Abdomen bajo y core
+868	: creo que es
+869	requesón y pepino
+870	salmón con brócoli
+871	kcal más ese día
+872	Hombros y cuello
+873	No se pudo enviar
+874	sin registrar
+875	Has iniciado sesión
+876	Cardio y fuerza
+877	no ha tenido ninguno
+878	Próxima comida ·
+879	h hasta acostarte
+880	solo una comida:
+881	Entrenamiento hoy:
+882	solo agua y té
+883	No ha funcionado.
+884	Enrollar y desenrollar
+885	kg en 7 días.
+886	Solo una comida
+887	5 o más
+888	después de medianoche
+889	no indicado
+890	días con comida
+891	Estás estable
+892	Un poco sobre ti
+893	tras la dosis
+894	sin registrar
+895	no come
+896	sin sueño:
+897	un poco de hambre
+898	La usuaria está
+899	La noche anterior
+900	Objetivo de calorías:
+901	kcal más.
+902	es vegetariana
+903	por encima del objetivo
+904	Gato-vaca
+905	. Sueño:
+906	Cantidad:
+907	Fijar objetivo
+908	Hora de
+909	kcal y
+910	(es decir,
+911	Estoy
+912	Objetivo:
+913	con
+914	y
+915	% de las calorías del día en la pausa de comidas, frente a
+916	% en otros días.
+917	(1 porción = una porción típica de adulto)
+918	(interrumpido)
+919	(supuesto)
+920	(aprox.
+921	(aprox. 200 kcal). Día
+922	(a las 23:00)
+923	, sofocos
+924	, de las cuales aprox.
+925	. La pausa de comidas nocturna empieza a las
+926	.\nÚltimos 14 días:
+927	Calma nocturna completada
+928	El apetito a lo largo de la semana de dosis
+929	Brazos, pecho, hombros
+930	Postura del niño
+931	Las notificaciones funcionan en la app real.
+932	Información extra de la usuaria:
+933	Sugerencia de hoy
+934	Dead bug
+935	¡Genial!
+936	Después:
+937	Tu pausa de comidas empieza a las
+938	Tu foto de comida
+939	Tu nivel de mantenimiento
+940	Tienes
+941	Te quedan unas
+942	Te faltan
+943	Sueles comer sobre las
+944	Duermes
+945	Comes
+946	Paloma, ambos lados
+947	Paloma, izquierda
+948	Sentadilla profunda, mantener
+949	Un buen día.
+950	DATOS DE HOY (a las
+951	Encuentra la calma
+952	Quema aprox.
+953	P. ej.
+954	P. ej.: me comí la mitad del paquete
+955	Buenas noches
+956	Buenas tardes
+957	Buenos días
+958	Buenos días
+959	Sofocos por la noche
+960	Cuerpo completo
+961	En marcha
+962	Anoche
+963	No es una copia de seguridad válida.
+964	No hay dosis registradas.
+965	No hay comida registrada
+966	No hay una diferencia clara.
+967	Aún no hay nada registrado.
+968	Ya tengo una cuenta
+969	Calorías restantes
+970	Empezar
+971	Noche corta anoche
+972	Hidratos
+973	Rotación tumbada
+974	Cerrar sesión
+975	Sesión iniciada
+976	Ingesta muy baja. Recuerda comer suficiente.
+977	Mucha comida en la pausa de comidas nocturna
+978	Moderadamente activa
+979	Dispositivo nuevo: toca Calcular otra vez.
+980	SOBRE TI
+981	CREAR CUENTA
+982	Crunch inverso
+983	Menopausia
+984	Suele comer
+985	Proteína restante
+986	HAMBRE HOY:
+987	Últimos 7 días
+988	Rotación sentada
+989	Plancha lateral, ambos lados
+990	Plancha lateral, izquierda
+991	Fiabilidad:
+992	Cambia de pierna. Mantén la cadera nivelada.
+993	Cambia de pierna. Mantén el tronco erguido.
+994	Cambia de lado
+995	La pausa de comidas empieza a las
+996	Comido a las
+997	Fase estable frente a reducción
+998	Empezar de nuevo
+999	Círculos grandes y tranquilos. Cambia de dirección a la mitad.
+1000	Haz una foto del plato
+1001	Dosis anteriores
+1002	Quedan:
+1003	Dejar el GLP-1
+1004	Toca Guardar.
+1005	Zancada, ambas piernas
+1006	Zancada, izquierda
+1007	Números inciertos:
+1008	[Estado ahora mismo, a las
+1009	días)
+1010	g de proteína faltan (comido
+1011	g de proteína)
+1012	veces (aprox. a las
+1013	kcal de media (
+1014	kcal restantes (comido
+1015	kcal, de las cuales
+1016	kcal, frente a
+1017	solo tuvo una
+1018	al día. Sugerencia:
+1019	menos de 6,5 h
+1020	· bien
+1021	· noche corta
+1022	bien
+1023	muy bien
+1024	con hambre
+1025	con mucha hambre
+1026	regular
+1027	" aria-label="Gramos
+1028	" aria-label="Eliminar
+1029	" aria-label="Ir a
+1030	" aria-label="Ocultar: no hay nada que registrar">
+1031	sc-go" type="button" data-start="log">Registrar comida
+1032	/vilkaar/" target="_blank" rel="noopener">Términos
+1033	" text-anchor="end" font-size="10.5" fill="var(--mute)">objetivo
+1034	" text-anchor="middle" font-size="13" fill="var(--mute)">Registra tu sueño unas noches para ver la tendencia
+1035	" text-anchor="middle" font-size="13" fill="var(--mute)">Pésate unas cuantas veces para ver la tendencia
+1036	Estiramiento y movilidad
+1037	Registrar comida
+1038	de
+1039	de 2
+1040	de 7 días
+1041	de unas habituales
+1042	aprox.
+1043	sobre las
+1044	a las
+1045	COME
+1046	lo antes posible
+1047	horas
+1048	día
+1049	días
+1050	registrado
+1051	semanas.
+1052	porciones
+1053	pesajes
+1054	dosis
+1055	medianoche
+1056	al menos
+1057	inquieta
+1058	perder peso
+1059	periodo estable
+1060	h menos.
+1061	ninguno aún
+1062	sin comida:
+1063	: comido hoy
+1064	g en total
+1065	g de media
+1066	g al día de media.
+1067	g de proteína en
+1068	g de proteína hoy.
+1069	esta noche
+1070	hoy
+1071	en la menopausia
+1072	de media
+1073	en la pausa de comidas
+1074	nada registrado hoy
+1075	kcal en la pausa de comidas nocturna
+1076	kcal al día frente a
+1077	kcal frente a
+1078	h de media
+1079	h de media la última semana
+1080	horas de media
+1081	g de grasa
+1082	ninguna

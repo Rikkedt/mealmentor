@@ -1,0 +1,320 @@
+503	Pegar copia de seguridad
+504	Tengo hambre
+505	Rodillas al pecho
+506	Cuenta y datos
+507	Porción pequeña
+508	Muslos y caderas
+509	Lunes por la mañana
+510	Abdominales
+511	Zancada, derecha
+512	Elige tu aspecto
+513	💉 Dosis de GLP-1
+514	0:00 de 4:52
+515	Fondos en silla
+516	Estás en
+517	Abdomen y zona lumbar
+518	Mucha hambre
+519	Comidas/día
+520	Siguiente ejercicio
+521	Actualizar sueño
+522	Estiramiento de hombro
+523	Porción grande
+524	Elige programa
+525	kg en 4 semanas
+526	kg en 7 días
+527	kg en una semana
+528	frente a la semana anterior
+529	skyr con frutos rojos
+530	horas de sueño.
+531	. Comidas:
+532	Postura del oso
+533	Postura del barco
+534	Paloma, derecha
+535	Más consejos (
+536	Día anterior
+537	Noche anterior
+538	Dosis de GLP-1
+539	Blanco y gris
+540	Zancada alta
+541	Copiar datos
+542	Un poco de hambre
+543	Registro rápido
+544	Muy activa
+545	Chat con el mentor
+546	Objetivos y cuerpo
+547	Reducción
+548	Nueva foto
+549	RECORDATORIOS
+550	En días con
+551	Recordatorios
+552	Muy bien
+553	Hambre real
+554	Saltar
+555	Saltos de tijera
+556	Me levanté a las
+557	Fija tu objetivo
+558	Buscar / escribir
+559	Elevaciones de talones
+560	la noche anterior
+561	g de proteína ·
+562	min de entrenamiento
+563	Ejercicios en
+564	); entrenamiento
+565	. Entrenamiento:
+566	Suscripción
+567	Dormir mejor
+568	Calculando …
+569	Apertura de pecho
+570	Puente de glúteos
+571	¡Bien hecho!
+572	Altura (cm)
+573	A la cama a las
+574	Mi perfil
+575	Impulso matinal
+576	Estiramiento de cuello
+577	Aumento de dosis
+578	Conexión
+579	Activando …
+580	Que descanses 🌙
+581	Pausa de comidas
+582	Añadido ✓
+583	comidas (
+584	añadido ·
+585	8 USD/mes
+586	Actividad
+587	Avanzado
+588	Movimiento
+589	Aburrimiento
+590	AUDIOGUÍAS
+591	Ligeramente activa
+592	Día siguiente
+593	Noche siguiente
+594	Proteína g
+595	Borrando …
+596	Código de barras
+597	Plato
+598	Ver más
+599	Peso (kg)
+600	anteayer
+601	comidas:
+602	entrenamientos
+603	los términos
+604	🏃 Entrenamiento
+605	😋 ¿Hambre?
+606	:''}Objetivo:
+607	ANÁLISIS
+608	Solo guardar
+609	Recogida de piernas
+610	Escáner corporal
+611	Pies
+612	Guardar sueño
+613	Guardando …
+614	Prepárate
+615	Cargando …
+616	Altura cm
+617	Rodillas altas
+618	Cerrar chat
+619	Minutos
+620	Comidas
+621	Medicación
+622	Enviando …
+623	Cerdo
+624	Perder peso
+625	Pensando …
+626	kcal/día
+627	mg · día
+628	comidas
+629	Escaneo IA
+630	Calma nocturna
+631	TU OBJETIVO
+632	Tu objetivo
+633	Mal
+634	Filtrar
+635	Anterior
+636	Continuar
+637	Iniciar sesión
+638	Sonido activado
+639	Patrón
+640	Actualizar
+641	Proteína
+642	Me levanté
+643	Detenido
+644	Atrás
+645	Entrenamiento
+646	Inquieta
+647	Apariencia
+648	Peso kg
+649	tu objetivo
+650	mal
+651	porción
+652	· cambiar
+653	⚖️ Peso
+654	Calcular
+655	Grasa g
+656	P. ej. 200
+657	Hecho
+658	Guardado ✓
+659	Restaurar
+660	A la cama
+661	Mujer
+662	Mentor
+663	Comida
+664	Cantidad
+665	Normal
+666	Siguiente:
+667	Perfil
+668	Estable
+669	Estrés
+670	Con hambre
+671	Sueño ·
+672	Términos
+673	kcal –
+674	noches
+675	rebanadas
+676	h de sueño
+677	Ejercicio
+678	😋 Hambre
+679	😴 Sueño
+680	+ Registrar
+681	OTROS
+682	Edad
+683	Dosis
+684	Unidad
+685	Hoy
+686	Ayer
+687	Siguiente
+688	Empezar
+689	Consuelo
+690	Sed
+691	ayer
+692	· aprox.
+693	Fecha
+694	Fase
+695	Bien
+696	Kcal
+697	Lista
+698	Hombre
+699	Menú
+700	Lácteos
+701	Oscuro
+702	Regular
+703	Escanear
+704	Enviar
+705	Sueño
+706	Cansada
+707	Peso
+708	gramos
+709	kcal
+710	kg ·
+711	comidas
+712	sueño
+713	Todo
+714	Día
+715	Guardar
+716	A las
+717	Carne
+718	Sexo
+719	Cerrar
+720	COMIDA
+721	Comida
+722	Semana
+723	objetivo
+724	uds.
+725	IA
+726	dl
+727	kg
+728	mg
+729	ahora
+730	Huevos
+731	Cena
+732	Tentempié nocturno
+733	Círculos de brazos
+734	Automático
+735	Piernas
+736	Postura de la montaña
+737	Core
+738	Día de dosis
+739	Merienda
+740	Agotada
+741	Con energía
+742	Grasa
+743	Pescado
+744	Quitar
+745	Fresca
+746	Almuerzo
+747	Guardado
+748	Restaurado.
+749	Contenta
+750	Gluten
+751	Gramos
+752	Postura del héroe
+753	Círculos de cadera
+754	Postura de descanso
+755	Contenido
+756	Navaja
+757	Calorías
+758	Camello
+759	Cobra
+760	Copiado.
+761	Solo
+762	Con náuseas
+763	Claro
+764	Abdomen
+765	Movilidad
+766	Audio de mañana
+767	Desayuno
+768	Meditación matinal
+769	Rutina de mañana
+770	Tren superior
+771	Pausa
+772	Plancha
+773	Política de privacidad
+774	Producto
+775	Prot.
+776	Tranquila
+777	Espalda
+778	Saltos de tijera
+779	Zancada lateral
+780	Rotación de hombros
+781	Eliminar
+782	Flexión de mariposa
+783	Mariposa
+784	Sentadilla
+785	Estable
+786	Saltos de estrella
+787	Orgullosa
+788	Estresada
+789	Superman
+790	De mal humor
+791	Triángulo
+792	Vegetariana
+793	Registrar
+794	: haz hincapié en la proteína repartida durante el día (al menos 25–30 g por comida), fuerza 2–3 veces por semana, fibra y calcio; distingue entre el aumento de peso por la menopausia y por dejar el GLP-1. Menciona la menopausia solo cuando sea relevante.
+795	Responde SOLO con JSON: {"kcal":0,"protein":0,"fedt":0,"kulhydrat":0,"maengde":0,"enhed":"g|stk|skiver|dl|portion","antagelse":"frase corta sobre en qué consiste la porción"}. "maengde" y "enhed" deben describir la cantidad a la que se refieren los números
+796	Se tiene en cuenta la menopausia: un poco más de proteína y, si es posible, fuerza 2–3 veces por semana.
+797	Dieta: NUNCA sugieras comida que incumpla esto (puede ser una alergia o intolerancia):
+798	Has usado los escaneos con foto de hoy. Escribe la comida o vuelve a escanear mañana.
+799	Tu apetito suele subir ahora. Ten preparados tentempiés ricos en proteína para la tarde.
+800	Los consejos se basan en menos datos. Si se te olvidó registrar, aún estás a tiempo.
+801	Los números son por 100 g según la etiqueta. Indica cuántos gramos comiste.
+802	Siéntate con las piernas estiradas e inclínate desde la cadera. Mantén la espalda larga.
+803	No se indica cantidad: supón una porción típica de adulto.
+804	Baja enrollándote desde el cuello vértebra a vértebra y vuelve a subir.
+805	Haz una foto de la comida o escribe lo que comiste.
+806	Tras noches con mucha comida en la pausa duermes unos
+807	Haz una foto del código de barras o de la tabla nutricional
+808	: tras noches buenas comes menos por la noche
+809	y "## Reducción" (comida y hábitos, no dosis)
+810	Combínalo con fuerza 2–4 veces por semana.
+811	Toca de nuevo: eliminar la cuenta y todos los datos para siempre
+812	Mantienes el nivel del periodo estable.
+813	La comida de hoy está hecha. Desde ahora solo agua y té.
+814	Pésate unas cuantas veces para ver la tendencia
+815	Aún no hay una relación clara con la comida.
+816	Este navegador no puede recibir notificaciones.
+817	Borra datos antiguos o contacta con soporte.
+818	Inténtalo de nuevo con una foto más clara.
+819	batido de proteína con plátano y avena
+820	El apetito es estable a lo largo de la semana.
+821	5 min de calma, energía y confianza
+822	Empieza el día con algo para ti

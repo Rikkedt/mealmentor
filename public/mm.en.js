@@ -1,8 +1,8 @@
-/* Sprog: vælg / eller /en/ ud fra valg eller telefonens sprog */
-(function(){try{if(location.protocol==='file:')return;const p=location.pathname,onEn=/^\/en(\/|$)/.test(p);
-  if(!/^\/(index\.html)?$|^\/en(\/(index\.html)?)?$/.test(p))return;
-  let l=localStorage.getItem('mm-lang');if(!l)l=/^da/i.test(navigator.language||'da')?'da':'en';
-  if(l==='en'&&!onEn)location.replace('/en/'+location.search+location.hash);else if(l==='da'&&onEn)location.replace('/'+location.search+location.hash);}catch(e){}})();
+/* Sprog: vælg /, /en/ eller /es/ ud fra valg eller telefonens sprog */
+(function(){try{if(location.protocol==='file:')return;const p=location.pathname,m=p.match(/^\/(en|es)(\/|$)/),on=m?m[1]:'da';
+  if(!/^\/(index\.html)?$|^\/(en|es)(\/(index\.html)?)?$/.test(p))return;
+  let l=localStorage.getItem('mm-lang');if(!l){const n=(navigator.language||'da').toLowerCase();l=n.startsWith('da')?'da':n.startsWith('es')?'es':'en';}
+  if(l!==on)location.replace((l==='da'?'/':'/'+l+'/')+location.search+location.hash);}catch(e){}})();
 function daErr(e){const m=(e&&e.message)||'';let t;
   if((t=m.match(/after (\d+) seconds?/i)))return 'Wait '+t[1]+' seconds, then try again.';
   if(/rate limit|too many/i.test(m))return 'Too many emails have been sent right now. Try again in a moment.';
@@ -17,7 +17,7 @@ function daErr(e){const m=(e&&e.message)||'';let t;
     const c = await fetch('/api/config').then(r => r.json()); sbUrl = c.url; sbAnon = c.anon;
     sb = supabase.createClient(c.url, c.anon, { auth: { persistSession: true, autoRefreshToken: true, detectSessionInUrl: true, flowType: 'implicit' } });
     session = (await sb.auth.getSession()).data.session;
-    try { const L = document.documentElement.lang === 'en' ? 'en' : 'da'; if (session && (session.user.user_metadata || {}).lang !== L) sb.auth.updateUser({ data: { lang: L } }); } catch (e) {}
+    try { const L = ['en', 'es'].includes(document.documentElement.lang) ? document.documentElement.lang : 'da'; if (session && (session.user.user_metadata || {}).lang !== L) sb.auth.updateUser({ data: { lang: L } }); } catch (e) {}
     if (/[?&](code|error)=/.test(location.search) || /access_token=|error_description=/.test(location.hash)) history.replaceState(null, '', location.pathname + '#vejleder');
     sb.auth.onAuthStateChange((ev, s) => {
       const had = !!session; session = s;
@@ -49,7 +49,7 @@ function daErr(e){const m=(e&&e.message)||'';let t;
       }
       if (!sent && !(code.value && !code.hidden)) {
         msg.textContent = 'Sending …';
-        const { error } = await sb.auth.signInWithOtp({ email: inp.value.trim(), options: { emailRedirectTo: location.origin + (document.documentElement.lang === 'en' ? '/en/' : '/'), data: { lang: document.documentElement.lang === 'en' ? 'en' : 'da' } } });
+        const { error } = await sb.auth.signInWithOtp({ email: inp.value.trim(), options: { emailRedirectTo: location.origin + ({ en: '/en/', es: '/es/' }[document.documentElement.lang] || '/'), data: { lang: ['en', 'es'].includes(document.documentElement.lang) ? document.documentElement.lang : 'da' } } });
         if (error) {
           const w = ((error.message || '').match(/after (\d+) seconds?/i) || [])[1];
           if (w) {

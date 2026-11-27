@@ -22,3 +22,9 @@
   Cache-Control: no-cache
 /mm.css
   Cache-Control: no-cache
+/es/
+  Cache-Control: no-cache
+/es/index.html
+  Cache-Control: no-cache
+/mm.es.js
+  Cache-Control: no-cache

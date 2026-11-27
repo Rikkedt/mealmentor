@@ -1047,7 +1047,7 @@ body[data-page=vejleder]{padding-bottom:calc(80px + env(safe-area-inset-bottom))
 
 
 
-<section class="pcard" id="pSetup"><h2>Opsætning</h2><p id="syncInfo2" class="small"></p><div class="langrow"><small>Visning</small><div class="seg" id="themeSeg"><button type="button" data-th="light">Lys</button><button type="button" data-th="dark">Mørk</button><button type="button" data-th="auto">Automatisk</button></div></div><div class="langrow"><small>Sprog · Language</small><div class="seg" id="langSeg"><button type="button" data-lang="da">Dansk</button><button type="button" data-lang="en">English</button></div></div></section>
+<section class="pcard" id="pSetup"><h2>Opsætning</h2><p id="syncInfo2" class="small"></p><div class="langrow"><small>Visning</small><div class="seg" id="themeSeg"><button type="button" data-th="light">Lys</button><button type="button" data-th="dark">Mørk</button><button type="button" data-th="auto">Automatisk</button></div></div><div class="langrow"><small>Sprog · Language</small><div class="seg" id="langSeg"><button type="button" data-lang="da">Dansk</button><button type="button" data-lang="en">English</button><button type="button" data-lang="es">Español</button></div></div></section>
 
 <section class="pcard"><h2>Konto og data</h2><p class="small" id="syncInfo">Kun på denne enhed.</p>
 <div class="btns"><button class="go" id="authBtn" hidden>Log ind</button><button class="ghost" id="delAcc" hidden>Slet min konto</button></div>
@@ -1241,7 +1241,7 @@ function render(){
 function drawLog(){
   const log=D.meals.filter(m=>m.t.startsWith(today)).sort((a,b)=>b.t.localeCompare(a.t)).map(m=>({...m,tid:m.t.slice(11)}));
   const t=log.reduce((a,e)=>{a.kcal+=e.kcal;a.protein+=e.protein;a.fedt+=e.fedt;a.kulhydrat+=e.kulhydrat;return a;},{kcal:0,protein:0,fedt:0,kulhydrat:0});
-  $('tot').innerHTML=`<div><b>${r0(t.kcal)}</b>kcal</div><div><b>${r0(t.protein)} g</b>protein</div><div><b>${r0(t.fedt)} g</b>fedt</div><div><b>${r0(t.kulhydrat)} g</b>kulhydrat</div>`;
+  $('tot').innerHTML=`<div><b>${r0(t.kcal)}</b>kcal</div><div><b>${r0(t.protein)} g</b>Protein</div><div><b>${r0(t.fedt)} g</b>Fedt</div><div><b>${r0(t.kulhydrat)} g</b>Kulhydrat</div>`;
   $('log').innerHTML=log.length?log.map(e=>`<li><span><b>${esc(e.titel)}</b> <small>kl. ${esc(e.tid)} · ${r0(e.protein)} g protein${+e.fedt?` · ${r0(e.fedt)} g fedt`:''}</small></span><span>${r0(e.kcal)} kcal <button class="ghost" data-d="${e.id}">Fjern</button></span></li>`).join(''):'<li><small>Ingen måltider endnu i dag.</small></li>';
   $('log').querySelectorAll('[data-d]').forEach(b=>b.onclick=()=>{D.meals=D.meals.filter(m=>m.id!==b.dataset.d);save();drawLog();});
 }
@@ -1502,10 +1502,10 @@ const clockTxt=s=>{const c=Math.ceil(s);return Math.floor(c/60)+':'+String(c%60)
 function beep(f=880,len=.15){if(!run.sound)return;try{ac=ac||new (window.AudioContext||window.webkitAudioContext)();const o=ac.createOscillator(),g=ac.createGain();o.frequency.value=f;g.gain.setValueAtTime(.15,ac.currentTime);g.gain.exponentialRampToValueAtTime(.001,ac.currentTime+len);o.connect(g).connect(ac.destination);o.start();o.stop(ac.currentTime+len);}catch(e){}}
 
 const VO_ON=true,VO_KEYS=new Set(["_pause", "_next", "_done", "fold", "catcow", "child", "cobra", "seatTw", "shoulder", "sideB", "quadB", "ham", "butterfly", "hipB", "calfS", "dog", "spineTw", "neck", "chest", "circles", "kpush", "tap", "plank", "push", "superman", "spL", "spR", "roll", "standTwist", "crunch", "bug", "bridge", "bear", "spB", "boat", "bike", "twist", "legs", "revCrunch", "flutter", "jackknife", "pullIn", "squat", "lungeL", "lungeR", "rdl", "sideLunge", "wallsit", "scissor", "calf", "pushHold", "row", "ytRaise", "dips", "bird", "jjack", "lungeAlt", "climb", "highKnees", "burpee", "starjump", "meditate", "hlunge", "triangle", "mountain", "hero", "camel", "bfold", "kneeChest", "corpse", "hipcirc", "thread", "lungeTw", "deep", "pigeonB"]);let vo=null;
-function voPlay(list,fallback){if(!run.sound)return;try{vo=vo||new Audio();const lang=document.documentElement.lang==='en'?'en':'da';let n=0;const next=()=>{if(n>=list.length)return;const k=list[n++];vo.onended=next;vo.onerror=()=>{vo.onerror=null;sayTTS(fallback);};vo.src=`/audio/ex/${lang}/${k}.mp3`;const pr=vo.play();if(pr&&pr.catch)pr.catch(()=>sayTTS(fallback));};next();}catch(e){sayTTS(fallback);}}
-function sayEx(k,pre){const e=X[k];if(!e)return;if(!VO_ON||!VO_KEYS.has(k)){sayTTS((pre==='next'?'Pause. Næste: ':'')+e[0]);return;}voPlay(pre==='next'?['_pause','_next',k]:[k],(pre==='next'?'Pause. Næste: ':'')+e[0]);}
+function voPlay(list,fallback){if(!run.sound)return;try{vo=vo||new Audio();const lang='da';let n=0;const next=()=>{if(n>=list.length)return;const k=list[n++];vo.onended=next;vo.onerror=()=>{vo.onerror=null;sayTTS(fallback);};vo.src=`/audio/ex/${lang}/${k}.mp3`;const pr=vo.play();if(pr&&pr.catch)pr.catch(()=>sayTTS(fallback));};next();}catch(e){sayTTS(fallback);}}
+function sayEx(k,pre){const e=X[k];if(!e)return;if(!VO_ON||!VO_KEYS.has(k)||document.documentElement.lang!=='da'){sayTTS((pre==='next'?'Pause. Næste: ':'')+e[0]);return;}voPlay(pre==='next'?['_pause','_next',k]:[k],(pre==='next'?'Pause. Næste: ':'')+e[0]);}
 function say(t){return sayTTS(t)}
-function sayTTS(t){if(!run.sound||!t)return;try{const ss=window.speechSynthesis;if(!ss)return;ss.cancel();const u=new SpeechSynthesisUtterance(t),en=document.documentElement.lang==='en';u.lang=en?'en-GB':'da-DK';const v=ss.getVoices().find(x=>x.lang&&x.lang.toLowerCase().startsWith(en?'en':'da'));if(v)u.voice=v;u.rate=.95;ss.speak(u);}catch(e){}}
+function sayTTS(t){if(!run.sound||!t)return;try{const ss=window.speechSynthesis;if(!ss)return;ss.cancel();const u=new SpeechSynthesisUtterance(t),L=document.documentElement.lang,LL={en:'en-GB',es:'es-ES'}[L]||'da-DK';u.lang=LL;const v=ss.getVoices().find(x=>x.lang&&x.lang.toLowerCase().startsWith(LL.slice(0,2)));if(v)u.voice=v;u.rate=.95;ss.speak(u);}catch(e){}}
 function showPlayer(){const el=document.querySelector('#v-tr .player');if(!el)return;const y=el.getBoundingClientRect().top+scrollY-12;window.scrollTo({top:Math.max(0,y),behavior:reduce?'auto':'smooth'});}
 function savePos(){try{store.set('tr-pos',{d:today,id:run.prog.id,i:run.i});}catch(e){}}
 function pick(id){
@@ -1567,7 +1567,7 @@ function finish(){
   $('exname').textContent='Godt gået!';$('extip').textContent=`Du har gennemført ${run.prog.navn.toLowerCase()} i dag. Vælg et nyt program eller tag det samme igen i morgen.`;
   $('clock').textContent='0:00';$('bar').style.width='100%';$('tag').textContent='Færdig';$('play').textContent='Start forfra';
   $('steps').querySelectorAll('li').forEach(l=>l.className='done');
-  run.i=0;run.el=0;run.phase='work';run.left=dur();run.restart=true;drawCards();$('stopTr').hidden=true;try{store.set('tr-pos',null)}catch(e){}if(run.sound&&!VO_ON)sayTTS('Godt gået!');else if(run.sound){try{vo=vo||new Audio();vo.onerror=()=>sayTTS('Godt gået!');vo.onended=null;vo.src=`/audio/ex/${document.documentElement.lang==='en'?'en':'da'}/_done.mp3`;const pr=vo.play();if(pr&&pr.catch)pr.catch(()=>sayTTS('Godt gået!'));}catch(e){sayTTS('Godt gået!')}}
+  run.i=0;run.el=0;run.phase='work';run.left=dur();run.restart=true;drawCards();$('stopTr').hidden=true;try{store.set('tr-pos',null)}catch(e){}if(run.sound&&(!VO_ON||document.documentElement.lang!=='da'))sayTTS('Godt gået!');else if(run.sound){try{vo=vo||new Audio();vo.onerror=()=>sayTTS('Godt gået!');vo.onended=null;vo.src=`/audio/ex/${document.documentElement.lang==='en'?'en':'da'}/_done.mp3`;const pr=vo.play();if(pr&&pr.catch)pr.catch(()=>sayTTS('Godt gået!'));}catch(e){sayTTS('Godt gået!')}}
 }
 function start(){
   progFold(true);
@@ -2633,9 +2633,9 @@ document.addEventListener('click',e=>{const b=e.target.closest('[data-start]');i
 }
 
 /* ===== sprog ===== */
-(function(){const cur=document.documentElement.lang==='en'?'en':'da';const box=document.getElementById('langSeg');if(!box)return;
+(function(){const cur=['en','es'].includes(document.documentElement.lang)?document.documentElement.lang:'da';const box=document.getElementById('langSeg');if(!box)return;
   box.querySelectorAll('button').forEach(b=>{b.setAttribute('aria-pressed',String(b.dataset.lang===cur));b.onclick=()=>{try{localStorage.setItem('mm-lang',b.dataset.lang);}catch(e){}
-    if(b.dataset.lang!==cur&&location.protocol!=='file:')location.href=b.dataset.lang==='en'?'/en/':'/';};});})();
+    if(b.dataset.lang!==cur&&location.protocol!=='file:')location.href=b.dataset.lang==='da'?'/':'/'+b.dataset.lang+'/';};});})();
 </script>
 </body>
 </html>

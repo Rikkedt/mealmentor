@@ -1,0 +1,220 @@
+0	Eres Meal Mentor AI, un mentor de alimentación cálido y práctico en una app para personas que usan medicación GLP-1 (p. ej. Wegovy, Ozempic, Mounjaro) o que la están dejando de forma gradual.
+Reglas:
+- Nunca des consejos sobre cambiar, saltarse, aumentar, reducir o dejar la medicación o las dosis. Eso se acuerda con el médico. Tú ayudas con la comida, los horarios, la saciedad, la proteína, el sueño, el movimiento y los hábitos.
+- Nada de dietas extremas. Si la ingesta es muy baja, anima a comer suficiente y a tomar suficiente proteína.
+- Si el peso sube más de aprox. 1 kg por semana durante la reducción, o hay señales de efectos secundarios, recomienda contactar con el médico.
+- Usa los propios números y horas del usuario. Sé amable y nunca moralices. Escribe en español sencillo y breve.
+- Si el objetivo es ponerse más fuerte y tonificado manteniendo el peso, céntrate en la proteína repartida durante el día, fuerza 2–4 veces por semana y un peso estable.
+- HAMBRE: Cuando el usuario tiene hambre (aparece en HAMBRE HOY o en la pregunta), busca la causa probable en los datos antes de aconsejar: tiempo desde la última comida, si hubo suficiente proteína y fibra, el sueño de anoche, día tras la dosis (el apetito suele subir los días 4–6), hora del día (final de la tarde/noche) y la propia sospecha del usuario (cansancio, estrés, aburrimiento, consuelo, sed). Di brevemente cuál crees que es la causa y da 1–2 consejos concretos: para hambre real, una comida/tentempié concreto con proteína que encaje con las calorías restantes y la pausa de comidas nocturna; para cansancio, estrés, aburrimiento o consuelo, algo que no sea comida (agua/té, un paseo corto, respirar, llamar a alguien) – sin moralizar. Si ves un patrón durante varios días (p. ej. hambre cada día a las 15 h), dilo y sugiere mover o reforzar una comida.
+- Dilo si hay muy pocos datos para concluir.
+- Si faltan registros algunos días (ver 'Registros que faltan'), menciona brevemente que la valoración es por tanto incierta y que el usuario puede añadirlos después si se le olvidó. Los días con 0 comidas probablemente significan registros que faltan, no ayuno.
+1	\n\nEscribe un comentario corto y personal sobre hoy (máx. 50 palabras, sin títulos ni viñetas). El comentario se muestra justo debajo de una tarjeta que ya muestra las calorías y la proteína que quedan o el exceso sobre el objetivo. Por eso: NO menciones cifras de kcal ni de proteína y no calcules tú; el único objetivo de calorías es el de DATOS DE HOY (la media del periodo estable no es el objetivo de hoy). Si el usuario está por encima del objetivo, dilo brevemente y con amabilidad sin darle importancia, y nunca elogies una ingesta por encima del objetivo. Da un consejo concreto para el resto del día. No menciones el entrenamiento salvo que haya muy poco (p. ej. ningún entrenamiento en 4 días). La pausa de comidas nocturna empieza a las
+2	Eres el mentor del chat de la app, Meal Mentor AI. Responde de forma breve (máx. 120 palabras), amable y concreta en español. Sugiere comidas cotidianas concretas con kcal y proteína aproximadas que encajen con lo que le queda al usuario y la hora del día. Usa viñetas para las sugerencias. Haz una pregunta corta si algo no está claro. Si la pregunta es sobre dosis de medicación, remite al médico. Respeta la pausa de comidas nocturna: no sugieras comida durante la pausa salvo que el usuario lo pida, y entonces menciona que es durante la pausa. No elogies el entrenamiento salvo que el usuario lo pida.
+3	Responde SOLO con JSON: {"titel":"nombre del producto en español","pr100":{"kcal":0,"protein":0,"fedt":0,"kulhydrat":0},"portion_g":null,"sikkerhed":"lav|middel|høj","note":"frase corta"}
+"portion_g" es la cantidad que el usuario probablemente comió en gramos: usa la información del usuario, si no una porción indicada en el envase, si no el tamaño del envase si es pequeño (p. ej. una barrita), si no 100. Si la etiqueta está en kJ, conviértelo a kcal. Si no ves una tabla nutricional, estima a partir del producto y pon sikkerhed en "lav".
+4	Responde SOLO con JSON en este formato:
+{"titel":"nombre corto del plato en español","emner":[{"navn":"...","gram":0,"kcal":0,"protein":0,"fedt":0,"kulhydrat":0}],"sikkerhed":"lav|middel|høj","note":"una frase corta sobre la incertidumbre o las suposiciones"}
+Los valores de cada elemento se refieren a la cantidad indicada en gramos. Si no hay comida en la imagen, devuelve {"titel":"No se encontró comida","emner":[],"sikkerhed":"lav","note":"..."}.
+5	:' No se indica cantidad: supón una porción típica de adulto.'}
+Responde SOLO con JSON: {"kcal":0,"protein":0,"fedt":0,"kulhydrat":0,"maengde":0,"enhed":"g|stk|skiver|dl|portion","antagelse":"frase corta sobre en qué consiste la porción"}. "maengde" y "enhed" deben describir la cantidad a la que se refieren los números${a?
+6	Eres un experto en nutrición. Analiza la comida de la imagen y estima el contenido nutricional con la mayor precisión posible.
+Usa nombres de alimentos comunes en español y tamaños de porción típicos. Incluye la grasa oculta probable (aceite, mantequilla, aliño).
+7	, o si las calorías del día ya están usadas, sugiere agua, té o esperar al desayuno. Los consejos no deben contradecirse. No escribas sobre la sinceridad y no repitas las recomendaciones de la app.
+8	\n\nResponde en markdown corto (máx. 220 palabras) con "## La semana en cifras", "## Patrones" (horas, cantidades, sueño, entrenamiento y peso) y "## Prueba esta semana" (máx. 3 puntos)
+9	La imagen muestra un envase de alimento, normalmente la tabla nutricional. Lee el nombre del producto y el contenido nutricional por 100 g (o por 100 ml en bebidas).
+10	y doy mi consentimiento para que Meal Mentor AI trate mi información de salud (p. ej. peso, sueño, comidas y medicación) para darme consejos. Lee
+11	Haz una foto de tu comida para obtener una estimación de calorías, proteína, grasa e hidratos. Ajusta las porciones si la IA se equivocó.
+12	¡Hola! Veo lo que has comido hoy y lo que te queda. Pregunta p. ej. qué puedes comer o cuándo deberías comer la próxima vez.
+13	El cansancio da hambre. La pausa de comidas ha empezado: tómate un té y acuéstate pronto. Mañana empezamos con proteína en el desayuno.
+14	Gracias por contármelo. El estrés puede dar ganas de comer por la noche. Prueba el escáner corporal en Entrenamiento antes de dormir: dura 5 minutos.
+15	Las náuseas son comunes con GLP-1. Come porciones pequeñas, bebe poco a poco y evita la comida grasa. Si continúa, habla con tu médico.
+16	Para si algo duele. Si tienes lesiones o estás embarazada, pregunta a tu médico o fisioterapeuta si los ejercicios son adecuados para ti.
+17	entrenamiento de fuerza la última semana. Los músculos se pierden más rápido en la menopausia, y la fuerza más la proteína ayudan a conservarlos.
+18	Es habitual durante la reducción. Mantén las porciones como en el periodo estable y habla con tu médico si continúa.
+19	La pausa de comidas ha empezado. Si es hambre real, toma agua o té; mañana ponemos más proteína en la comida.
+20	Pierna delantera doblada delante de ti, pierna trasera estirada. Inclínate hacia delante si te sienta bien. Cambia de lado con el pitido.
+21	A cuatro patas: pasa un brazo por debajo del cuerpo y baja el hombro hacia el suelo. Cambia de lado con el pitido.
+22	).join('; ')}. Última comida antes del último hambre: ${(()=>{const last=hu.at(-1);const m=D.meals.filter(z=>z.t
+23	Rodillas ligeramente dobladas. Lleva la cadera atrás y baja el tronco con la espalda recta. Sujeta una botella de agua en cada mano si quieres.
+24	Túmbate boca arriba con los brazos abiertos y deja caer las rodillas hacia un lado. Cambia de lado con el pitido.
+25	Cuando hayas registrado sueño y comida un par de semanas, el mentor te mostrará aquí si el sueño y comer por la noche están relacionados.
+26	Tienes muy poca proteína para las calorías: elige skyr, requesón, huevos, pollo, pescado o legumbres.
+27	Mantén a media bajada en una flexión con el cuerpo en línea recta. Apoya las rodillas para una versión más fácil.
+28	\n\nResponde en markdown corto (máx. 150 palabras) con "## El día en resumen" y "## Prueba mañana" (máx. 3 puntos).
+29	Brazo por encima de la cabeza. Inclínate suavemente hacia un lado y nota el estiramiento en el costado. Cambia de lado con el pitido.
+30	Lleva el talón hacia el glúteo, rodillas juntas. Ponte cerca de una pared si te tambaleas. Cambia de pierna con el pitido.
+31	Codo bajo el hombro, cadera alta. Apoya las rodillas para una versión más fácil. Cambia de lado con el pitido.
+32	Inclínate hacia delante con la espalda recta y lleva los codos atrás hacia la cadera. Usa una botella de agua o una banda elástica.
+33	; llámala siempre "la pausa de comidas nocturna", no "después de las X".
+Recomendaciones actuales de la app:
+34	Túmbate boca arriba con los brazos junto al cuerpo. Cierra los ojos y respira despacio por la nariz.
+35	En iPhone: toca Compartir → Añadir a pantalla de inicio y abre la app desde ahí. Así podrá enviar notificaciones.
+36	Siéntate en V con las piernas levantadas y los brazos estirados hacia delante. Mantén; dobla las rodillas para una versión más fácil.
+37	De pie con las piernas abiertas, estira los brazos y inclínate hacia el pie delantero. Cambia de lado con el pitido.
+38	Túmbate o siéntate cómodamente, cierra los ojos y escucha. La voz te guía por todo el cuerpo.
+39	La tabla de "Información nutricional por 100 g" en la parte trasera del envase. La app lee los números exactos.
+40	Piernas abiertas. Baja sobre una pierna mientras la otra está estirada. Cambia de lado con el pitido.
+41	A cuatro patas con las rodillas a dos centímetros del suelo. Espalda plana y respira con calma.
+42	kcal por encima de la media semanal. El mentor añade un tentempié extra rico en proteína esos días.
+43	kcal restantes: come algo ligero con proteína, p. ej. skyr o requesón, y después empieza la pausa de comidas.
+44	Dijiste que no a las notificaciones. Actívalas en Ajustes → Meal Mentor → Notificaciones.
+45	En el móvil puedes abrir la cámara directamente. En el ordenador también puedes arrastrar una imagen aquí.
+46	Alterna rápido zancadas con la pierna derecha e izquierda. Sin saltos: da un paso en lugar de saltar.
+47	Eres un experto en nutrición. Estima el contenido nutricional de esta comida, descrita en español: "
+48	Siéntate con las piernas estiradas y gira el tronco con la mano detrás de ti. Cambia de lado con el pitido.
+49	Así podemos calcular tu objetivo de calorías y proteína. Siempre puedes cambiarlo en Perfil.
+50	El mentor las envía cuando mejor te viene. Siempre puedes cambiarlo en Perfil.
+51	De pie con las rodillas ligeramente dobladas y los brazos al frente. Gira el tronco suavemente de lado a lado.
+52	Manos contra la pared, pierna trasera estirada y talón en el suelo. Cambia de pierna con el pitido.
+53	Baja a sentadilla, manos al suelo, salta o da un paso atrás a plancha y vuelve, y ponte de pie.
+54	Las notificaciones están bloqueadas. Actívalas en Ajustes → Meal Mentor → Notificaciones.
+55	Manos y pies en el suelo, cadera alta. Lleva los talones hacia el suelo y pedalea con los pies.
+56	Túmbate completamente quieta boca arriba con los brazos a los lados. Suéltalo todo y respira despacio.
+57	Paso largo adelante, dobla la rodilla delantera y estira los brazos hacia arriba. Cambia de lado con el pitido.
+58	De rodillas, eleva el pecho e inclínate suavemente hacia atrás. Solo hasta donde te resulte cómodo.
+59	Pierna delantera doblada delante de ti, pierna trasera estirada. Inclínate hacia delante si te sienta bien.
+60	Abre brazos y piernas con un salto y vuelve a juntarlos. Sin saltos: da pasos al lado alternando.
+61	Manos bajo la cadera, piernas bajas sobre el suelo. Haz tijeras pequeñas y rápidas arriba y abajo.
+62	Paso largo adelante y baja la rodilla trasera hacia el suelo. Cambia de pierna con el pitido.
+63	Siente todo el cuerpo a la vez. Mueve los dedos de manos y pies, y abre los ojos cuando estés lista.
+64	Para ponerte más fuerte y tonificada, tus músculos necesitan 2–4 entrenamientos por semana.
+65	De pie y erguida, estira los brazos hacia arriba y respira hondo. Baja los hombros lejos de las orejas.
+66	Rodilla en el suelo, empuja la cadera hacia delante y estira los brazos hacia arriba. Cambia de lado con el pitido.
+67	Siéntate sobre los talones con la espalda recta y las manos en los muslos. Respira despacio.
+68	Estírate a lo largo y luego junta brazos y piernas en una V. Baja despacio.
+69	No es consejo médico. Habla con tu médico antes de cambiar o dejar el GLP-1.
+70	Apóyate atrás sobre las manos. Lleva las rodillas hacia el pecho y vuelve a estirarlas.
+71	En el móvil la cámara se abre directamente. En el ordenador puedes arrastrar una imagen aquí.
+72	De pie y erguida con los pies juntos. Estira los brazos hacia arriba y respira hondo hacia el abdomen.
+73	Tus datos siguen en este dispositivo y se guardan cuando vuelva la conexión.
+74	Da una zancada y gira el tronco hacia la pierna delantera. Cambia de lado a la mitad.
+75	Siéntate con las piernas cruzadas y la espalda recta. Cierra los ojos y haz cinco respiraciones tranquilas.
+76	Dobla las rodillas y salta con brazos y piernas abiertos como una estrella. Aterriza con suavidad.
+77	No se pudo eliminar la cuenta. Inténtalo de nuevo o escribe a info@mealmentorai.com.
+78	:''}Los consejos se basan en menos datos. Si se te olvidó registrar, aún estás a tiempo.
+79	. Pasa parte de la comida a la comida del mediodía y a la tarde, para que la noche sea más fácil.
+80	Las calorías de hoy ya están usadas. No te acuestes con hambre: come algo ligero hacia las
+81	Pies a la anchura de la cadera, siéntate atrás como en una silla. Las rodillas siguen a los pies.
+82	Túmbate boca abajo y levanta los brazos en Y del suelo. Junta los omóplatos.
+83	Túmbate boca arriba con las rodillas dobladas. Sube la cadera del suelo y baja despacio.
+84	Túmbate boca arriba y abraza las rodillas hacia el pecho. Balancéate suavemente de lado a lado.
+85	Regístralo: así tu mentor ve cuándo llega el hambre y te ayuda mejor.
+86	Siente los dedos, las palmas, los antebrazos y los brazos. Deja que pesen.
+87	, p. ej. verduras con requesón, sopa de verduras o skyr natural (100–150 kcal).
+88	Siéntate sobre los talones y baja el pecho hacia los muslos. Respira hacia la espalda.
+89	Lleva el brazo por delante del pecho con la otra mano. Cambia de brazo con el pitido.
+90	% del día). Las pausas largas dan mucha hambre, así que un tentempié puede ayudar.
+91	Has alcanzado el objetivo de hoy. Si tienes hambre, elige algo ligero con proteína y verduras.
+92	Estás en la pausa de comidas nocturna. Mejor comer un poco ahora que una comida grande.
+93	Un día completamente normal, y eso está bien. Mantén el ritmo mañana.
+94	Manos en el borde de una silla detrás de ti. Dobla los codos y vuelve a empujar hacia arriba.
+95	kcal más. Ten un plan para la tarde y acuéstate antes esta noche.
+96	Brazo por encima de la cabeza. Inclínate suavemente hacia un lado y nota el estiramiento en el costado.
+97	Tus datos se guardan de forma privada en tu cuenta y te acompañan en todos tus dispositivos.
+98	Lleva el talón hacia el glúteo. Rodillas juntas; ponte cerca de una pared si te tambaleas.
+99	Registra el sueño de anoche con dos toques para que el mentor lo tenga en cuenta hoy.
+100	Espalda contra la pared, baja hasta 90 grados en las rodillas. Mantén la posición.
+101	Si comes más que eso, normalmente subes de peso. Calculado a partir de tus últimos
+102	tras la dosis sube el apetito: una comida pequeña ahora hace la noche más fácil.
+103	Codo bajo el hombro, cadera alta. Apoya las rodillas para una versión más fácil.
+104	Tus comidas habituales aparecen aquí cuando las hayas registrado unas cuantas veces.
+105	Junta las manos detrás de la espalda, eleva el pecho y junta los omóplatos.
+106	comidas registradas hoy: eso le da al mentor una buena imagen. Bien hecho.
+107	No hay mucha diferencia en cuánto comes a lo largo de la semana de dosis.
+108	Siéntate con las plantas de los pies juntas y deja que las rodillas bajen suavemente hacia el suelo.
+109	Sigue cómo tu pecho sube y baja. No tienes que cambiar nada.
+110	Unos 10 minutos por programa. Sigue la figura y deja que el reloj lleve el tiempo.
+111	Toma 25–30 g en cada comida, p. ej. skyr, huevos, pollo, pescado o legumbres.
+112	Lo usamos para fijar tu objetivo diario de calorías y proteína.
+113	kcal restantes. Come ahora si tienes hambre; después solo agua y té.
+114	Codos bajo los hombros, aprieta abdomen y glúteos. Respira con calma.
+115	¡Genial! Recuerda registrar las comidas de hoy para que el mentor esté al día.
+116	Túmbate boca arriba con las piernas dobladas. Presiona los talones contra el suelo y eleva la cadera.
+117	En iPhone: toca Compartir → Añadir a pantalla de inicio y abre la app desde ahí.
+118	de media. Empieza el día con proteína y planifica un tentempié a las 15 h.
+119	Dóblate por la cadera con las rodillas ligeramente dobladas. Deja la cabeza y los brazos colgando.
+120	Sube la atención por las pantorrillas y las rodillas. Suelta la tensión.
+121	Plancha alta. Toca el hombro contrario alternando sin balancear la cadera.
+122	Túmbate boca abajo y empuja suavemente con las manos. La cadera se queda en el suelo.
+123	Zona lumbar pegada al suelo. Baja las piernas hasta donde puedas controlar.
+124	Indica tu altura, edad y peso en Perfil y calcularemos tu objetivo
+125	Edad, altura y peso: así calculamos tus calorías y tu proteína.
+126	Tu mentor con IA para cuándo, con qué frecuencia y cuánto comer.
+127	Manos en la cadera, haz círculos grandes. Cambia de dirección a la mitad.
+128	Come lo último ahora si tienes hambre; después solo agua y té.
+129	Revisa si se han colado comidas nocturnas o porciones más grandes.
+130	Comes más o menos lo mismo, da igual cuánto hayas dormido.
+131	Cuerpo en una línea recta. Apoya las rodillas si es demasiado duro.
+132	Túmbate boca abajo. Levanta brazos y piernas unos centímetros y mantén un momento.
+133	Siéntate con las plantas de los pies juntas e inclínate suavemente hacia delante sobre las piernas.
+134	Cambia de lado. Mantén la cadera quieta y deja que el brazo te lleve.
+135	: nunca sugieras comer durante la pausa de comidas. Si es después de las
+136	Deja que el abdomen se mueva libremente con la respiración. Nota cómo se relaja la zona lumbar.
+137	hoy. Elige un programa nuevo o repite el mismo mañana.
+138	Siente los pies. Dedos, talones, plantas. Deja que pesen.
+139	No es consejo médico. Habla con tu médico sobre tu medicación.
+140	Inclínate ligeramente hacia atrás y gira el tronco de lado a lado.
+141	Tras una noche corta, las comidas regulares ayudan contra el hambre esta noche.
+142	Sigue unos días más y el mentor podrá ver tus patrones.
+143	Cambia de pierna. Lleva la cadera un poco adelante para un estiramiento más profundo.
+144	Las notificaciones en el móvil llegarán en la próxima actualización de la app.
+145	Dosis, calorías, proteína, sueño y peso de los últimos 28 días
+146	Alterna entre espalda redondeada y arqueada, al ritmo de la respiración.
+147	Has usado la ayuda de IA de hoy. Vuelve a estar lista mañana.
+148	Zona lumbar en el suelo. Estira el brazo y la pierna contrarios, cambia de lado.
+149	El sueño no parece influir en cuánto comes.
+150	. ¿Por qué crees que tengo hambre y qué puedo hacer?
+151	Recibes las notificaciones a tiempo, incluso con la app cerrada.
+152	Corre en el sitio y sube mucho las rodillas. Usa los brazos de forma activa.
+153	Comer durante la pausa de comidas no parece acortar tu sueño.
+154	Lleva las rodillas al pecho alternando. Encuentra tu propio ritmo.
+155	La calculadora es para adultos. Pregunta a un médico o dietista.
+156	Inclina la oreja hacia el hombro a cada lado. Despacio, sin tirones.
+157	Separa los omóplatos del suelo. Barbilla lejos del pecho.
+158	Estira el brazo y la pierna contrarios. Espalda plana como una mesa.
+159	Diez minutos cuentan. Prueba la sugerencia de hoy en Entrenamiento.
+160	tras la dosis: el apetito sube ahora, así que come a tiempo.
+161	Nota los muslos apoyados en el suelo. Deja que la cadera se hunda.
+162	Pésate antes del desayuno para que los números se puedan comparar.
+163	10 minutos al día. Elige un programa y pulsa empezar.
+164	Lleva el codo a la rodilla contraria y cambia a un ritmo tranquilo.
+165	Rodilla en el suelo, empuja la cadera hacia delante y estira los brazos hacia arriba.
+166	Paso largo adelante, baja la rodilla trasera hacia el suelo.
+167	\n\nResponde de forma breve y concreta (máx. 150 palabras) en markdown.
+168	kcal menos. El sueño es uno de tus atajos más potentes.
+169	Demasiadas solicitudes ahora mismo. Inténtalo de nuevo en un momento.
+170	Dormir poco suele traer más hambre. Intenta dormir 7 horas.
+171	Cancela cuando quieras. Solo pagas después de 7 días.
+172	. Comidas restantes planificadas: ${r.slots.map(x=>
+173	Relaja la frente, los ojos y la mandíbula. Deja descansar la lengua.
+174	Inicia sesión para usar la IA; se hace en Perfil.
+175	Haz una foto de la comida y obtén calorías y proteína.
+176	Ponerme más fuerte y tonificada, pero mantener el peso
+177	Ha sido un día duro. Prioriza el sueño esta noche
+178	Tras noches cortas no comes claramente más.
+179	P. ej.: frito en mantequilla, porción grande, 2 rebanadas de pan de centeno
+180	Deja que los hombros bajen lejos de las orejas. Suelta el cuello.
+181	Registra tu sueño unas noches para ver la tendencia
+182	Sube los hombros hacia las orejas, gíralos hacia atrás y abajo.
+183	Siéntate abajo con el peso en los talones y el pecho elevado.
+184	La IA no está disponible aquí. Introduce los números tú misma.
+185	El análisis con IA no está disponible en esta vista.
+186	Manos bajo los hombros, codos inclinados hacia atrás.
+187	Cintura en cm (opcional, p. ej. una vez al mes)
+188	ponerme más fuerte y tonificada y mantener el peso
+189	Haz el check-in de la noche: tarda 10 segundos.
+190	:'Aún no hay una relación clara con la comida.'}
+191	Inicia sesión para guardar tus datos en tu cuenta.
+192	Cambia de pierna. Aprieta el glúteo de la pierna trasera.
+193	Cambia de lado. Sube el brazo de arriba hacia el techo.
+194	Oculto: aún puedes registrarlo en + Registrar
+195	Hambre registrada: tu mentor lo tiene en cuenta
+196	kcal más. Acuéstate un poco antes esta noche.
+197	mg. Recuerda registrarla cuando la hayas tomado.
+198	horas sin comer y luego una comida grande (
+199	) – usa estos números exactamente, no calcules tú:
+200	Tras noches de menos de 6,5 horas comes de media
+201	% de la comida se come durante la pausa de comidas nocturna
+202	Tus datos, objetivos, recordatorios y suscripción.
+203	Un programa corto ahora te da mejor sueño esta noche.
+204	Aparece cuando hayas registrado un par de semanas.

@@ -1,0 +1,232 @@
+1083	comido
+1084	6,5–7 h
+1085	7 h +
+1086	Se acaba de enviar un código. Revisa tu correo, o espera
+1087	Se han enviado demasiados correos ahora mismo. Inténtalo de nuevo en un momento.
+1088	No ha funcionado. Inicia sesión con tu correo.
+1089	El inicio de sesión con Google no ha funcionado. Inicia sesión con tu correo.
+1090	Has iniciado sesión.
+1091	Ya puedes enviar un código nuevo.
+1092	Sin conexión. Revisa tu internet e inténtalo de nuevo.
+1093	Código del correo
+1094	El código tiene 6 dígitos.
+1095	El código no coincide o ha caducado. Revisa el correo e inténtalo de nuevo.
+1096	Iniciar sesión con correo
+1097	Iniciando sesión …
+1098	Iniciar sesión con
+1099	No se pudo enviar el correo. Inténtalo de nuevo en un momento.
+1100	Enviar código
+1101	Escribe aquí el código del correo. Llegará en un momento.
+1102	Comprueba que el correo esté bien escrito.
+1103	Te enviaremos un código por correo.
+1104	\n\nResponde SOLO con JSON válido, sin explicaciones ni markdown.
+1105	llegará pronto. Mientras tanto, inicia sesión con tu correo.
+1106	segundos y envía uno nuevo.
+1107	segundos e inténtalo de nuevo.
+1108	Espera
+1109	Cancelar
+1110	tu@correo.com
+1111	Registrar sueño
+1112	¿Comiste
+1113	Sí, registrarlo
+1114	Me lo salté
+1115	Ocultar
+1116	¿Qué tal has dormido?
+1117	Proteína media:
+1118	g al día
+1119	Media de los últimos 7 días. Toma 25–30 g en cada comida, p. ej. skyr, huevos, pollo, pescado o legumbres.
+1120	Eres Meal Mentor AI, un mentor de alimentación cálido y práctico en una app para personas que usan medicación GLP-1 (p. ej. Wegovy, Ozempic, Mounjaro) o que la están dejando de forma gradual.
+Reglas:
+- Nunca des consejos sobre cambiar, saltarse, aumentar, reducir o dejar la medicación o las dosis. Eso se acuerda con el médico. Tú ayudas con la comida, los horarios, la saciedad, la proteína, el sueño, el movimiento y los hábitos.
+- Nada de dietas extremas. Si la ingesta es muy baja, anima a comer suficiente y a tomar suficiente proteína.
+- Si el peso sube más de aprox. 1 kg por semana durante la reducción, o hay señales de efectos secundarios, recomienda contactar con el médico.
+- Usa los propios números y horas del usuario. Sé amable y nunca moralices. Escribe en español sencillo y breve.
+- Si el objetivo es ponerse más fuerte y tonificado manteniendo el peso, céntrate en la proteína repartida durante el día, fuerza 2–4 veces por semana y un peso estable.
+- HAMBRE: Cuando el usuario tiene hambre (aparece en HAMBRE HOY o en la pregunta), busca la causa probable en los datos antes de aconsejar: tiempo desde la última comida, si hubo suficiente proteína y fibra, el sueño de anoche, día tras la dosis (el apetito suele subir los días 4–6), hora del día (final de la tarde/noche) y la propia sospecha del usuario (cansancio, estrés, aburrimiento, consuelo, sed). Di brevemente cuál crees que es la causa y da 1–2 consejos concretos: para hambre real, una comida/tentempié concreto con proteína que encaje con las calorías restantes y la pausa de comidas nocturna; para cansancio, estrés, aburrimiento o consuelo, algo que no sea comida (agua/té, un paseo corto, respirar, llamar a alguien) – sin moralizar. Si ves un patrón durante varios días (p. ej. hambre cada día a las 15 h), dilo y sugiere mover o reforzar una comida.
+- Dilo si hay muy pocos datos para concluir.
+- Escribe en un español correcto y natural.
+- Si faltan registros algunos días (ver 'Registros que faltan'), menciona brevemente que la valoración es por tanto incierta y que el usuario puede añadirlos después si se le olvidó. Los días con 0 comidas probablemente significan registros que faltan, no ayuno.
+1121	Eres el mentor del chat de la app, Meal Mentor AI. Responde de forma breve (máx. 80 palabras, mejor menos), amable y concreta en español. Sugiere comidas cotidianas concretas con kcal y proteína aproximadas que encajen con lo que le queda al usuario y la hora del día. Usa viñetas para las sugerencias. Haz una pregunta corta si algo no está claro. Si la pregunta es sobre dosis de medicación, remite al médico. Respeta la pausa de comidas nocturna: no sugieras comida durante la pausa salvo que el usuario lo pida, y entonces menciona que es durante la pausa. No elogies el entrenamiento salvo que el usuario lo pida.
+PATRONES: Usa la sección PATRONES para comentar patrones cuando sea relevante: p. ej. hambre en relación con el sueño, el entrenamiento, las comidas de ayer, el tiempo desde la última comida y el día tras la dosis. Menciona una relación solo si los datos la muestran al menos dos veces, y exprésalo con cautela ("parece que"). Un patrón cada vez.
+1122	" role="button" tabindex="0" aria-label="Editar o eliminar comida"
+1123	La comida que has registrado antes aparece aquí. Tócala y elige la cantidad.
+1124	PATRONES – los últimos 8 días antes de hoy (los más antiguos primero):\n
+1125	Comida anterior · elige la cantidad
+1126	¿Qué parte quieres editar?
+1127	sin comidas registradas
+1128	La comida se ha eliminado
+1129	La comida se ha actualizado
+1130	g de proteína. Sueño
+1131	tras la dosis.
+1132	Eliminar comida
+1133	Editar comida
+1134	. Entrenamiento
+1135	Añadir
+1136	O en porcentaje
+1137	Hora
+1138	La comida que has registrado antes aparece aquí.
+1139	Comida anterior
+1140	Buscar comida anterior
+1141	Sin resultados.
+1142	añadido ·
+1143	Eres Meal Mentor AI, un mentor de alimentación cálido y práctico en una app para personas que usan medicación GLP-1 (p. ej. Wegovy, Ozempic, Mounjaro) o que la están dejando de forma gradual.
+Reglas:
+- Nunca des consejos sobre cambiar, saltarse, aumentar, reducir o dejar la medicación o las dosis. Eso se acuerda con el médico. Tú ayudas con la comida, los horarios, la saciedad, la proteína, el sueño, el movimiento y los hábitos.
+- Nada de dietas extremas. Si la ingesta es muy baja, anima a comer suficiente y a tomar suficiente proteína.
+- Si el peso sube más de aprox. 1 kg por semana durante la reducción, o hay señales de efectos secundarios, recomienda contactar con el médico.
+- Usa los propios números y horas del usuario. Sé amable y nunca moralices. Escribe en español sencillo y breve.
+- Si el objetivo es ponerse más fuerte y tonificado manteniendo el peso, céntrate en la proteína repartida durante el día, fuerza 2–4 veces por semana y un peso estable.
+- HAMBRE: Cuando el usuario tiene hambre (aparece en HAMBRE HOY o en la pregunta), busca la causa probable en los datos antes de aconsejar: tiempo desde la última comida, si hubo suficiente proteína y fibra, el sueño de anoche, día tras la dosis (el apetito suele subir los días 4–6), hora del día (final de la tarde/noche) y la propia sospecha del usuario (cansancio, estrés, aburrimiento, consuelo, sed). Di brevemente cuál crees que es la causa y da 1–2 consejos concretos: para hambre real, una comida/tentempié concreto con proteína que encaje con las calorías restantes y la pausa de comidas nocturna; para cansancio, estrés, aburrimiento o consuelo, algo que no sea comida (agua/té, un paseo corto, respirar, llamar a alguien) – sin moralizar. Si ves un patrón durante varios días (p. ej. hambre cada día a las 15 h), dilo y sugiere mover o reforzar una comida.
+- Dilo si hay muy pocos datos para concluir.
+- MENOPAUSIA: Si la usuaria usa 'Cuerpo y hormonas', busca relaciones entre ciclo, sofocos, hinchazón, antojos de dulce, estrés, alcohol, sueño y peso. Ayúdala a ver qué ocurre antes de que suba el peso para que pueda evitarlo. Los líquidos y los días antes del sangrado pueden causar una subida de peso temporal; dilo para que no se preocupe. Nunca diagnostiques, y remite al médico ante sangrados abundantes o inesperados o sangrados después de la menopausia.
+- Escribe en un español correcto y natural.
+- Si faltan registros algunos días (ver 'Registros que faltan'), menciona brevemente que la valoración es por tanto incierta y que la usuaria puede añadirlos después si se le olvidó. Los días con 0 comidas probablemente significan registros que faltan, no ayuno.
+1144	% frente a
+1145	.
+Fiabilidad de los análisis:
+1146	. Tienes
+1147	. Di claramente lo seguro que estás, y no concluyas más de lo que permite la fiabilidad.
+1148	2–3 meses de "Cuerpo y hormonas" la mayoría de los días
+1149	2–3 semanas de comida registrada
+1150	4 o más
+1151	6 semanas pesándote al menos dos veces por semana
+1152	Alcohol (copas)
+1153	Sangrado hoy
+1154	Ciclo
+1155	Ciclo de
+1156	Estreñimiento
+1157	Antes de que suba el peso
+1158	Antes de que suba el peso, lo más frecuente:
+1159	¿QUÉ FIABILIDAD TIENEN LOS ANÁLISIS?
+1160	Sofocos hoy
+1161	Niebla mental / cansancio
+1162	Dolor de cabeza
+1163	Qué hace que suba tu peso
+1164	Aún no hay una causa clara
+1165	Hoy he tomado terapia hormonal
+1166	Abundante
+1167	Cuerpo y hormonas
+1168	Cuerpo y hormonas:
+1169	Necesita
+1170	Ánimo bajo / irritable
+1171	Dolor articular
+1172	Registra cómo se siente tu cuerpo hoy. Tras 2–3 meses el Mentor puede ver qué está relacionado con que suba tu peso.
+1173	Media
+1174	¿Notas alguno de estos?
+1175	Datos suficientes para decir algo sobre
+1176	Lo más frecuente:
+1177	Hinchazón / retención de líquidos
+1178	Menopausia y hormonas
+1179	Manchado
+1180	Último sangrado
+1181	Patrones de comida
+1182	Estrés hoy
+1183	Antojos de dulce
+1184	Irregular
+1185	Inquieta / ansiosa
+1186	de 21 días
+1187	de 6 semanas
+1188	alcohol (2+ copas)
+1189	sangrado:
+1190	sangrados registrados. El último empezó hace
+1191	días
+1192	los días antes del sangrado
+1193	una noche corta (menos de 6½ h)
+1194	demasiada comida (por encima del objetivo)
+1195	estreñimiento
+1196	copas de alcohol
+1197	veces que tu peso subió al menos 0,4 kg y
+1198	sofocos:
+1199	niebla mental/cansancio
+1200	terapia hormonal
+1201	dolor de cabeza
+1202	qué hábitos vienen antes de que suba tu peso
+1203	cuándo comes, hambre, sueño y comidas
+1204	estrés alto
+1205	sin síntomas
+1206	abundante
+1207	ánimo bajo
+1208	dolor articular
+1209	registros en
+1210	mucha comida a última hora de la noche
+1211	hinchazón/líquidos
+1212	hinchazón / líquidos
+1213	manchado
+1214	relaciones entre ciclo, sofocos, síntomas y peso
+1215	antojos de dulce
+1216	inquieta/ansiosa
+1217	Pechos sensibles
+1218	pechos sensibles
+1219	🌸 Cuerpo y hormonas
+1220	veces que no. El porcentaje muestra con qué frecuencia ocurrió en los 2 días anteriores. El peso también varía por los líquidos, así que mira el patrón a lo largo del tiempo.
+1221	días. Los ciclos irregulares son comunes antes de la menopausia. Si tienes dudas sobre el sangrado, habla con tu médico.
+1222	sin entrenamiento
+1223	Según
+1224	Alta
+1225	Baja
+1226	Registra cómo se siente tu cuerpo hoy, también en días buenos. Tras 2–3 meses el Mentor puede ver qué está relacionado con que suba tu peso. Pésate también 2–3 veces por semana.
+1227	, incluido el manchado. Muestra tu ciclo, y los días antes del sangrado suelen traer líquidos y peso.
+1228	. El músculo se pierde más rápido en la menopausia, y entrenar ayuda con el peso.
+1229	, también en días buenos. Los días sin síntomas son igual de importantes para comparar.
+1230	, por la mañana antes del desayuno. Así la app ve cuándo sube tu peso.
+1231	. La grasa suele ir a la barriga, aunque el peso se mantenga.
+1232	, y el alcohol. Ahí suelen estar las calorías ocultas.
+1233	. Dormir mal suele significar más hambre al día siguiente.
+1234	Medida de cintura una vez al mes
+1235	Todas las comidas, también las tardías
+1236	"Cuerpo y hormonas" cada día
+1237	Sueño y sofocos nocturnos
+1238	Peso 2–3 veces por semana
+1239	Entrenamiento de fuerza
+1240	Sangrado
+1241	Importante registrar en la menopausia
+1242	Media de los últimos 7 días.
+1243	Genial, estás cerca de tu objetivo.
+1244	batido de proteína
+1245	Ninguno
+1246	Leve
+1247	Registrado
+1248	frente a
+1249	% en otros casos
+1250	Media de los últimos 7 días
+1251	: estás en
+1252	Calorías medias:
+1253	kcal al día
+1254	Gracias, tu check-in de la noche está guardado 🌙
+1255	Lo que la app ha aprendido de ti: consejos, patrones y la fiabilidad de los análisis.
+1256	Tus análisis aparecen aquí cuando hayas registrado un par de semanas.
+1257	Atención
+1258	ejercicios
+1259	Ver todos
+1260	Resumen
+1261	Pitido al cambiar
+1262	Sin pitido
+1263	Elige cómo quieres iniciar sesión. Si ya tienes una cuenta, simplemente entras; si no, te la creamos.
+1264	Te enviamos un código por correo
+1265	Inicia sesión o crea una cuenta
+1266	Con tu cuenta de Google
+1267	EMPEZAR
+1268	Bienvenida de nuevo
+1269	no ha funcionado ahora mismo
+1270	. Inicia sesión con tu correo.
+1271	El inicio de sesión con Apple no está disponible en esta versión de la app
+1272	Consejos (
+1273	Cuanto más registres, más consejos y análisis obtendrás. Los patrones de sueño, semana de dosis y peso necesitan un par de semanas de registros.
+1274	Registra comida y sueño durante 3 días y aquí aparecerán tus primeros análisis de calorías, proteína y sueño. Has registrado
+1275	Menos de 7 horas suele traer más hambre al día siguiente. Intenta acostarte un poco antes.
+1276	Bien: 7 horas o más hacen más fácil controlar el hambre.
+1277	noches en los últimos 7 días.
+1278	Sueño medio:
+1279	Ajustes
+1280	LOS ÚLTIMOS 7 DÍAS
+1281	TU COMIDA
+1282	horas por noche
+1283	Envase
+1284	Escribir
+1285	🔊 Voz y pitido
+1286	🔕 Sin sonido
+1287	Pausa. Siguiente:
+1288	Entrenamiento detenido.
+1289	min guardados.
+1290	Detener entrenamiento
+1291	CONSEJOS

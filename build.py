@@ -21,3 +21,11 @@ pathlib.Path('public/en').mkdir(exist_ok=True)
 pathlib.Path('public/en/index.html').write_text(en)
 pathlib.Path('public/mm.en.js').write_text(build_en.build_js(pathlib.Path('public/mm.js').read_text()))
 print('public/en/index.html bygget', len(en))
+# Spansk version: /es/ + /mm.es.js
+import importlib
+build_es = importlib.import_module('build_es')
+es = build_es.build_html(src).replace('</title>', '</title>' + head.replace('/mm.js', '/mm.es.js'), 1)
+pathlib.Path('public/es').mkdir(exist_ok=True)
+pathlib.Path('public/es/index.html').write_text(es)
+pathlib.Path('public/mm.es.js').write_text(build_es.build_js(pathlib.Path('public/mm.js').read_text()))
+print('public/es/index.html bygget', len(es))
