@@ -1,3 +1,4 @@
+window.mmTerms = () => ({ en: '/en/terms/', es: '/es/terminos/' })[document.documentElement.lang] || '/vilkaar/';
 window.mmPriv = () => ({ en: '/en/privacy/', es: '/es/privacidad/' })[document.documentElement.lang] || '/privatliv/';
 /* Sprog: vælg /, /en/ eller /es/ ud fra valg eller telefonens sprog */
 (function(){try{if(location.protocol==='file:')return;const p=location.pathname,m=p.match(/^\/(en|es)(\/|$)/),on=m?m[1]:'da';
@@ -382,7 +383,7 @@ function daErr(e){const m=(e&&e.message)||'';let t;
         <p>${T('Meal Mentor AI es un mentor de alimentación con IA. Haz una foto de tu comida y obtén calorías y proteína, recibe sugerencias de cuándo y cuánto comer, registra el sueño y entrena 10 minutos al día.', 'Meal Mentor AI is an AI food mentor. Snap a photo of your meal to get calories and protein, get suggestions for when and how much to eat, log sleep and train 10 minutes a day.')}</p>
         <p>${T('Inicias sesión con Apple, Google o correo. Solo usamos tu nombre y tu correo para crear tu cuenta. Más información en la política de privacidad.', 'You sign in with Apple, Google or email. We only use your name and email to create your account. Read more in the privacy policy.')}</p>
         <p>${T('Meal Mentor AI es una app para iPhone y llegará pronto a la App Store.', 'Meal Mentor AI is an iPhone app and is coming soon to the App Store.')}</p>
-        <p class="mm-gate-small"><a href="${window.mmPriv()}">${T('Política de privacidad', 'Privacy policy')}</a> · <a href="/vilkaar/">${T('Términos', 'Terms')}</a> · <a href="mailto:info@mealmentorai.com">info@mealmentorai.com</a></p></div>`;
+        <p class="mm-gate-small"><a href="${window.mmPriv()}">${T('Política de privacidad', 'Privacy policy')}</a> · <a href="${window.mmTerms()}">${T('Términos', 'Terms')}</a> · <a href="mailto:info@mealmentorai.com">info@mealmentorai.com</a></p></div>`;
       document.body.append(d); document.documentElement.classList.add('mm-locked');
     };
     if (document.body) show(); else document.addEventListener('DOMContentLoaded', show);
@@ -418,7 +419,7 @@ function daErr(e){const m=(e&&e.message)||'';let t;
       <button class="go mm-buy">${T('Continuar', 'Continue')}</button>
       <p class="mm-msg"></p>
       <p class="mm-gate-small">${T('La suscripción se renueva automáticamente cada mes hasta que la canceles. ', 'The subscription renews automatically every month until you cancel. ')}${cancelHow}</p>
-      <p class="mm-gate-small"><a href="#" class="mm-restore">${T('Restaurar compras', 'Restore purchases')}</a> · <a href="https://mealmentorai.com/vilkaar/">${T('Términos', 'Terms of Use')}</a> · <a href="https://mealmentorai.com${window.mmPriv()}">${T('Privacidad', 'Privacy')}</a> · <a href="#" class="mm-out">${T('Cerrar sesión', 'Log out')}</a></p></div>`;
+      <p class="mm-gate-small"><a href="#" class="mm-restore">${T('Restaurar compras', 'Restore purchases')}</a> · <a href="https://mealmentorai.com${window.mmTerms()}">${T('Términos', 'Terms of Use')}</a> · <a href="https://mealmentorai.com${window.mmPriv()}">${T('Privacidad', 'Privacy')}</a> · <a href="#" class="mm-out">${T('Cerrar sesión', 'Log out')}</a></p></div>`;
     document.body.append(wall); document.documentElement.classList.add('mm-locked');
     const msg = wall.querySelector('.mm-msg'), buy = wall.querySelector('.mm-buy'), price = wall.querySelector('.mm-price');
     const ps = o.price || T('8 $', '$8');

@@ -1031,7 +1031,6 @@
 "\" aria-label=\"Gå til": "\" aria-label=\"Ir a",
 "\" aria-label=\"Skjul – der er ikke noget at logge\">": "\" aria-label=\"Ocultar: no hay nada que registrar\">",
 "sc-go\" type=\"button\" data-start=\"log\">Log måltid": "sc-go\" type=\"button\" data-start=\"log\">Registrar comida",
-"/vilkaar/\" target=\"_blank\" rel=\"noopener\">Vilkår": "/vilkaar/\" target=\"_blank\" rel=\"noopener\">Términos",
 "\" text-anchor=\"end\" font-size=\"10.5\" fill=\"var(--mute)\">mål": "\" text-anchor=\"end\" font-size=\"10.5\" fill=\"var(--mute)\">objetivo",
 "\" text-anchor=\"middle\" font-size=\"13\" fill=\"var(--mute)\">Log din søvn et par nætter for at se udviklingen": "\" text-anchor=\"middle\" font-size=\"13\" fill=\"var(--mute)\">Registra tu sueño unas noches para ver la tendencia",
 "\" text-anchor=\"middle\" font-size=\"13\" fill=\"var(--mute)\">Vej dig et par gange for at se udviklingen": "\" text-anchor=\"middle\" font-size=\"13\" fill=\"var(--mute)\">Pésate unas cuantas veces para ver la tendencia",
@@ -1320,5 +1319,6 @@
 "Skriv også, hvad 1 portion vejer, så regner appen det om.": "Escribe también cuánto pesa 1 porción y la app lo recalcula.",
 "Eller i gram": "O en gramos",
 "1 portion vejer ca.": "1 porción pesa aprox.",
-"Fx 150": "P. ej. 150"
+"Fx 150": "P. ej. 150",
+"${TERMS}\" target=\"_blank\" rel=\"noopener\">Vilkår": "${TERMS}\" target=\"_blank\" rel=\"noopener\">Términos"
 }

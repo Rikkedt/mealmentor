@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,viewport-fit=cover">
-<title>Meal Mentor AI</title><meta name="mm-version" content="c720a1b242"><link rel="manifest" href="/manifest.webmanifest"><link rel="apple-touch-icon" href="/apple-touch-icon.png"><link rel="icon" href="/icon-192.png"><meta name="theme-color" content="#F1F1F4"><link rel="stylesheet" href="/mm.css?v=7a7e45a6"><script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script><script src="/mm.en.js?v=7a7e45a6"></script>
+<title>Meal Mentor AI</title><meta name="mm-version" content="bbdc590a6f"><link rel="manifest" href="/manifest.webmanifest"><link rel="apple-touch-icon" href="/apple-touch-icon.png"><link rel="icon" href="/icon-192.png"><meta name="theme-color" content="#F1F1F4"><link rel="stylesheet" href="/mm.css?v=03b925ea"><script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script><script src="/mm.en.js?v=03b925ea"></script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Inter+Tight:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <style>
@@ -2625,8 +2625,9 @@ if(window.mmAuth)window.mmAuth.ready.then(()=>{drawAuth();if(window.mmAuth.user(
 /* ===== privatliv og vilkår ===== */
 const LEGAL=/claude|usercontent|^$/.test(location.hostname)||location.protocol==='file:'?'https://mealmentor.rikkedt.workers.dev':'';
 const PRIV={en:'/en/privacy/',es:'/es/privacidad/'}[document.documentElement.lang]||'/privatliv/';
-$('lnkTerms').href=LEGAL+'/vilkaar/';$('lnkPriv').href=LEGAL+PRIV;
-$('legalLinks').innerHTML=`<a href="${LEGAL}${PRIV}" target="_blank" rel="noopener">Privacy policy</a> · <a href="${LEGAL}/vilkaar/" target="_blank" rel="noopener">Terms</a>`;
+const TERMS={en:'/en/terms/',es:'/es/terminos/'}[document.documentElement.lang]||'/vilkaar/';
+$('lnkTerms').href=LEGAL+TERMS;$('lnkPriv').href=LEGAL+PRIV;
+$('legalLinks').innerHTML=`<a href="${LEGAL}${PRIV}" target="_blank" rel="noopener">Privacy policy</a> · <a href="${LEGAL}${TERMS}" target="_blank" rel="noopener">Terms</a>`;
 
 
 $('onbOk').addEventListener('change',()=>{if(!$('onb').hidden)drawOnb();});

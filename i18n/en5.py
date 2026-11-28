@@ -167,7 +167,7 @@ X.update({'godt':'good','rigtig godt':'really good','sulten':'hungry','meget sul
 '" aria-label="Gram':'" aria-label="Grams','" aria-label="Slet':'" aria-label="Delete','" aria-label="Gå til':'" aria-label="Go to',
 '" aria-label="Skjul – der er ikke noget at logge">':'" aria-label="Hide – there is nothing to log">',
 'sc-go" type="button" data-start="log">Log måltid':'sc-go" type="button" data-start="log">Log meal',
-'/vilkaar/" target="_blank" rel="noopener">Vilkår':'/vilkaar/" target="_blank" rel="noopener">Terms',
+'${TERMS}" target="_blank" rel="noopener">Vilkår':'${TERMS}" target="_blank" rel="noopener">Terms',
 '" text-anchor="end" font-size="10.5" fill="var(--mute)">mål':'" text-anchor="end" font-size="10.5" fill="var(--mute)">goal',
 '" text-anchor="middle" font-size="13" fill="var(--mute)">Log din søvn et par nætter for at se udviklingen':'" text-anchor="middle" font-size="13" fill="var(--mute)">Log your sleep for a few nights to see the trend',
 '" text-anchor="middle" font-size="13" fill="var(--mute)">Vej dig et par gange for at se udviklingen':'" text-anchor="middle" font-size="13" fill="var(--mute)">Weigh yourself a few times to see the trend',
