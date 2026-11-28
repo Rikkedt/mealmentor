@@ -2624,8 +2624,9 @@ if(window.mmAuth)window.mmAuth.ready.then(()=>{drawAuth();if(window.mmAuth.user(
 
 /* ===== privatliv og vilkår ===== */
 const LEGAL=/claude|usercontent|^$/.test(location.hostname)||location.protocol==='file:'?'https://mealmentor.rikkedt.workers.dev':'';
-$('lnkTerms').href=LEGAL+'/vilkaar/';$('lnkPriv').href=LEGAL+'/privatliv/';
-$('legalLinks').innerHTML=`<a href="${LEGAL}/privatliv/" target="_blank" rel="noopener">Privatlivspolitik</a> · <a href="${LEGAL}/vilkaar/" target="_blank" rel="noopener">Vilkår</a>`;
+const PRIV={en:'/en/privacy/',es:'/es/privacidad/'}[document.documentElement.lang]||'/privatliv/';
+$('lnkTerms').href=LEGAL+'/vilkaar/';$('lnkPriv').href=LEGAL+PRIV;
+$('legalLinks').innerHTML=`<a href="${LEGAL}${PRIV}" target="_blank" rel="noopener">Privatlivspolitik</a> · <a href="${LEGAL}/vilkaar/" target="_blank" rel="noopener">Vilkår</a>`;
 
 
 $('onbOk').addEventListener('change',()=>{if(!$('onb').hidden)drawOnb();});
