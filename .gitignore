@@ -2,3 +2,9 @@
 __pycache__/
 .wrangler/
 node_modules/
+
+# Signeringsnøgler må aldrig ligge i git
+*.jks
+*.keystore
+Keystore/
+keystore/
